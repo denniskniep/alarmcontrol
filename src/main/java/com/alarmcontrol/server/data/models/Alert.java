@@ -36,7 +36,22 @@ public class Alert {
 
   protected Alert() {}
 
-  public Alert(Long organisationId, boolean active, String raw, String keyword, Date dateTime, String description, String addressType, String address) {
+  public Alert(Long organisationId,
+      String raw,
+      boolean active,
+      String keyword,
+      Date dateTime,
+      String description,
+      String addressType,
+      String address) {
+    this.organisationId = organisationId;
+    this.raw = raw;
+    this.active = active;
+    this.keyword = keyword;
+    this.dateTime = dateTime;
+    this.description = description;
+    this.addressType = addressType;
+    this.address = address;
   }
 
   public Long getId() {

@@ -1,0 +1,22 @@
+type Query {
+  alertById(id: ID): Alert
+  alertsByOrganisationId(organisationId: ID): [Alert]
+}
+
+type Mutation {
+  newAlert(organisationId: ID, raw: String, active: Boolean, keyword: String, dateTime: DateTime, description: String, addressType: String, address: String): Alert
+}
+
+type Alert {
+  id: ID
+  keyword: String
+  organisationId: ID
+  raw: String
+  active: Boolean
+  dateTime: DateTime
+  description: String
+  addressType: String
+  address: String
+}
+
+scalar DateTime
