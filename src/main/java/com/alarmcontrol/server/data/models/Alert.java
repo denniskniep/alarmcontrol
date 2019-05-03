@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.data.models;
 
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,11 +13,12 @@ import javax.persistence.TemporalType;
 public class Alert {
 
   @Id
-  @GeneratedValue(strategy= GenerationType.AUTO)
+  @GeneratedValue(strategy= GenerationType.IDENTITY)
   private Long id;
 
   private Long organisationId;
 
+  @Column(columnDefinition="clob")
   private String raw;
 
   private boolean active;

@@ -14,7 +14,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: organisationId
+                  name: organisation_id
                   type: bigint
               - column:
                   name: raw
@@ -26,10 +26,13 @@ databaseChangeLog:
                   name: keyword
                   type: nvarchar(255)
               - column:
+                  name: date_time
+                  type: datetime
+              - column:
                   name: description
                   type: nvarchar(255)
               - column:
-                  name: addressType
+                  name: address_type
                   type: nvarchar(255)
               - column:
                   name: address
