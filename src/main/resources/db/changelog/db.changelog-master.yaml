@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: dkniep
+      changes:
+        - createTable:
+            tableName: alert
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisationId
+                  type: bigint
+              - column:
+                  name: raw
+                  type: clob
+              - column:
+                  name: active
+                  type: boolean
+              - column:
+                  name: keyword
+                  type: nvarchar(255)
+              - column:
+                  name: description
+                  type: nvarchar(255)
+              - column:
+                  name: addressType
+                  type: nvarchar(255)
+              - column:
+                  name: address
+                  type: nvarchar(255)
+        - createTable:
+            tableName: organisation
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: nvarchar(255)
