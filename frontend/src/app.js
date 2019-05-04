@@ -1,8 +1,9 @@
 import React from "react";
 import AlertView from "./alertView";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import ApolloClient from "apollo-boost";
+import { Navbar, NavDropdown, Nav } from 'react-bootstrap';
 
 const client = new ApolloClient({
   uri: "http://localhost:8080/graphql"
@@ -32,20 +33,17 @@ function Home() {
 
 function Menu() {
   return (
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/alertview/3">Alert Nr. 3</Link>
-          </li>
-          <li>
-            <Link to="/alertview/2">Alert Nr. 2</Link>
-          </li>
-        </ul>
-        <hr />
-      </div>
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Brand>AlarmControl</Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto">
+            <NavLink className={"nav-link"} exact to="/">Home</NavLink>
+            <NavLink className={"nav-link"} to="/alertview/2">Alert 2</NavLink>
+            <NavLink className={"nav-link"} to="/alertview/3">Alert 3</NavLink>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
   );
 }
 

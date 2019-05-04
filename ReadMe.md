@@ -46,7 +46,7 @@ http://localhost:1234
 * **Routing**: react-router
 (https://reacttraining.com/react-router/web/example/basic)
 * **GraphQl**: Apollo Client (https://www.apollographql.com/docs/react/essentials/get-started)
-
+* **GUI-Components**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
 
 ## ToDos
 
