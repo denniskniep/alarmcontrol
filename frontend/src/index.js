@@ -1,5 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import ApolloClient from "apollo-boost";
+import { gql } from "apollo-boost";
+
+const client = new ApolloClient({
+  uri: "http://localhost:8080/graphql"
+});
 
 class HelloMessage extends React.Component {
 
@@ -12,11 +18,19 @@ class HelloMessage extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://localhost:8080/api/test')
-    .then(response =>  response.json())
-    .then(resData => {
-      this.setState({ greeting: resData.greeting }); //this is an asynchronous function
+    client
+    .query({
+      query: gql`
+      query {
+        alertById(id: 1) {
+          id
+          keyword
+          dateTime
+        }
+      }
+    `
     })
+    .then(result => console.log(result));
   }
 
   render() {
