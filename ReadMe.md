@@ -6,11 +6,11 @@ Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
 Start react client inside the folder `frontend` with `npm run start`
 
 ### Database
-http://localhost:8080/h2-console
+* **H2Console**: http://localhost:8080/h2-console
 
 ### GraphQL
-Editor:
-http://localhost:8080/graphiql
+* **Editor**: http://localhost:8080/graphiql
+* **Schema**: http://localhost:8080/graphql/schema.json
 
 #### Add an Alert
 ```
@@ -27,7 +27,6 @@ mutation {
   ){id}
 }
 ```
-
 #### Query an Alert
 ```
 query {
@@ -39,5 +38,22 @@ query {
 }
 ```
 
-## Websockets Example
-https://github.com/RatneshChauhan/springboot-react-chatroom/tree/master/Client
+### Client
+http://localhost:1234
+
+## Architecture
+### Client
+* **Routing**: react-router
+(https://reacttraining.com/react-router/web/example/basic)
+* **GraphQl**: Apollo Client (https://www.apollographql.com/docs/react/essentials/get-started)
+
+
+## ToDos
+
+### Real-Time
+Client should be up to date without manually refreshing the page. This is necessary if someone respond with a status.
+
+> Polling is an excellent way to achieve near-realtime data without the complexity of setting up GraphQL subscriptions.
+
+https://www.apollographql.com/docs/react/essentials/queries#refetching
+
