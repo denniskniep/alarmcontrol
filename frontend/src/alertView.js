@@ -3,6 +3,7 @@ import { Query } from "react-apollo";
 import { gql } from "apollo-boost";
 import { Container, Row, Col, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Map, TileLayer } from 'react-leaflet'
 
 const ALERT_BY_ID = gql`
     query alertById($id: ID) {
@@ -254,8 +255,8 @@ class AlertViewMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lat: 51.505,
-      lng: -0.09,
+      lat: 51.406378,
+      lng: 9.358980,
       zoom: 13,
     };
   }
@@ -263,17 +264,22 @@ class AlertViewMap extends Component {
   render() {
     const position = [this.state.lat, this.state.lng]
     return (
-        <AlertViewBox>
-
-        </AlertViewBox>
+      <div className="alertViewOuterBox h-100">
+        <Map className={"alertViewBox "} center={position} zoom={13}>
+          <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          />
+        </Map>
+      </div>
     )
   }
 }
 
 class AlertViewBox extends Component {
   render() {
-    return ( <div className="alertViewOuterBox h-100">
-      <div className={"alertViewBox h-100"}>
+    return (<div className="alertViewOuterBox h-100">
+      <div className={["alertViewBox", "h-100"].join(' ')}>
         {this.props.children}
       </div>
     </div>);
