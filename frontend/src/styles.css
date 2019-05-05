@@ -1,0 +1,63 @@
+html,body,#app{
+  height:100%;
+}
+
+.h-full{
+  height: calc(100% - 56px);
+}
+
+.flex-fill {
+  flex:1;
+}
+
+.alertView{
+  padding-top: 20px;
+  background-color: #fafafa;
+}
+
+.alertViewBox{
+  border-radius: .8rem;
+  border: 1px solid #e5e5e5;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+}
+
+.alertViewBoxStretch{
+  height: calc(100% - 20px) !important;
+}
+
+.noPadding{
+  padding: 0px;
+}
+
+.insideBadge{
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.badgeSpace{
+  margin-right: 10px;
+}
+
+.available{
+  background-color: #b1dfbb42;
+}
+
+.laterAvailable{
+  background-color: #8ec0ff42;
+}
+
+/*
+.alertViewBoxFirstLeftCell{
+  border-top: 0px !important;
+  background: aqua;
+  border-top-left-radius: .8rem;
+}
+
+.alertViewBoxFirstRightCell{
+  border-top: 0px !important;
+  background: aqua;
+  border-top-right-radius: .8rem;
+}
+*/

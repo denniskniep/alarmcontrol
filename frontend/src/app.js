@@ -3,7 +3,7 @@ import AlertView from "./alertView";
 import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import ApolloClient from "apollo-boost";
-import { Navbar, NavDropdown, Nav } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 
 const client = new ApolloClient({
   uri: "http://localhost:8080/graphql"
@@ -13,11 +13,9 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <div>
           <Menu/>
           <Route exact path="/" component={Home} />
           <Route path="/alertview/:id" component={AlertView} />
-        </div>
       </Router>
     </ApolloProvider>
   );
@@ -33,7 +31,7 @@ function Home() {
 
 function Menu() {
   return (
-      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+      <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand>AlarmControl</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
