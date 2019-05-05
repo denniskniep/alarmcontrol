@@ -11,8 +11,12 @@ html,body,#app{
 }
 
 .alertView{
-  padding-top: 20px;
   background-color: #fafafa;
+}
+
+.alertViewOuterBox {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .alertViewBox{

@@ -23,7 +23,18 @@ class AlertViewLayout extends Component {
          <AlertViewPersons alert={this.props.alert} />
         </Col>
         <Col>
-          <AlertViewHeader alert={this.props.alert} />
+          <Container fluid="true" className={"d-flex flex-column h-100 "}>
+            <Row>
+              <Col>
+                <AlertViewHeader alert={this.props.alert} />
+              </Col>
+            </Row>
+            <Row className={"h-100"}>
+              <Col>
+                <AlertViewMap alert={this.props.alert} />
+              </Col>
+            </Row>
+          </Container>
         </Col>
       </Row>
     </Container>);
@@ -33,66 +44,69 @@ class AlertViewLayout extends Component {
 class AlertViewHeader extends Component {
   render() {
     return (
-     <Container fluid="true" className={"alertViewBox"}>
-      <Row>
-        <Col xs={3}>
-          <h1>F2 Y</h1>
-        </Col>
-        <Col xs={6}>
-          <h1>Musterstraße 25</h1>
-        </Col>
-        <Col xs={3}>
-          <h1>00:02:25</h1>
-        </Col>
-      </Row>
-      <Row>
-       <Col xs={3}>
-         <span>1 vermisste Person</span>
-       </Col>
-       <Col xs={6}>
-         <span>12345 Berlin</span>
-       </Col>
-       <Col xs={3}>
-         <span>12.01.2019 16:17:03</span>
-       </Col>
-      </Row>
-       <Row>
+      <AlertViewBox>
+        <Container fluid="true">
+          <Row>
+          <Col xs={3}>
+            <h1>F2 Y</h1>
+          </Col>
+          <Col xs={6}>
+            <h1>Musterstraße 25</h1>
+          </Col>
+          <Col xs={3}>
+            <h1>00:02:25</h1>
+          </Col>
+         </Row>
+          <Row>
          <Col xs={3}>
-           <span>
-             <Badge className={"badgeSpace"} pill variant="primary">
-                LZ2
-             </Badge>
-             <Badge className={"badgeSpace"} pill variant="primary">
-                ELW
-             </Badge>
-           </span>
+           <span>1 vermisste Person</span>
          </Col>
          <Col xs={6}>
-           <span>OT: Spandau</span>
+           <span>12345 Berlin</span>
          </Col>
          <Col xs={3}>
-           <span></span>
+           <span>12.01.2019 16:17:03</span>
          </Col>
-       </Row>
-       <Row>
-         <Col xs={3}>
-           <span></span>
-         </Col>
-         <Col xs={6}>
-           <span>7 km (4 min)</span>
-         </Col>
-         <Col xs={3}>
-           <span></span>
-         </Col>
-       </Row>
-    </Container>);
+        </Row>
+          <Row>
+           <Col xs={3}>
+             <span>
+               <Badge className={"badgeSpace"} pill variant="primary">
+                  LZ2
+               </Badge>
+               <Badge className={"badgeSpace"} pill variant="primary">
+                  ELW
+               </Badge>
+             </span>
+           </Col>
+           <Col xs={6}>
+             <span>OT: Spandau</span>
+           </Col>
+           <Col xs={3}>
+             <span></span>
+           </Col>
+         </Row>
+          <Row>
+           <Col xs={3}>
+             <span></span>
+           </Col>
+           <Col xs={6}>
+             <span>7 km (4 min)</span>
+           </Col>
+           <Col xs={3}>
+             <span></span>
+           </Col>
+         </Row>
+        </Container>
+      </AlertViewBox>);
   }
 }
 
 class AlertViewPersons extends Component {
   render() {
     return (
-        <Container fluid="true" className={"alertViewBox alertViewBoxStretch d-flex flex-column "}>
+      <AlertViewBox>
+        <Container fluid="true" className={"d-flex flex-column h-100"}>
           <Row>
             <Col>
               <h1>
@@ -230,9 +244,42 @@ class AlertViewPersons extends Component {
               <Badge className={"badgeSpace"} variant="danger">Torben Tau</Badge>
             </Col>
           </Row>
-        </Container>);
+        </Container>
+      </AlertViewBox>);
   }
 }
+
+class AlertViewMap extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      lat: 51.505,
+      lng: -0.09,
+      zoom: 13,
+    };
+  }
+
+  render() {
+    const position = [this.state.lat, this.state.lng]
+    return (
+        <AlertViewBox>
+
+        </AlertViewBox>
+    )
+  }
+}
+
+class AlertViewBox extends Component {
+  render() {
+    return ( <div className="alertViewOuterBox h-100">
+      <div className={"alertViewBox h-100"}>
+        {this.props.children}
+      </div>
+    </div>);
+  }
+}
+
 
 class AlertView extends Component {
   render() {
