@@ -3,7 +3,12 @@ import { Query } from "react-apollo";
 import { gql } from "apollo-boost";
 import { Container, Row, Col, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Map, TileLayer } from 'react-leaflet'
+import { Map, TileLayer, LeafletConsumer } from 'react-leaflet'
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-routing-machine';
+import 'leaflet-control-geocoder';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 const ALERT_BY_ID = gql`
     query alertById($id: ID) {
@@ -261,6 +266,7 @@ class AlertViewMap extends Component {
     };
   }
 
+
   render() {
     const position = [this.state.lat, this.state.lng]
     return (
@@ -270,9 +276,32 @@ class AlertViewMap extends Component {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           />
+          <Routing />
         </Map>
       </div>
     )
+  }
+}
+
+class Routing extends Component {
+
+  render() {
+    return (
+        <LeafletConsumer>
+          {
+            map => {
+              console.log(map)
+              L.Routing.control({
+                waypoints: [
+                  L.latLng(51.406173, 9.358961),
+                  L.latLng(51.385084, 9.365897)
+                ],
+                routeWhileDragging: false
+              }).addTo(map.map);
+            }
+          }
+        </LeafletConsumer>
+    );
   }
 }
 
