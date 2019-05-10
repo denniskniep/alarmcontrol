@@ -3,10 +3,11 @@ import { Query } from "react-apollo";
 import { gql } from "apollo-boost";
 import { Container, Row, Col, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Map, TileLayer, LeafletConsumer } from 'react-leaflet'
+import { Map, TileLayer, LeafletConsumer, CircleMarker } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
+import 'lrm-graphhopper';
 import 'leaflet-control-geocoder';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
@@ -260,44 +261,176 @@ class AlertViewMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lat: 51.406378,
-      lng: 9.358980,
-      zoom: 13,
+      pos: {
+        lat: 51.406378,
+        lng: 9.358980,
+        zoom: 13
+      },
+      target: null
     };
   }
 
+  targetGeocoded(geocodedTarget){
+    console.log("geocoded:", geocodedTarget);
+    this.setState({
+      target: {
+        lat: geocodedTarget.center.lat,
+        lng: geocodedTarget.center.lng
+      }
+    });
+  }
 
   render() {
-    const position = [this.state.lat, this.state.lng]
     return (
       <div className="alertViewOuterBox h-100">
-        <Map className={"alertViewBox "} center={position} zoom={13}>
+        <Map className={"alertViewBox "} center={[this.state.pos.lat, this.state.pos.lng]} zoom={this.state.pos.zoom}>
           <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           />
-          <Routing />
+
+          <Routing from={{lat: 51.406339, lng: 9.359186}}
+                   target={"Hinter den Gärten 8, 34379 Calden"}
+                   onTargetGeocoded={(t) => this.targetGeocoded(t)}
+                   onRouting={(r) => console.log("Routing to:", r) }
+                   onRouteFound={(r) => console.log("Route found:", r)}/>
+
+          {this.state.target &&
+            <CircleMarker center={this.state.target}/>
+          }
         </Map>
       </div>
     )
   }
 }
 
+const ZOOM_FACTOR = {
+  Continent : 0,
+  Country : 3,
+  State : 5,
+  Region: 6,
+  County : 8,
+  City: 10,
+  Town: 12,
+  Suburb: 14,
+  Street: 16,
+  Building: 18,
+  Max: 21
+};
+
+const routingCache = {}
+
+class CacheRouter {
+
+  constructor() {
+    //this.router = new L.Routing.OSRMv1()
+    //ToDo: Proxy it through the server with serverside caching...No ClientSecret Problem...
+    this.router = L.Routing.graphHopper('');
+  }
+
+  route(waypoints, callback, context, options){
+    let waypointKey = waypoints.map(w => w.latLng.lat + ";" + w.latLng.lat).join("|");
+    if(waypointKey in routingCache){
+      let routes = routingCache[waypointKey];
+      console.log("use route from cached "+ waypointKey, routes);
+
+      // fixes an function not found error
+      // currently we have no alternative routes
+      //TODO: execute this.state.route.addTo(map.map); before
+      context._altContainer = {
+        appendChild : () => {}
+      }
+
+      callback.call(context, null, routes);
+      return this.router;
+    }
+
+    let cacheCallback = function(error, routes){
+      if(routes){
+        console.log("caching route "+ waypointKey, routes);
+        routingCache[waypointKey] = routes;
+        callback.call(context, null, routes);
+      }
+    }
+
+    this.router.route(waypoints, cacheCallback, context, options);
+    return this.router;
+  }
+}
+
 class Routing extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      route: null,
+      routeAddedToMap : false
+    }
+  }
+
+  componentWillMount(){
+    this.geocodeAsync(this.props.target)
+    .then(geocodedLocations => {
+      let geocodedLocation = geocodedLocations[0];
+      this.props.onTargetGeocoded && this.props.onTargetGeocoded(geocodedLocation);
+
+      let fromLocation ={
+        center: {
+          lat: this.props.from.lat,
+          lng: this.props.from.lng
+        }
+      };
+
+      let route = this.calculateRoute([fromLocation, geocodedLocation]);
+      this.setState({
+        route: route
+      });
+    })
+  }
+
+  geocodeAsync(query) {
+    const geocoder = new L.Control.Geocoder.Nominatim();
+    return new Promise(function (resolve, reject) {
+      if (query.hasOwnProperty("lat") && query.hasOwnProperty("lng")) {
+        geocoder.reverse(query, ZOOM_FACTOR.Max, function (a, b) {
+          resolve(a);
+        });
+      }else if(typeof query === 'string' || query instanceof String) {
+        geocoder.geocode(query, function (a, b) {
+          resolve(a);
+        });
+      }else{
+        reject("the argument query is not a string or has the following properties: lat, lng")
+      }
+    });
+  }
+
+  calculateRoute(geocodedLocations){
+    let waypoints = geocodedLocations.map( g => new L.LatLng(g.center.lat, g.center.lng));
+
+    return new L.Routing.Control({
+      waypoints: waypoints,
+      routeWhileDragging: false,
+      router: new CacheRouter()
+    })
+    .on('routingstart', (x)=>{this.props.onRouting && this.props.onRouting(x)})
+    .on('routesfound', (x)=>{ x && this.props.onRouteFound && this.props.onRouteFound(x.routes[0]);})
+    .on('routingerror', (x)=>{x && this.props.onRoutingError && this.props.onRoutingError(x)});
+  }
 
   render() {
     return (
+        // Uses react context API
+        // https://reactjs.org/docs/context.html
         <LeafletConsumer>
           {
             map => {
-              console.log(map)
-              L.Routing.control({
-                waypoints: [
-                  L.latLng(51.406173, 9.358961),
-                  L.latLng(51.385084, 9.365897)
-                ],
-                routeWhileDragging: false
-              }).addTo(map.map);
+              if (map && map.map && this.state.route && !this.state.routeAddedToMap) {
+                console.log(map);
+                console.log(this.state);
+                this.state.routeAddedToMap = true;
+                this.state.route.addTo(map.map);
+              }
             }
           }
         </LeafletConsumer>
