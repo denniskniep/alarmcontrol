@@ -34,6 +34,9 @@ public class Alert {
 
   private String address;
 
+  @Column(columnDefinition="clob")
+  private String route;
+
   protected Alert() {}
 
   public Alert(Long organisationId,
@@ -43,7 +46,8 @@ public class Alert {
       Date dateTime,
       String description,
       String addressType,
-      String address) {
+      String address,
+      String route) {
     this.organisationId = organisationId;
     this.raw = raw;
     this.active = active;
@@ -52,6 +56,7 @@ public class Alert {
     this.description = description;
     this.addressType = addressType;
     this.address = address;
+    this.route = route;
   }
 
   public Long getId() {
@@ -88,5 +93,9 @@ public class Alert {
 
   public String getAddress() {
     return address;
+  }
+
+  public String getRoute() {
+    return route;
   }
 }

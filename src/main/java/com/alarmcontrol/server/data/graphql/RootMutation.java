@@ -22,7 +22,7 @@ public class RootMutation implements GraphQLMutationResolver {
       String description,
       String addressType,
       String address) {
-    Alert alert = new Alert(organisationId, raw, active, keyword, dateTime, description, addressType, address);
+    Alert alert = new Alert(organisationId, raw, active, keyword, dateTime, description, addressType, address, null);
     alertRepository.save(alert);
     return alert;
   }

@@ -50,3 +50,13 @@ databaseChangeLog:
               - column:
                   name: name
                   type: nvarchar(255)
+  - changeSet:
+      id: 2
+      author: dkniep
+      changes:
+        - addColumn:
+            tableName: alert
+            columns:
+              - column:
+                  name: route
+                  type: clob

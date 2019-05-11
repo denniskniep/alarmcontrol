@@ -17,6 +17,7 @@ type Alert {
   description: String
   addressType: String
   address: String
+  route: String
 }
 
 scalar DateTime
