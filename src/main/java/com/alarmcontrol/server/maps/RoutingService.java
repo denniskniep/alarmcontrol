@@ -1,52 +1,45 @@
 package com.alarmcontrol.server.maps;
 
+import com.alarmcontrol.server.maps.CachingRestService.Request;
+import com.alarmcontrol.server.maps.CachingRestService.Response;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class RoutingService {
-
   private Logger logger = LoggerFactory.getLogger(RoutingService.class);
-  private RestTemplate restTemplate;
   private GraphhopperProperties graphhopperProperties;
-  private ConcurrentHashMap<String, Object> routingCache;
+  private CachingRestService restService;
 
-  public RoutingService(@Qualifier("mapRestTemplate") RestTemplate restTemplate,
-      GraphhopperProperties graphhopperProperties) {
-    this.restTemplate = restTemplate;
+  public RoutingService(GraphhopperProperties graphhopperProperties,
+      CachingRestService restService) {
     this.graphhopperProperties = graphhopperProperties;
-    this.routingCache = new ConcurrentHashMap<>();
+    this.restService = restService;
   }
 
   public Object route(List<String> points){
-    String cacheKey = getCacheKey(points);
-    logger.info("Start routing waypoints: {}", cacheKey);
-    if(routingCache.containsKey(cacheKey)){
-      logger.info("Using Route from Cache");
-      return routingCache.get(cacheKey);
-    }
+    logger.info("Start routing for waypoints: {}", asString(points));
+    Request geocodeRequest = createGeocodeRequest(points);
+    Response response = restService.executeRequest(geocodeRequest);
 
-    Object routingResult = executeRouting(points);
-    logger.info("Routing finished");
-    cacheRequest(cacheKey, routingResult);
-    return routingResult;
+    if (!response.isFromCache()) {
+      logRemainingRequests(response.getResponse());
+    }
+    return response.getResponse().getBody();
   }
 
-  private Object executeRouting(List<String> points) {
+  private CachingRestService.Request createGeocodeRequest(List<String> points) {
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(graphhopperProperties.getUrl());
     for (String point : points) {
       builder.queryParam("point",point);
@@ -57,29 +50,18 @@ public class RoutingService {
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    HttpEntity<String> entity = new HttpEntity<>(headers);
+    HttpEntity<Object> entity = new HttpEntity<>(headers);
 
     URI uri = builder.build().toUri();
-    ResponseEntity<Object> result = restTemplate.exchange(uri, HttpMethod.GET, entity, Object.class);
 
-    logRemainingRequests(result);
-
-    if(result.getStatusCode().isError()){
-      logger.error("Error during routing request. StatusCode={}, Body={}", result.getStatusCodeValue(), result.getBody().toString());
-    }else{
-      logger.info("Routing request successful");
-    }
-
-    return result.getBody();
+    return new CachingRestService.Request(asString(points),
+        uri,
+        HttpMethod.GET,
+        entity);
   }
 
-  private String getCacheKey(List<String> points){
+  private String asString(List<String> points) {
     return points.stream().collect(Collectors.joining("|"));
-  }
-
-  private void cacheRequest(String key, Object routingResult) {
-    logger.info("Caching route");
-    routingCache.put(key, routingResult);
   }
 
   private void logRemainingRequests(ResponseEntity<Object> result) {

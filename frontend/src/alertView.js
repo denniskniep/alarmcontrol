@@ -349,7 +349,9 @@ class Routing extends Component {
   }
 
   geocodeAsync(query) {
-    const geocoder = new L.Control.Geocoder.Nominatim();
+    const geocoder = new L.Control.Geocoder.Nominatim({
+      serviceUrl: 'http://localhost:8080/map/geocode/'
+    });
     return new Promise(function (resolve, reject) {
       if (query.hasOwnProperty("lat") && query.hasOwnProperty("lng")) {
         geocoder.reverse(query, ZOOM_FACTOR.Max, function (a, b) {
@@ -369,6 +371,9 @@ class Routing extends Component {
     let waypoints = geocodedLocations.map( g => new L.LatLng(g.center.lat, g.center.lng));
 
     return new L.Routing.Control({
+      geocoder: new L.Control.Geocoder.Nominatim({
+        serviceUrl: 'http://localhost:8080/map/geocode/'
+      }),
       waypoints: waypoints,
       routeWhileDragging: false,
       router: L.Routing.graphHopper('', {

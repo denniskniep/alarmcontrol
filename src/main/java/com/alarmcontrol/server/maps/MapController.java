@@ -11,14 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class MapController {
 
   private RoutingService routingService;
+  private GeocodingService geocodingService;
+  private GeocodingReverseService geocodingReverseService;
 
-  public MapController(RoutingService routingService) {
+  public MapController(RoutingService routingService, GeocodingService geocodingService,
+      GeocodingReverseService geocodingReverseService) {
     this.routingService = routingService;
+    this.geocodingService = geocodingService;
+    this.geocodingReverseService = geocodingReverseService;
   }
 
   @GetMapping(value = "/map/route", produces = "application/json")
   public ResponseEntity<Object> route(@RequestParam(value="point") List<String> points){
-    Object routeingResult = routingService.route(points);
+    Object routingResult = routingService.route(points);
 
     //Necessary for the client library
     HttpHeaders responseHeaders = new HttpHeaders();
@@ -30,12 +35,21 @@ public class MapController {
 
     return ResponseEntity.ok()
         .headers(responseHeaders)
-        .body(routeingResult);
+        .body(routingResult);
   }
 
-  @GetMapping(value = "/map/geocode", produces = "application/json")
-  public String geocode(@RequestParam(value="query") String query){
-
-    return "{}";
+  @GetMapping(value = "/map/geocode/search", produces = "application/json")
+  public ResponseEntity<Object> geocode(@RequestParam(value="q") String query){
+    Object geocodeResult = geocodingService.geocode(query);
+    return ResponseEntity.ok()
+        .body(geocodeResult);
+  }
+  @GetMapping(value = "/map/geocode/reverse", produces = "application/json")
+  public  ResponseEntity<Object> geocodeReverse(@RequestParam(value="lat") String lat,
+      @RequestParam(value="lon") String lon,
+      @RequestParam(value="zoom") int zoom){
+    Object geocodeResult = geocodingReverseService.geocodeReverse(lat, lon, zoom);
+    return ResponseEntity.ok()
+        .body(geocodeResult);
   }
 }
