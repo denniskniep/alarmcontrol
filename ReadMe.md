@@ -1,7 +1,9 @@
 # Alarmcontrol
 
 ## Development
-Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
+* Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
+* Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
+(register for a free account [here](https://graphhopper.com/dashboard/#/register) and generate your apikey) 
 
 Start react client inside the folder `frontend` with `npm run start`
 
@@ -39,17 +41,17 @@ query {
 ```
 
 ### Client
-http://localhost:1234
+The client is running by default at http://localhost:1234
 
 ## Architecture
 ### Client
 * **Routing**: react-router
 (https://reacttraining.com/react-router/web/example/basic)
 * **GraphQl**: Apollo Client (https://www.apollographql.com/docs/react/essentials/get-started)
-* **GUI-Components**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
+* **GUI**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
 
-#### Routing API
-https://docs.graphhopper.com/
+### Server
+* **Routing**: https://docs.graphhopper.com/
 
 ## ToDos
 

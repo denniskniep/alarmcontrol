@@ -318,46 +318,6 @@ const ZOOM_FACTOR = {
   Max: 21
 };
 
-const routingCache = {}
-
-class CacheRouter {
-
-  constructor() {
-    //this.router = new L.Routing.OSRMv1()
-    //ToDo: Proxy it through the server with serverside caching...No ClientSecret Problem...
-    this.router = L.Routing.graphHopper('');
-  }
-
-  route(waypoints, callback, context, options){
-    let waypointKey = waypoints.map(w => w.latLng.lat + ";" + w.latLng.lat).join("|");
-    if(waypointKey in routingCache){
-      let routes = routingCache[waypointKey];
-      console.log("use route from cached "+ waypointKey, routes);
-
-      // fixes an function not found error
-      // currently we have no alternative routes
-      //TODO: execute this.state.route.addTo(map.map); before
-      context._altContainer = {
-        appendChild : () => {}
-      }
-
-      callback.call(context, null, routes);
-      return this.router;
-    }
-
-    let cacheCallback = function(error, routes){
-      if(routes){
-        console.log("caching route "+ waypointKey, routes);
-        routingCache[waypointKey] = routes;
-        callback.call(context, null, routes);
-      }
-    }
-
-    this.router.route(waypoints, cacheCallback, context, options);
-    return this.router;
-  }
-}
-
 class Routing extends Component {
 
   constructor(props) {
@@ -411,7 +371,11 @@ class Routing extends Component {
     return new L.Routing.Control({
       waypoints: waypoints,
       routeWhileDragging: false,
-      router: new CacheRouter()
+      router: L.Routing.graphHopper('', {
+        serviceUrl: 'http://localhost:8080/map/route',
+        timeout: 30 * 1000,
+        urlParameters: {}
+      })
     })
     .on('routingstart', (x)=>{this.props.onRouting && this.props.onRouting(x)})
     .on('routesfound', (x)=>{ x && this.props.onRouteFound && this.props.onRouteFound(x.routes[0]);})
