@@ -2,6 +2,7 @@ package com.alarmcontrol.server.maps;
 
 import com.alarmcontrol.server.maps.CachingRestService.Request;
 import com.alarmcontrol.server.maps.CachingRestService.Response;
+import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,18 +22,18 @@ public class GeocodingReverseService {
     this.restService = restService;
   }
 
-  public Object geocodeReverse(String lat, String lon, int zoom){
-    logger.info("Start reverse geocoding '{}'", asString(lat, lon, zoom));
-    Request geocodeRequest = createGeocodeRequest(lat, lon, zoom);
+  public GeocodingResult geocodeReverse(String lat, String lng, int zoom){
+    logger.info("Start reverse geocoding '{}'", asString(lat, lng, zoom));
+    Request geocodeRequest = createGeocodeRequest(lat, lng, zoom);
     Response response = restService.executeRequest(geocodeRequest);
-    return response.getResponse().getBody();
+    return new GeocodingResult(response.getJson(), lat, lng);
   }
 
-  private Request createGeocodeRequest(String lat, String lon, int zoom) {
+  private Request createGeocodeRequest(String lat, String lng, int zoom) {
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://nominatim.openstreetmap.org/reverse");
     builder.queryParam("lat", lat);
-    builder.queryParam("lon",lon);
-    builder.queryParam("zoom",zoom);
+    builder.queryParam("lon", lng);
+    builder.queryParam("zoom", zoom);
     builder.queryParam("addressdetails",1);
     builder.queryParam("format","json");
 
@@ -42,13 +43,13 @@ public class GeocodingReverseService {
     HttpEntity<Object> entity = new HttpEntity<>(headers);
     URI uri = builder.build().toUri();
 
-    return new Request(asString(lat, lon, zoom),
+    return new Request(asString(lat, lng, zoom),
         uri,
         HttpMethod.GET,
         entity);
   }
 
-  private String asString(String lat, String lon, int zoom) {
-    return lat + ";"+ lon +";"+zoom;
+  private String asString(String lat, String lng, int zoom) {
+    return lat + ";"+ lng +";"+zoom;
   }
 }
