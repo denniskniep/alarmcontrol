@@ -19,34 +19,34 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class RoutingService {
   private Logger logger = LoggerFactory.getLogger(RoutingService.class);
-  private GraphhopperProperties graphhopperProperties;
+  private GraphhopperRoutingProperties graphhopperRoutingProperties;
   private CachingRestService restService;
 
-  public RoutingService(GraphhopperProperties graphhopperProperties,
+  public RoutingService(GraphhopperRoutingProperties graphhopperRoutingProperties,
       CachingRestService restService) {
-    this.graphhopperProperties = graphhopperProperties;
+    this.graphhopperRoutingProperties = graphhopperRoutingProperties;
     this.restService = restService;
   }
 
-  public Object route(List<String> points){
+  public RoutingResult route(List<Coordinate> points){
     logger.info("Start routing for waypoints: {}", asString(points));
     Request geocodeRequest = createGeocodeRequest(points);
     Response response = restService.executeRequest(geocodeRequest);
 
-    if (!response.isFromCache()) {
+    if (!response.isFromCache() && response.getResponse() != null) {
       logRemainingRequests(response.getResponse());
     }
-    return response.getResponse().getBody();
+    return parse(response.getJson());
   }
 
-  private CachingRestService.Request createGeocodeRequest(List<String> points) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(graphhopperProperties.getUrl());
-    for (String point : points) {
-      builder.queryParam("point",point);
+  private CachingRestService.Request createGeocodeRequest(List<Coordinate> points) {
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(graphhopperRoutingProperties.getUrl());
+    for (Coordinate point : points) {
+      builder.queryParam("point", asString(point));
     }
     builder.queryParam("instructions",true);
     builder.queryParam("type","json");
-    builder.queryParam("key",graphhopperProperties.getApikey());
+    builder.queryParam("key", graphhopperRoutingProperties.getApikey());
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -60,8 +60,12 @@ public class RoutingService {
         entity);
   }
 
-  private String asString(List<String> points) {
-    return points.stream().collect(Collectors.joining("|"));
+  private String asString(Coordinate p) {
+    return p.getLat() + "," + p.getLng();
+  }
+
+  private String asString(List<Coordinate> points) {
+    return points.stream().map(this::asString).collect(Collectors.joining("|"));
   }
 
   private void logRemainingRequests(ResponseEntity<Object> result) {
@@ -85,5 +89,12 @@ public class RoutingService {
         logger.info("{} remaining routing requests", remainingValue);
       }
     }
+  }
+
+  private RoutingResult parse(String json){
+    //ToDo: read distance and duration
+    //String lat = JsonPath.read(json, "$[0]['lat']");
+    //String lon = JsonPath.read(json, "$[0]['lon']");
+    return new RoutingResult(json, "", "");
   }
 }

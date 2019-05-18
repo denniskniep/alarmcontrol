@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@EnableConfigurationProperties(GraphhopperProperties.class)
+@EnableConfigurationProperties({GraphhopperRoutingProperties.class, GeocodingProperties.class})
 public class MapConfiguration {
 
   @Bean("mapRestTemplate")

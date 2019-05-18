@@ -13,14 +13,18 @@ import 'leaflet-control-geocoder';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 const ALERT_BY_ID = gql`
-    query alertById($id: ID) {
-      alertById(id: $id) {
+  query alertById($id: ID) {
+    alertById(id: $id) {
+      id
+      keyword
+      dateTime
+      route
+      organisation {
         id
-        keyword
-        dateTime
-        route
+        name
       }
     }
+  }
 `;
 
 class AlertViewLayout extends Component {

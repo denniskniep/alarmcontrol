@@ -22,7 +22,7 @@ public class RootQuery implements GraphQLQueryResolver {
     return null;
   }
 
-  public  Iterable<Alert> alertsByOrganisationId(Long organisationId) {
+  public Iterable<Alert> alertsByOrganisationId(Long organisationId) {
     return alertRepository.findByOrganisationId(organisationId);
   }
 }

@@ -1,8 +1,10 @@
 package com.alarmcontrol.server.maps;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +25,12 @@ public class MapController {
 
   @GetMapping(value = "/map/route", produces = "application/json")
   public ResponseEntity<Object> route(@RequestParam(value="point") List<String> points){
-    Object routingResult = routingService.route(points);
+    List<Coordinate> coordinates = points
+        .stream()
+        .map(this::pointToCoordinate)
+        .collect(Collectors.toList());
+
+    Object routingResult = routingService.route(coordinates);
 
     //Necessary for the client library
     HttpHeaders responseHeaders = new HttpHeaders();
@@ -36,6 +43,11 @@ public class MapController {
     return ResponseEntity.ok()
         .headers(responseHeaders)
         .body(routingResult);
+  }
+
+  private Coordinate pointToCoordinate(String point){
+    String[] splitted = StringUtils.split(point, ";");
+    return new Coordinate(splitted[0],splitted[1]);
   }
 
   @GetMapping(value = "/map/geocode/search", produces = "application/json")

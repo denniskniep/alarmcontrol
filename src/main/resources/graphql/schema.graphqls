@@ -4,13 +4,14 @@ type Query {
 }
 
 type Mutation {
-  newAlert(organisationId: ID, raw: String, active: Boolean, keyword: String, dateTime: DateTime, description: String, addressType: String, address: String): Alert
+  newAlert(organisationId: ID, keyword: String, dateTime: DateTime, description: String, address: String): Alert
+  newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
 }
 
 type Alert {
   id: ID
   keyword: String
-  organisationId: ID
+  organisation: Organisation
   raw: String
   active: Boolean
   dateTime: DateTime
@@ -18,6 +19,13 @@ type Alert {
   addressType: String
   address: String
   route: String
+}
+
+type Organisation {
+  id: ID
+  name: String
+  addressLat: String
+  addressLng: String
 }
 
 scalar DateTime

@@ -60,3 +60,35 @@ databaseChangeLog:
               - column:
                   name: route
                   type: clob
+  - changeSet:
+      id: 3
+      author: dkniep
+      changes:
+        - addColumn:
+            tableName: alert
+            columns:
+              - column:
+                  name: address_lat
+                  type: nvarchar(30)
+              - column:
+                  name: address_lng
+                  type: nvarchar(30)
+        - addColumn:
+            tableName: organisation
+            columns:
+              - column:
+                  name: address_lat
+                  type: nvarchar(30)
+              - column:
+                  name: address_lng
+                  type: nvarchar(30)
+  - changeSet:
+      id: 4
+      author: dkniep
+      changes:
+        - addColumn:
+            tableName: alert
+            columns:
+              - column:
+                  name: address_geocoded
+                  type: clob

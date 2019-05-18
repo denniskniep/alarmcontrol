@@ -2,6 +2,7 @@ package com.alarmcontrol.server.maps;
 
 import com.alarmcontrol.server.maps.CachingRestService.Request;
 import com.alarmcontrol.server.maps.CachingRestService.Response;
+import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,20 +17,23 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class GeocodingService {
   private Logger logger = LoggerFactory.getLogger(GeocodingService.class);
   private CachingRestService restService;
+  private GeocodingProperties geocodingProperties;
 
-  public GeocodingService(CachingRestService restService) {
+  public GeocodingService(CachingRestService restService,
+      GeocodingProperties geocodingProperties) {
     this.restService = restService;
+    this.geocodingProperties = geocodingProperties;
   }
 
-  public Object geocode(String query){
+  public GeocodingResult geocode(String query){
     logger.info("Start geocoding '{}'", query);
     Request geocodeRequest = createGeocodeRequest(query);
     Response response = restService.executeRequest(geocodeRequest);
-    return response.getResponse().getBody();
+    return parse(response.getJson());
   }
 
   private CachingRestService.Request createGeocodeRequest(String query) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://nominatim.openstreetmap.org/search");
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(geocodingProperties.getUrl());
     builder.queryParam("q", query);
     builder.queryParam("limit",1);
     builder.queryParam("format","json");
@@ -44,5 +48,11 @@ public class GeocodingService {
         uri,
         HttpMethod.GET,
         entity);
+  }
+
+  private GeocodingResult parse(String json){
+    String lat = JsonPath.read(json, "$[0]['lat']");
+    String lon = JsonPath.read(json, "$[0]['lon']");
+    return new GeocodingResult(json, lat, lon);
   }
 }

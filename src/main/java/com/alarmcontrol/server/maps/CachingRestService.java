@@ -1,5 +1,7 @@
 package com.alarmcontrol.server.maps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
@@ -17,21 +19,34 @@ import org.springframework.web.client.RestTemplate;
 public class CachingRestService {
   private Logger logger = LoggerFactory.getLogger(CachingRestService.class);
   private RestTemplate restTemplate;
-  private ConcurrentHashMap<String, ResponseEntity<Object>> cache;
+  private ConcurrentHashMap<String, String> cache;
+  private ObjectMapper objectMapper;
 
   public CachingRestService(@Qualifier("mapRestTemplate") RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     this.cache = new ConcurrentHashMap<>();
+    this.objectMapper = new ObjectMapper();
   }
 
   public Response executeRequest(Request request) {
     if(cache.containsKey(request.getKeyForCache())){
       logger.info("Using result from cache");
-      return new Response(true, cache.get(request.getKeyForCache()));
+      String cachedJson = cache.get(request.getKeyForCache());
+      return new Response(true, null, cachedJson);
     }
     ResponseEntity<Object> result = exchange(request);
-    cacheRequest(request.getKeyForCache(), result);
-    return new Response(false, result);
+    String json =  asJsonString(result);
+    cacheRequest(request.getKeyForCache(), json);
+    return new Response(false, result, json);
+  }
+
+  private String asJsonString(ResponseEntity<Object> result) {
+    try {
+      return objectMapper.writeValueAsString(result.getBody());
+    } catch (JsonProcessingException e) {
+      logger.error("Can not serialize into json", e);
+      return null;
+    }
   }
 
   private ResponseEntity<Object> exchange(Request request){
@@ -54,9 +69,9 @@ public class CachingRestService {
     return result;
   }
 
-  private void cacheRequest(String key, ResponseEntity<Object> result) {
+  private void cacheRequest(String key, String json) {
     logger.info("Caching result");
-    cache.put(key, result);
+    cache.put(key, json);
   }
 
   public static class Request{
@@ -92,18 +107,28 @@ public class CachingRestService {
   public static class Response{
     private boolean fromCache;
     private ResponseEntity<Object> response;
+    private String json;
 
-    public Response(boolean fromCache, ResponseEntity<Object> response) {
+    public Response(boolean fromCache, ResponseEntity<Object> response, String json) {
       this.fromCache = fromCache;
       this.response = response;
+      this.json = json;
     }
 
     public boolean isFromCache() {
       return fromCache;
     }
 
+    /**
+     * The response is empty, if it is retrieved from cache
+     * @return
+     */
     public ResponseEntity<Object> getResponse() {
       return response;
+    }
+
+    public String getJson() {
+      return json;
     }
   }
 }

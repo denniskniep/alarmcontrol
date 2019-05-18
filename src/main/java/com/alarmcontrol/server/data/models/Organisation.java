@@ -14,10 +14,16 @@ public class Organisation {
 
   private String name;
 
+  private String addressLat;
+
+  private String addressLng;
+
   protected Organisation() {}
 
-  public Organisation(String name) {
+  public Organisation(String name, String addressLat, String addressLng) {
     this.name = name;
+    this.addressLat = addressLat;
+    this.addressLng = addressLng;
   }
 
   public Long getId() {
@@ -26,5 +32,13 @@ public class Organisation {
 
   public String getName() {
     return name;
+  }
+
+  public String getAddressLat() {
+    return addressLat;
+  }
+
+  public String getAddressLng() {
+    return addressLng;
   }
 }

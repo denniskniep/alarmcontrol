@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 @ConfigurationProperties(prefix = "map.routing.graphhopper")
-public class GraphhopperProperties {
+public class GraphhopperRoutingProperties {
 
   private String url;
   private String apikey;

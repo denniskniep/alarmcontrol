@@ -34,6 +34,13 @@ public class Alert {
 
   private String address;
 
+  private String addressLat;
+
+  private String addressLng;
+
+  @Column(columnDefinition="clob")
+  private String addressGeocoded;
+
   @Column(columnDefinition="clob")
   private String route;
 
@@ -47,6 +54,9 @@ public class Alert {
       String description,
       String addressType,
       String address,
+      String addressLat,
+      String addressLng,
+      String addressGeocoded,
       String route) {
     this.organisationId = organisationId;
     this.raw = raw;
@@ -56,6 +66,9 @@ public class Alert {
     this.description = description;
     this.addressType = addressType;
     this.address = address;
+    this.addressLat = addressLat;
+    this.addressLng = addressLng;
+    this.addressGeocoded = addressGeocoded;
     this.route = route;
   }
 
@@ -93,6 +106,18 @@ public class Alert {
 
   public String getAddress() {
     return address;
+  }
+
+  public String getAddressLat() {
+    return addressLat;
+  }
+
+  public String getAddressLng() {
+    return addressLng;
+  }
+
+  public String getAddressGeocoded() {
+    return addressGeocoded;
   }
 
   public String getRoute() {
