@@ -1,9 +1,9 @@
 import React from "react";
-import AlertView from "./alertView";
-import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import ApolloClient from "apollo-boost";
 import { Navbar, Nav } from 'react-bootstrap';
+import AlertView from "./alertview/alertView";
 
 const client = new ApolloClient({
   uri: "http://localhost:8080/graphql"

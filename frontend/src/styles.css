@@ -60,17 +60,3 @@ html,body,#app{
 .leaflet-routing-container-hide{
   display:none;
 }
-
-/*
-.alertViewBoxFirstLeftCell{
-  border-top: 0px !important;
-  background: aqua;
-  border-top-left-radius: .8rem;
-}
-
-.alertViewBoxFirstRightCell{
-  border-top: 0px !important;
-  background: aqua;
-  border-top-right-radius: .8rem;
-}
-*/
