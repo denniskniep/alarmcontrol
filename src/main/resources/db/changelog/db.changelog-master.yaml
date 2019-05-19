@@ -37,6 +37,30 @@ databaseChangeLog:
               - column:
                   name: address
                   type: nvarchar(255)
+              - column:
+                  name: address_geocoded
+                  type: clob
+              - column:
+                  name: address_lat
+                  type: nvarchar(30)
+              - column:
+                  name: address_lng
+                  type: nvarchar(30)
+              - column:
+                  name: address_info1
+                  type: nvarchar(255)
+              - column:
+                  name: address_info2
+                  type: nvarchar(255)
+              - column:
+                  name: route
+                  type: clob
+              - column:
+                  name: distance
+                  type: double
+              - column:
+                  name: duration
+                  type: int
         - createTable:
             tableName: organisation
             columns:
@@ -50,45 +74,9 @@ databaseChangeLog:
               - column:
                   name: name
                   type: nvarchar(255)
-  - changeSet:
-      id: 2
-      author: dkniep
-      changes:
-        - addColumn:
-            tableName: alert
-            columns:
-              - column:
-                  name: route
-                  type: clob
-  - changeSet:
-      id: 3
-      author: dkniep
-      changes:
-        - addColumn:
-            tableName: alert
-            columns:
               - column:
                   name: address_lat
                   type: nvarchar(30)
               - column:
                   name: address_lng
                   type: nvarchar(30)
-        - addColumn:
-            tableName: organisation
-            columns:
-              - column:
-                  name: address_lat
-                  type: nvarchar(30)
-              - column:
-                  name: address_lng
-                  type: nvarchar(30)
-  - changeSet:
-      id: 4
-      author: dkniep
-      changes:
-        - addColumn:
-            tableName: alert
-            columns:
-              - column:
-                  name: address_geocoded
-                  type: clob

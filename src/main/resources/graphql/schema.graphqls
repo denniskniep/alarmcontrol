@@ -16,9 +16,11 @@ type Alert {
   active: Boolean
   dateTime: DateTime
   description: String
-  addressType: String
-  address: String
-  route: String
+  addressInfo1 : String,
+  addressInfo2 : String,
+  route: String,
+  distance: Float,
+  duration: Int
 }
 
 type Organisation {

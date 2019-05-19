@@ -3,10 +3,10 @@ package com.alarmcontrol.server.maps;
 public class RoutingResult {
 
   private String json;
-  private String distance;
-  private String duration;
+  private Double distance;
+  private Integer duration;
 
-  public RoutingResult(String json, String distance, String duration) {
+  public RoutingResult(String json, Double distance, Integer duration) {
     this.json = json;
     this.distance = distance;
     this.duration = duration;
@@ -16,11 +16,11 @@ public class RoutingResult {
     return json;
   }
 
-  public String getDistance() {
+  public Double getDistance() {
     return distance;
   }
 
-  public String getDuration() {
+  public Integer getDuration() {
     return duration;
   }
 }

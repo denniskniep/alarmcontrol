@@ -2,7 +2,6 @@ package com.alarmcontrol.server.maps;
 
 import com.alarmcontrol.server.maps.CachingRestService.Request;
 import com.alarmcontrol.server.maps.CachingRestService.Response;
-import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,20 +16,23 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class GeocodingReverseService {
   private Logger logger = LoggerFactory.getLogger(GeocodingReverseService.class);
   private CachingRestService restService;
+  private GeocodingProperties geocodingProperties;
 
-  public GeocodingReverseService(CachingRestService restService) {
+  public GeocodingReverseService(CachingRestService restService,
+      GeocodingProperties geocodingProperties) {
     this.restService = restService;
+    this.geocodingProperties = geocodingProperties;
   }
 
   public GeocodingResult geocodeReverse(String lat, String lng, int zoom){
     logger.info("Start reverse geocoding '{}'", asString(lat, lng, zoom));
     Request geocodeRequest = createGeocodeRequest(lat, lng, zoom);
     Response response = restService.executeRequest(geocodeRequest);
-    return new GeocodingResult(response.getJson(), lat, lng);
+    return new GeocodingResult(response.getJson(), lat, lng, null, null);
   }
 
   private Request createGeocodeRequest(String lat, String lng, int zoom) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://nominatim.openstreetmap.org/reverse");
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(geocodingProperties.getUrlReverse());
     builder.queryParam("lat", lat);
     builder.queryParam("lon", lng);
     builder.queryParam("zoom", zoom);

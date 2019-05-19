@@ -5,6 +5,7 @@ import {Badge, Col, Container, Row, Table} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {CircleMarker, LeafletConsumer, Map, TileLayer} from 'react-leaflet'
 import L from 'leaflet';
+import moment from 'moment';
 import polyline from 'polyline';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
@@ -17,12 +18,17 @@ const ALERT_BY_ID = gql`
     alertById(id: $id) {
       id
       keyword
+      description
       dateTime
       route
+      distance
+      duration
       organisation {
         id
         name
       }
+      addressInfo1
+      addressInfo2
     }
   }
 `;
@@ -56,30 +62,72 @@ class AlertViewLayout extends Component {
 }
 
 class AlertViewHeader extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentUTC: moment.utc()
+    };
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.setState({ currentUTC: moment.utc() }), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  prettifyDistanceAndDuration(alert){
+    let distanceInKm = Number(alert.distance / 1000).toFixed(1);
+    let durationInMin = Number(alert.duration / 1000 / 60).toFixed(0);
+    return distanceInKm + " km ("+durationInMin+" min)"
+  }
+
+  prettifyDate(alert){
+    return moment.utc(alert.dateTime).local().format("DD.MM.YYYY HH:MM:ss")
+  }
+
+  prettifyDuration(alert, currentUTC){
+    let duration = moment.duration(currentUTC.diff(moment.utc(this.props.alert.dateTime))).locale('de');
+
+    if(duration.asHours() < 24){
+
+      let hours = duration.hours() + "";
+      let minutes = duration.minutes() + "";
+      let seconds = duration.seconds() + "";
+
+      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+    }
+
+    return duration.humanize();
+  }
+
   render() {
     return (
         <AlertViewBox>
           <Container fluid="true">
             <Row>
               <Col xs={3}>
-                <h1>F2 Y</h1>
+                <h1>{this.props.alert.keyword}</h1>
               </Col>
               <Col xs={6}>
-                <h1>Musterstraße 25</h1>
+                <h1>{this.props.alert.addressInfo1}</h1>
               </Col>
               <Col xs={3}>
-                <h1>00:02:25</h1>
+                <h1>{this.prettifyDuration(this.props.alert, this.state.currentUTC)}</h1>
               </Col>
             </Row>
             <Row>
               <Col xs={3}>
-                <span>1 vermisste Person</span>
+                <span>{this.props.alert.description}</span>
               </Col>
               <Col xs={6}>
-                <span>12345 Berlin</span>
+                <span>{this.props.alert.addressInfo2}</span>
               </Col>
               <Col xs={3}>
-                <span>12.01.2019 16:17:03</span>
+
+                <span>{this.prettifyDate(this.props.alert)}</span>
               </Col>
             </Row>
             <Row>
@@ -94,7 +142,7 @@ class AlertViewHeader extends Component {
              </span>
               </Col>
               <Col xs={6}>
-                <span>OT: Spandau</span>
+                <span>{this.prettifyDistanceAndDuration(this.props.alert)}</span>
               </Col>
               <Col xs={3}>
                 <span></span>
@@ -105,7 +153,7 @@ class AlertViewHeader extends Component {
                 <span></span>
               </Col>
               <Col xs={6}>
-                <span>7 km (4 min)</span>
+                <span></span>
               </Col>
               <Col xs={3}>
                 <span></span>

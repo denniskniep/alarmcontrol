@@ -53,10 +53,14 @@ public class AlertService {
         description,
         AddressTypes.STREET,
         address,
+        geocodedAddress.getAddressInfo1(),
+        geocodedAddress.getAddressInfo2(),
         geocodedAddress.getCoordinate().getLat(),
         geocodedAddress.getCoordinate().getLng(),
         geocodedAddress.getJson(),
-        route.getJson());
+        route.getJson(),
+        route.getDistance(),
+        route.getDuration());
     alertRepository.save(alert);
     return alert;
   }

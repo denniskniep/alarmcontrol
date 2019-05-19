@@ -34,6 +34,10 @@ public class Alert {
 
   private String address;
 
+  private String addressInfo1;
+
+  private String addressInfo2;
+
   private String addressLat;
 
   private String addressLng;
@@ -43,6 +47,10 @@ public class Alert {
 
   @Column(columnDefinition="clob")
   private String route;
+
+  private Double distance;
+
+  private Integer duration;
 
   protected Alert() {}
 
@@ -54,10 +62,14 @@ public class Alert {
       String description,
       String addressType,
       String address,
+      String addressInfo1,
+      String addressInfo2,
       String addressLat,
       String addressLng,
       String addressGeocoded,
-      String route) {
+      String route,
+      Double distance,
+      Integer duration) {
     this.organisationId = organisationId;
     this.raw = raw;
     this.active = active;
@@ -66,10 +78,14 @@ public class Alert {
     this.description = description;
     this.addressType = addressType;
     this.address = address;
+    this.addressInfo1 = addressInfo1;
+    this.addressInfo2 = addressInfo2;
     this.addressLat = addressLat;
     this.addressLng = addressLng;
     this.addressGeocoded = addressGeocoded;
     this.route = route;
+    this.distance = distance;
+    this.duration = duration;
   }
 
   public Long getId() {
@@ -80,12 +96,12 @@ public class Alert {
     return organisationId;
   }
 
-  public boolean isActive() {
-    return active;
-  }
-
   public String getRaw() {
     return raw;
+  }
+
+  public boolean isActive() {
+    return active;
   }
 
   public String getKeyword() {
@@ -108,6 +124,14 @@ public class Alert {
     return address;
   }
 
+  public String getAddressInfo1() {
+    return addressInfo1;
+  }
+
+  public String getAddressInfo2() {
+    return addressInfo2;
+  }
+
   public String getAddressLat() {
     return addressLat;
   }
@@ -122,5 +146,13 @@ public class Alert {
 
   public String getRoute() {
     return route;
+  }
+
+  public Double getDistance() {
+    return distance;
+  }
+
+  public Integer getDuration() {
+    return duration;
   }
 }

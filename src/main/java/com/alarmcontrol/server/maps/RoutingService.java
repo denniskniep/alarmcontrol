@@ -2,6 +2,7 @@ package com.alarmcontrol.server.maps;
 
 import com.alarmcontrol.server.maps.CachingRestService.Request;
 import com.alarmcontrol.server.maps.CachingRestService.Response;
+import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -92,9 +93,8 @@ public class RoutingService {
   }
 
   private RoutingResult parse(String json){
-    //ToDo: read distance and duration
-    //String lat = JsonPath.read(json, "$[0]['lat']");
-    //String lon = JsonPath.read(json, "$[0]['lon']");
-    return new RoutingResult(json, "", "");
+    Double distance = JsonPath.read(json, "$.paths[0]['distance']");
+    Integer time = JsonPath.read(json, "$.paths[0]['time']");
+    return new RoutingResult(json, distance, time);
   }
 }
