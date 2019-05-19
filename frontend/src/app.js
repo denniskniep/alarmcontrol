@@ -39,6 +39,8 @@ function Menu() {
             <NavLink className={"nav-link"} exact to="/">Home</NavLink>
             <NavLink className={"nav-link"} to="/alertview/2">Alert 2</NavLink>
             <NavLink className={"nav-link"} to="/alertview/3">Alert 3</NavLink>
+            <NavLink className={"nav-link"} to="/alertview/4">Alert 4</NavLink>
+            <NavLink className={"nav-link"} to="/alertview/5">Alert 5</NavLink>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

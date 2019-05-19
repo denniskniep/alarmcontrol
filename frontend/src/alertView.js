@@ -522,17 +522,26 @@ class CacheRouter {
 class Route extends Component {
   constructor(props) {
     super(props)
+    this.router = null;
+    this.map = null;
   }
 
   render() {
     return (
-        // Uses react context API
+        // Uses react context API (LeafletConsumer provides the map object)
         // https://reactjs.org/docs/context.html
         <LeafletConsumer>
           {
             map => {
+
+              //remove old route
+              if (this.router && this.map) {
+                this.map.removeControl(this.router);
+              }
+
               let route = JSON.parse(this.props.route);
-              let router = new L.Routing.Control({
+              this.map = map.map;
+              this.router = new L.Routing.Control({
                 waypoints: [{lat: 0, lng: 0}, {lat: 0, lng: 0}],
                 routeWhileDragging: false,
                 router: new CacheRouter(route)
@@ -547,8 +556,7 @@ class Route extends Component {
               .on('routingerror', (x) => {
                 x && this.props.onRoutingError && this.props.onRoutingError(x)
               });
-
-              router.addTo(map.map);
+              this.router.addTo(this.map);
             }
           }
         </LeafletConsumer>
