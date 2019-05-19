@@ -18,6 +18,8 @@ type Alert {
   description: String
   addressInfo1 : String,
   addressInfo2 : String,
+  addressLat : String,
+  addressLng : String,
   route: String,
   distance: Float,
   duration: Int

@@ -19,6 +19,8 @@ const ALERT_BY_ID = gql`
       }
       addressInfo1
       addressInfo2
+      addressLat,
+      addressLng,
     }
   }
 `;

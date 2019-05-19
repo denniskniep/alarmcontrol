@@ -31,7 +31,8 @@ class Route extends Component {
               this.router = new L.Routing.Control({
                 waypoints: [{lat: 0, lng: 0}, {lat: 0, lng: 0}],
                 routeWhileDragging: false,
-                router: new GraphhopperRouter(route)
+                router: new GraphhopperRouter(route),
+                fitSelectedRoutes: this.props.fitSelectedRoutes
               })
               .on('routingstart', (x) => {
                 this.props.onRouting && this.props.onRouting(x)

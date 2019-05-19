@@ -47,6 +47,7 @@ public class RoutingService {
     }
     builder.queryParam("instructions",true);
     builder.queryParam("type","json");
+    builder.queryParam("locale","de");
     builder.queryParam("key", graphhopperRoutingProperties.getApikey());
 
     HttpHeaders headers = new HttpHeaders();

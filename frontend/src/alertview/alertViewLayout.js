@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import AlertViewPersons from "./tiles/alertViewPersons";
 import AlertViewHeader from "./tiles/alertViewHeader";
-import AlertViewMap from "./tiles/alertViewMap";
+import AlertViewMapRoute from "./tiles/alertViewMapRoute";
+import AlertViewMapTarget from "./tiles/alertViewMapTarget";
 
 class AlertViewLayout extends Component {
   render() {
@@ -22,7 +23,7 @@ class AlertViewLayout extends Component {
                 </Row>
                 <Row className={"h-100"}>
                   <Col>
-                    <AlertViewMap alert={this.props.alert}/>
+                    <AlertViewMapTarget alert={this.props.alert}/>
                   </Col>
                 </Row>
               </Container>
