@@ -94,6 +94,9 @@ USER can only read
 
 Later there could be dedicated permissions for each organisation
 
+### Routing/Geocoding API Error Handling
+What should be done if the Address can not be geocoded
+
 ## Known Problems
 ### Geocoding house numbers
 Some villages does not provide house number accurate information for geocoding via Openstreetmap Nominatim  

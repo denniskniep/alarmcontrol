@@ -57,6 +57,10 @@ html,body,#app{
   background-color: #8ec0ff42;
 }
 
+.leaflet-routing-container-hide{
+  display:none;
+}
+
 /*
 .alertViewBoxFirstLeftCell{
   border-top: 0px !important;

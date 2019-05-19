@@ -557,6 +557,7 @@ class Route extends Component {
                 x && this.props.onRoutingError && this.props.onRoutingError(x)
               });
               this.router.addTo(this.map);
+              this.router.hide();
             }
           }
         </LeafletConsumer>
