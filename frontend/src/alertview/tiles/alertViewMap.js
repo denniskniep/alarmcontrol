@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import 'leaflet/dist/leaflet.css';
 import {CircleMarker, Map, TileLayer} from "react-leaflet";
-import Route from "./route";
-import AlertViewPersons from "./alertViewPersons";
+import Route from "./map/route";
+
 
 class AlertViewMap extends Component {
 

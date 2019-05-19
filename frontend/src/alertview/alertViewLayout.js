@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import AlertViewPersons from "./alertViewPersons";
-import AlertViewHeader from "./alertViewHeader";
-import AlertViewMap from "./alertViewMap";
-
+import AlertViewPersons from "./tiles/alertViewPersons";
+import AlertViewHeader from "./tiles/alertViewHeader";
+import AlertViewMap from "./tiles/alertViewMap";
 
 class AlertViewLayout extends Component {
   render() {

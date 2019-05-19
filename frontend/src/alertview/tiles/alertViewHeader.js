@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
-import AlertViewBox from "./alertViewBox";
+import AlertViewBox from "../alertViewBox";
 
 class AlertViewHeader extends Component {
 

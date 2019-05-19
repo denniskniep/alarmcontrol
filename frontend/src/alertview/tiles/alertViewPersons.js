@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import AlertViewBox from "./alertViewBox";
 import {Badge, Col, Container, Row, Table} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import AlertViewBox from "../alertViewBox";
 
 class AlertViewPersons extends Component {
   render() {
