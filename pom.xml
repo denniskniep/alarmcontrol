@@ -17,8 +17,6 @@
   </properties>
 
   <dependencies>
-    <!--Use https://github.com/zalando/logbook-->
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
