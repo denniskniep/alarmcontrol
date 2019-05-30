@@ -7,10 +7,25 @@
 
 Start react client inside the folder `frontend` with `npm run start`
 
+
 ### Database
 * **H2Console**: http://localhost:8080/h2-console
 
+Liquibase Database definition:
+src/main/resources/db/changelog/db.changelog-master.yaml
+
 ### GraphQL
+Entrypoint for Webrequests:
+* src/main/java/com/alarmcontrol/server/data/graphql/RootQuery.java
+* src/main/java/com/alarmcontrol/server/data/graphql/RootMutation.java
+
+Schema:
+src/main/resources/graphql/schema.graphqls
+
+Introduction:
+https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
+
+
 * **Editor**: http://localhost:8080/graphiql
 * **Schema**: http://localhost:8080/graphql/schema.json
 
