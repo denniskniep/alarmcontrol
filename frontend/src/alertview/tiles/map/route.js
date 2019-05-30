@@ -29,6 +29,10 @@ class Route extends Component {
               let route = JSON.parse(this.props.route);
               this.map = map.map;
               this.router = new L.Routing.Control({
+                // The nonsense waypoints are necessary here because of an
+                // "is empty check" in the framework.
+                // Actually the route object passed to the
+                // GraphhopperRouter contains the waypoints
                 waypoints: [{lat: 0, lng: 0}, {lat: 0, lng: 0}],
                 routeWhileDragging: false,
                 router: new GraphhopperRouter(route),
@@ -38,8 +42,7 @@ class Route extends Component {
                 this.props.onRouting && this.props.onRouting(x)
               })
               .on('routesfound', (x) => {
-                x && this.props.onRouteFound && this.props.onRouteFound(
-                    x.routes[0]);
+                x && this.props.onRouteFound && this.props.onRouteFound(x);
               })
               .on('routingerror', (x) => {
                 x && this.props.onRoutingError && this.props.onRoutingError(x)

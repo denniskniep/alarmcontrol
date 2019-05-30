@@ -23,6 +23,10 @@ class AlertViewLayout extends Component {
                 </Row>
                 <Row className={"h-100"}>
                   <Col>
+
+                    <AlertViewMapRoute alert={this.props.alert}/>
+                  </Col>
+                  <Col>
                     <AlertViewMapTarget alert={this.props.alert}/>
                   </Col>
                 </Row>
