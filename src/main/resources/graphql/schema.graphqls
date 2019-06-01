@@ -1,11 +1,16 @@
 type Query {
   alertById(id: ID): Alert
   alertsByOrganisationId(organisationId: ID): [Alert]
+  skillsByOrganisationId(organisationId: ID): [Skill]
 }
 
 type Mutation {
   newAlert(organisationId: ID, keyword: String, dateTime: DateTime, description: String, address: String): Alert
   newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
+  newSkill(organisationId: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
+  newEmployee(organisationId: ID, firstname: String, lastname: String) : Employee
+  setEmployeeFeedbackForAlert(employeeId: ID, alertId:ID, feedback: EmployeeFeedback) : EmployeeFeedbackForAlert
+  addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
 }
 
 type Alert {
@@ -22,7 +27,8 @@ type Alert {
   addressLng : String,
   route: String,
   distance: Float,
-  duration: Int
+  duration: Int,
+  employeeFeedback: [EmployeeFeedbackForAlert]
 }
 
 type Organisation {
@@ -30,6 +36,33 @@ type Organisation {
   name: String
   addressLat: String
   addressLng: String
+}
+
+type EmployeeFeedbackForAlert {
+  employee: Employee
+  feedback: EmployeeFeedback
+  dateTime: DateTime
+}
+
+enum EmployeeFeedback {
+  NO_RESPONSE,
+  COMMIT,
+  LATER,
+  CANCEL
+}
+
+type Employee {
+  id: ID
+  firstname: String
+  lastname: String
+  skills : [Skill]
+}
+
+type Skill {
+    id: ID
+    name: String
+    shortName: String
+    displayAtOverview: Boolean
 }
 
 scalar DateTime
