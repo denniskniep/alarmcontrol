@@ -9,7 +9,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faCheckCircle as fasCheckCircle}  from '@fortawesome/free-solid-svg-icons'
 import { faCheckCircle as farCheckCircle } from '@fortawesome/free-regular-svg-icons'
-library.add(fab, fasCheckCircle, farCheckCircle)
+import { faClock as farClock } from '@fortawesome/free-regular-svg-icons'
+library.add(fab, fasCheckCircle, farCheckCircle, farClock)
 
 ReactDOM.render(
     <App/>,

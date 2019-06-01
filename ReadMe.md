@@ -40,6 +40,97 @@ mutation {
 }
 ```
 
+#### Add Skills
+```
+mutation { 
+  newSkill (
+    organisationId: 1
+    name: "Atemschutzgeräteträger"
+    shortName: "AGT"
+    displayAtOverview: true    
+  ){id}
+}
+```
+
+```
+mutation { 
+  newSkill (
+    organisationId: 1
+    name: "Führungskraft"
+    shortName: "FK"
+    displayAtOverview: true    
+  ){id}
+}
+```
+
+```
+mutation { 
+  newSkill (
+    organisationId: 1
+    name: "Min. C1 (Fahrer > 3,5t)"
+    shortName: "C1"
+    displayAtOverview: true    
+  ){id}
+}
+```
+
+#### Add Employees
+```
+mutation { 
+  newEmployee(
+    organisationId: 1
+    firstname: "Lars"
+    lastname: "Laune"
+  ){id}
+}
+```
+```
+mutation { 
+  newEmployee(
+    organisationId: 1
+    firstname: "Malte"
+    lastname: "Malteser"
+  ){id}
+}
+```
+```
+mutation { 
+  newEmployee(
+    organisationId: 1
+    firstname: "Erika"
+    lastname: "Mustermann"
+  ){id}
+}
+```
+```
+mutation { 
+  newEmployee(
+    organisationId: 1
+    firstname: "Max"
+    lastname: "Mustermann"
+  ){id}
+}
+```
+
+#### Set Employee Skills
+```
+mutation { 
+  addEmployeeSkill(employeeId: 1, skillId: 1)
+}
+```
+
+```
+mutation { 
+  addEmployeeSkill(employeeId:1, skillId: 2)
+}
+```
+
+```
+mutation { 
+  addEmployeeSkill(employeeId:2, skillId: 1)
+}
+```
+
 #### Add an Alert
 ```
 mutation { 
@@ -50,6 +141,29 @@ mutation {
     description: ""
     address:"Hinter den Gärten 8, 34379 Calden"
   ){id}
+}
+```
+
+#### Set Employee Feedback to Alert
+```
+mutation { 
+  setEmployeeFeedbackForAlert(
+    alertId: 1
+    employeeId: 1
+    feedback: COMMIT) {
+    feedback
+  }
+}
+```
+
+```
+mutation { 
+  setEmployeeFeedbackForAlert(
+    alertId: 1
+    employeeId: 2
+    feedback: CANCEL) {
+    feedback
+  }
 }
 ```
 
@@ -85,7 +199,7 @@ The client is running by default at http://localhost:1234
 (https://reacttraining.com/react-router/web/example/basic)
 * **GraphQl**: Apollo Client (https://www.apollographql.com/docs/react/essentials/get-started)
 * **GUI**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
-
+* **Icons**: React-Fontawesome (https://github.com/FortAwesome/react-fontawesome) (Browse: https://fontawesome.com/icons?d=gallery) Don't forget to add the icon to the icon-lib in `index.js`
 
 ## ToDos
 ### Real-Time

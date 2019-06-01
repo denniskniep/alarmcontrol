@@ -33,7 +33,7 @@ class AlertViewHeader extends Component {
   prettifyDuration(alert, currentUTC){
     let duration = moment.duration(currentUTC.diff(moment.utc(this.props.alert.dateTime))).locale('de');
 
-    if(duration.asHours() < 24){
+    if(duration.asHours() < 72){
 
       let hours = duration.hours() + "";
       let minutes = duration.minutes() + "";
@@ -42,7 +42,7 @@ class AlertViewHeader extends Component {
       return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
     }
 
-    return duration.humanize();
+    return moment.utc(alert.dateTime).local().format("DD.MM.YYYY")
   }
 
   render() {

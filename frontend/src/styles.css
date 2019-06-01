@@ -60,3 +60,7 @@ html,body,#app{
 .leaflet-routing-container-hide{
   display:none;
 }
+
+.badgeEmployee.badge-light{
+  background-color: #d8d8d8 !important;
+}

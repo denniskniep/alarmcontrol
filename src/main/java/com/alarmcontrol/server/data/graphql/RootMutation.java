@@ -2,10 +2,19 @@ package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.models.Alert;
+import com.alarmcontrol.server.data.models.AlertEmployee;
+import com.alarmcontrol.server.data.models.Employee;
+import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.models.Skill;
+import com.alarmcontrol.server.data.repositories.AlertEmployeeRepository;
+import com.alarmcontrol.server.data.repositories.EmployeeRepository;
+import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
+import com.alarmcontrol.server.data.repositories.SkillRepository;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import java.util.Date;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,11 +22,23 @@ public class RootMutation implements GraphQLMutationResolver {
 
   private AlertService alertService;
   private OrganisationRepository organisationRepository;
+  private EmployeeRepository employeeRepository;
+  private AlertEmployeeRepository alertEmployeeRepository;
+  private SkillRepository skillRepository;
+  private EmployeeSkillRepository employeeSkillRepository;
 
   public RootMutation(AlertService alertService,
-      OrganisationRepository organisationRepository) {
+      OrganisationRepository organisationRepository,
+      EmployeeRepository employeeRepository,
+      AlertEmployeeRepository alertEmployeeRepository,
+      SkillRepository skillRepository,
+      EmployeeSkillRepository employeeSkillRepository) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
+    this.employeeRepository = employeeRepository;
+    this.alertEmployeeRepository = alertEmployeeRepository;
+    this.skillRepository = skillRepository;
+    this.employeeSkillRepository = employeeSkillRepository;
   }
 
   public Alert newAlert(Long organisationId,
@@ -28,9 +49,52 @@ public class RootMutation implements GraphQLMutationResolver {
     return alertService.create(organisationId, keyword, dateTime, description, address);
   }
 
+  public AlertEmployee setEmployeeFeedbackForAlert(Long employeeId, Long alertId, AlertEmployee.Feedback feedback) {
+    List<AlertEmployee> existingFeedback = alertEmployeeRepository
+        .findByAlertIdAndEmployeeId(alertId, employeeId);
+
+    if(existingFeedback.size() > 1){
+      throw new RuntimeException("There should be at most one existing feedback per alert and employee, but "
+          +existingFeedback.size()+ " were found");
+    }
+
+    AlertEmployee alertEmployee;
+    if(existingFeedback.size() == 1){
+      alertEmployee = existingFeedback.get(0);
+    }else{
+      alertEmployee = new AlertEmployee(employeeId, alertId, feedback, new Date());
+    }
+    alertEmployee.setFeedback(feedback);
+    return alertEmployeeRepository.save(alertEmployee);
+  }
+
+  public Employee newEmployee(Long organisationId,
+      String firstname,
+      String lastname) {
+    Employee employee = new Employee(organisationId, firstname, lastname);
+    return employeeRepository.save(employee);
+  }
+
   public Organisation newOrganisation(String name, String addressLat, String addressLng) {
     Organisation org = new Organisation(name, addressLat, addressLng);
     organisationRepository.save(org);
     return org;
+  }
+
+  public Skill newSkill(Long organisationId, String name, String shortName, boolean displayAtOverview) {
+    Skill skill = new Skill(organisationId, name, shortName, displayAtOverview);
+    skillRepository.save(skill);
+    return skill;
+  }
+
+  public boolean addEmployeeSkill(Long employeeId, Long skillId) {
+    List<EmployeeSkill> existingEmployeeSkill = employeeSkillRepository
+        .findByEmployeeIdAndSkillId(employeeId, skillId);
+
+    if(existingEmployeeSkill.size() == 0) {
+      employeeSkillRepository.save(new EmployeeSkill(employeeId, skillId));
+      return true;
+    }
+    return false;
   }
 }

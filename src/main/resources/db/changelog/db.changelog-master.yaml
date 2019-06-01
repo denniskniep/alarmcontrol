@@ -16,6 +16,8 @@ databaseChangeLog:
               - column:
                   name: organisation_id
                   type: bigint
+                  constraints:
+                    nullable: false
               - column:
                   name: raw
                   type: clob
@@ -74,9 +76,170 @@ databaseChangeLog:
               - column:
                   name: name
                   type: nvarchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: address_lat
                   type: nvarchar(30)
               - column:
                   name: address_lng
                   type: nvarchar(30)
+  - changeSet:
+      id: 2
+      author: dkniep
+      changes:
+        - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisation_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastname
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: skill
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisation_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: short_name
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_at_overview
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: employee_skill
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: employee_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skill_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: alert_employee
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: employee_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: alert_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feedback
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_time
+                  type: datetime
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_alert-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: alert
+            baseColumnNames: organisation_id
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_employee-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: employee
+            baseColumnNames: organisation_id
+        - addForeignKeyConstraint:
+            constraintName: fk_employee-id-alert_employee-employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+            baseTableName: alert_employee
+            baseColumnNames: employee_id
+        - addForeignKeyConstraint:
+            constraintName: fk_alert-id-alert_employee-alert_id
+            referencedTableName: alert
+            referencedColumnNames: id
+            baseTableName: alert_employee
+            baseColumnNames: alert_id
+        - addUniqueConstraint:
+            tableName: alert_employee
+            columnNames: employee_id, alert_id
+            constraintName: uk_alert_employee-employee_id-alert_id
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_skill-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: skill
+            baseColumnNames: organisation_id
+        - addForeignKeyConstraint:
+            constraintName: fk_employee-id-employee_skill-employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+            baseTableName: employee_skill
+            baseColumnNames: employee_id
+        - addForeignKeyConstraint:
+            constraintName: fk_skill-id-employee_skill-skill_id
+            referencedTableName: skill
+            referencedColumnNames: id
+            baseTableName: employee_skill
+            baseColumnNames: skill_id
+        - addUniqueConstraint:
+            tableName: employee_skill
+            columnNames: employee_id, skill_id
+            constraintName: uk_employee_skill-employee_id-skill_id

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import AlertViewPersons from "./tiles/alertViewPersons";
+import AlertViewEmployeeFeedback from "./tiles/alertViewEmployeeFeedback";
 import AlertViewHeader from "./tiles/alertViewHeader";
 import AlertViewMapRoute from "./tiles/alertViewMapRoute";
 import AlertViewMapTarget from "./tiles/alertViewMapTarget";
@@ -12,7 +12,7 @@ class AlertViewLayout extends Component {
                    className={"h-full d-flex flex-column alertView"}>
           <Row className={"flex-fill d-flex justify-content-star"}>
             <Col xs={3}>
-              <AlertViewPersons alert={this.props.alert}/>
+              <AlertViewEmployeeFeedback alert={this.props.alert}/>
             </Col>
             <Col>
               <Container fluid="true" className={"d-flex flex-column h-100 "}>
