@@ -23,6 +23,10 @@ type Mutation {
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
 }
 
+type Subscription {
+    alertAdded: AlertAdded
+}
+
 type Alert {
   id: ID
   keyword: String
@@ -39,6 +43,10 @@ type Alert {
   distance: Float,
   duration: Int,
   employeeFeedback: [EmployeeFeedbackForAlert]
+}
+
+type AlertAdded {
+  id: ID
 }
 
 type Organisation {

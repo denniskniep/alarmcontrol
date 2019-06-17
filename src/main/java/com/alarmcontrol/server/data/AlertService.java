@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data;
 
+import com.alarmcontrol.server.data.graphql.alert.AlertAddedPublisher;
 import com.alarmcontrol.server.data.models.AddressTypes;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.Organisation;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,15 +24,18 @@ public class AlertService {
   private MapboxGeocodingService geocodingService;
   private GraphhopperRoutingService routingService;
   private OrganisationRepository organisationRepository;
+  private AlertAddedPublisher alertAddedPublisher;
 
   public AlertService(AlertRepository alertRepository,
       MapboxGeocodingService geocodingService,
       GraphhopperRoutingService routingService,
-      OrganisationRepository organisationRepository) {
+      OrganisationRepository organisationRepository,
+      AlertAddedPublisher alertAddedPublisher) {
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
     this.organisationRepository = organisationRepository;
+    this.alertAddedPublisher = alertAddedPublisher;
   }
 
   public Alert create(Long organisationId,
@@ -63,10 +66,10 @@ public class AlertService {
         route.getDistance(),
         route.getDuration());
     alertRepository.save(alert);
+    alertAddedPublisher.emitAlertAdded(alert.getId());
     return alert;
   }
 
-  @NotNull
   private Coordinate getOrgCoordinate(Long organisationId) {
 
     Optional<Organisation> orgById = organisationRepository.findById(organisationId);

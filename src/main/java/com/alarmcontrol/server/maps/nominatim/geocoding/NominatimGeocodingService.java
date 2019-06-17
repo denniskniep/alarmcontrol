@@ -10,7 +10,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -77,7 +76,6 @@ public class NominatimGeocodingService implements GeocodingService {
     return new GeocodingResult(json, lat, lon, addressInfo1, addressInfo2);
   }
 
-  @NotNull
   private String join(String delimiter, String ...elements) {
     List<String> filteredElements = Arrays.stream(elements).filter(e -> !StringUtils.isEmpty(e)).collect(Collectors.toList());
     return String.join(delimiter, filteredElements);
