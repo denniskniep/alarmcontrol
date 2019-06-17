@@ -84,7 +84,7 @@ class SkillsEditMutation extends Component {
                                             organisationId: this.props.id,
                                             name: newSkill.name,
                                             shortName: newSkill.shortName,
-                                            displayAtOverview: true
+                                            displayAtOverview: newSkill.displayAtOverview
                                           }
                                         });
                                       }}
@@ -95,7 +95,7 @@ class SkillsEditMutation extends Component {
                                             id: editedSkill.id,
                                             name: editedSkill.name,
                                             shortName: editedSkill.shortName,
-                                            displayAtOverview: true
+                                            displayAtOverview: editedSkill.displayAtOverview
                                           }
                                         });
                                       }}

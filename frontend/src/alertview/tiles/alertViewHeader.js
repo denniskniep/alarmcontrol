@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
 import AlertViewBox from "../alertViewBox";
-import PrettyPrinter from "../../utils/PrettyPrinter";
+import PrettyPrinter from "../../utils/prettyPrinter";
 
 class AlertViewHeader extends Component {
 

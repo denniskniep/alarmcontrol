@@ -4,7 +4,7 @@ import {NavLink} from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import {gql} from "apollo-boost";
 import {Query} from "react-apollo";
-import PrettyPrinter from "./utils/PrettyPrinter";
+import PrettyPrinter from "./utils/prettyPrinter";
 
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($id: ID, $page: Int, $size: Int) {

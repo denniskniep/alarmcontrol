@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button, ButtonGroup, ButtonToolbar, Table} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import EditableRow from "./EditableRow";
+import {chooseViewer} from "./defaultsChooser";
 
 class EditableTable extends Component {
 
@@ -17,7 +18,7 @@ class EditableTable extends Component {
 
   startEditMode(dataIndex, obj) {
     //is startEditModeHandler defined and should or should not start the edit Mode?
-    if(this.props.onStartEditMode && !this.props.onStartEditMode(obj)){
+    if (this.props.onStartEditMode && !this.props.onStartEditMode(obj)) {
       return;
     }
 
@@ -37,7 +38,7 @@ class EditableTable extends Component {
     });
   }
 
-  resetNewObjRow(){
+  resetNewObjRow() {
     this.setState((state, props) => ({
       newObj: {},
       newObjKey: ++state.newObjKey
@@ -82,7 +83,14 @@ class EditableTable extends Component {
                     {this.props.columns.map((column, columnIndex) => {
                       return (
                           <React.Fragment key={objKey + "-" + column.key}>
-                            <td>{obj[column.key]}</td>
+                            <td>{
+                              React.createElement(
+                                  chooseViewer(column.viewer, obj[column.key]),
+                                  {
+                                    value: obj[column.key]
+                                  })
+                            }
+                            </td>
                           </React.Fragment>
                       )
                     })}
@@ -91,7 +99,8 @@ class EditableTable extends Component {
                         <ButtonGroup className="mr-2">
                           <Button className={"btn-icon"}
                                   variant="outline-secondary"
-                                  onClick={e => this.startEditMode(dataIndex, obj)}>
+                                  onClick={e => this.startEditMode(dataIndex,
+                                      obj)}>
                             <FontAwesomeIcon icon={["far", "edit"]}/>
                           </Button>
                           <Button className={"btn-icon"}
@@ -112,8 +121,10 @@ class EditableTable extends Component {
           <EditableRow key={this.state.newObjKey}
                        obj={this.state.newObj}
                        columns={this.props.columns}
-                       onSave={obj => {this.resetNewObjRow();
-                       this.props.onNewRow && this.props.onNewRow(obj)}}
+                       onSave={obj => {
+                         this.resetNewObjRow();
+                         this.props.onNewRow && this.props.onNewRow(obj)
+                       }}
                        onCancel={() => this.resetNewObjRow()}/>
 
           </tbody>
