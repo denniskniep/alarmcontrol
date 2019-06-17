@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import AlertViewBox from "../alertViewBox";
 import {gql} from "apollo-boost";
-import {Query} from "react-apollo";
+import {Query, Subscription} from "react-apollo";
 import EmployeeFeedbackAsBadges from "./employee/employeeFeedbackAsBadges";
 import EmployeeFeedbackStates from "./employee/employeeFeedbackStates";
 import EmployeeFeedbackAsList from "./employee/employeeFeedbackAsList";
@@ -29,14 +29,23 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
   }
 `;
 
-const SKILLS_BY_ORGANISATION_ID = gql`
-query skillsByOrganisationId($id: ID){
-  skillsByOrganisationId(organisationId: $id) {
-    id,
-    shortName
-    displayAtOverview
+const ALERT_EMPLOYEE_FEEDBACK_ADDED = gql`
+  subscription employeeFeedbackForAlertAdded{
+    employeeFeedbackForAlertAdded {
+      alertId
+      employeeId
+    }
   }
-}
+`;
+
+const SKILLS_BY_ORGANISATION_ID = gql`
+  query skillsByOrganisationId($id: ID){
+    skillsByOrganisationId(organisationId: $id) {
+      id,
+      shortName
+      displayAtOverview
+    }
+  }
 `;
 
 class AlertViewEmployeeFeedback extends Component {
@@ -67,96 +76,121 @@ class AlertViewEmployeeFeedback extends Component {
             let skills = data.skillsByOrganisationId;
 
             return (
-                <Query query={ALERT_WITH_EMPLOYEE_BY_ID}
-                       variables={{id: this.props.alert.id}}>
-                  {({loading, error, data}) => {
-                    if (loading || error || !data.alertById) {
-                      return <p></p>;
-                    }
 
-                    let hasEmployeeThatAreLater = this.filterAndSortByFeedback(
-                        data.alertById.employeeFeedback, [
-                          EmployeeFeedbackStates.getLater()
-                        ]).length > 0
+                <React.Fragment>
+                  <Query fetchPolicy="no-cache" query={ALERT_WITH_EMPLOYEE_BY_ID}
+                         variables={{id: this.props.alert.id}}>
+                    {({loading, error, data, refetch}) => {
+                      if (loading || error || !data.alertById) {
+                        return <p></p>;
+                      }
 
-                    return (
-                        <AlertViewBox>
-                          <Container fluid="true"
-                                     className={"d-flex flex-column h-100"}>
+                      let alertData = data;
+                      let hasEmployeeThatAreLater = this.filterAndSortByFeedback(
+                          alertData.alertById.employeeFeedback, [
+                            EmployeeFeedbackStates.getLater()
+                          ]).length > 0
 
-                            <EmployeeFeedbackAggregated
-                                icon={["far", "check-circle"]}
-                                badgeVariant="success"
-                                skills={skills}
-                                employeeFeedback={
-                                  this.filterAndSortByFeedback(
-                                      data.alertById.employeeFeedback, [
-                                        EmployeeFeedbackStates.getCommit()
-                                      ])
-                                }
-                            />
+                      return (
+                          <Subscription fetchPolicy="no-cache"
+                                        subscription={ALERT_EMPLOYEE_FEEDBACK_ADDED}>
+                            {({loading, error, data}) => {
 
-                            <EmployeeFeedbackAsList
-                                employeeFeedback={
-                                  this.filterAndSortByFeedback(
-                                      data.alertById.employeeFeedback, [
-                                        EmployeeFeedbackStates.getCommit()
-                                      ])
-                                }
-                            />
+                              let subscriptionData = data;
+                              if(subscriptionData && subscriptionData.employeeFeedbackForAlertAdded){
+                                refetch();
+                              }
 
-                            <Row>
-                              <Col>
-                                <hr/>
-                              </Col>
-                            </Row>
+                              return (
+                                  <AlertViewBox>
+                                    <Container fluid="true"
+                                               className={"d-flex flex-column h-100"}>
+
+                                      <EmployeeFeedbackAggregated
+                                          icon={["far", "check-circle"]}
+                                          badgeVariant="success"
+                                          skills={skills}
+                                          employeeFeedback={
+                                            this.filterAndSortByFeedback(
+                                                alertData.alertById.employeeFeedback,
+                                                [
+                                                  EmployeeFeedbackStates.getCommit()
+                                                ])
+                                          }
+                                      />
+
+                                      <EmployeeFeedbackAsList
+                                          employeeFeedback={
+                                            this.filterAndSortByFeedback(
+                                                alertData.alertById.employeeFeedback,
+                                                [
+                                                  EmployeeFeedbackStates.getCommit()
+                                                ])
+                                          }
+                                      />
+
+                                      <Row>
+                                        <Col>
+                                          <hr/>
+                                        </Col>
+                                      </Row>
 
 
-                            {hasEmployeeThatAreLater &&
-                            <EmployeeFeedbackAggregated
-                                icon={["far", "clock"]}
-                                badgeVariant="info"
-                                skills={skills}
-                                employeeFeedback={
-                                  this.filterAndSortByFeedback(
-                                      data.alertById.employeeFeedback, [
-                                        EmployeeFeedbackStates.getLater()
-                                      ])
-                                }
-                            />}
+                                      {hasEmployeeThatAreLater &&
+                                      <EmployeeFeedbackAggregated
+                                          icon={["far", "clock"]}
+                                          badgeVariant="info"
+                                          skills={skills}
+                                          employeeFeedback={
+                                            this.filterAndSortByFeedback(
+                                                alertData.alertById.employeeFeedback,
+                                                [
+                                                  EmployeeFeedbackStates.getLater()
+                                                ])
+                                          }
+                                      />}
 
-                            {hasEmployeeThatAreLater &&
-                            <EmployeeFeedbackAsList
-                                employeeFeedback={
-                                  this.filterAndSortByFeedback(
-                                      data.alertById.employeeFeedback, [
-                                        EmployeeFeedbackStates.getLater()
-                                      ])
-                                }
-                            />}
+                                      {hasEmployeeThatAreLater &&
+                                      <EmployeeFeedbackAsList
+                                          employeeFeedback={
+                                            this.filterAndSortByFeedback(
+                                                alertData.alertById.employeeFeedback,
+                                                [
+                                                  EmployeeFeedbackStates.getLater()
+                                                ])
+                                          }
+                                      />}
 
-                            {hasEmployeeThatAreLater &&
-                            <Row>
-                              <Col>
-                                <hr/>
-                              </Col>
-                            </Row>
-                            }
+                                      {hasEmployeeThatAreLater &&
+                                      <Row>
+                                        <Col>
+                                          <hr/>
+                                        </Col>
+                                      </Row>
+                                      }
 
-                            <EmployeeFeedbackAsBadges
-                                employeeFeedback={
-                                  this.filterAndSortByFeedback(
-                                      data.alertById.employeeFeedback, [
-                                        EmployeeFeedbackStates.getNoResponse(),
-                                        EmployeeFeedbackStates.getCancel()
-                                      ])
-                                }
-                            />
+                                      <EmployeeFeedbackAsBadges
+                                          employeeFeedback={
+                                            this.filterAndSortByFeedback(
+                                                alertData.alertById.employeeFeedback,
+                                                [
+                                                  EmployeeFeedbackStates.getNoResponse(),
+                                                  EmployeeFeedbackStates.getCancel()
+                                                ])
+                                          }
+                                      />
 
-                          </Container>
-                        </AlertViewBox>);
-                  }}
-                </Query>)
+                                    </Container>
+                                  </AlertViewBox>
+                              );
+                            }}
+                          </Subscription>
+                      )
+                    }}
+                  </Query>
+                </React.Fragment>
+            )
+
           }}
         </Query>);
     ;
