@@ -76,6 +76,23 @@ public class RootMutation implements GraphQLMutationResolver {
     return employeeRepository.save(employee);
   }
 
+  public Employee editEmployee(Long id,
+      String firstname,
+      String lastname) {
+
+    Optional<Employee> employeeById = employeeRepository.findById(id);
+    if(!employeeById.isPresent()){
+      throw new RuntimeException("No Employee found for id:" +id);
+    }
+
+    Employee employee = employeeById.get();
+    employee.setFirstname(firstname);
+    employee.setLastname(lastname);
+
+    employeeRepository.save(employee);
+    return employee;
+  }
+
   public Organisation newOrganisation(String name, String addressLat, String addressLng) {
     Organisation org = new Organisation(name, addressLat, addressLng);
     organisationRepository.save(org);

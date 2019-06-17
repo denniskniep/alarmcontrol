@@ -21,8 +21,25 @@ const NEW_EMPLOYEE = gql`
      newEmployee(organisationId: $organisationId, firstname:  $firstname, lastname: $lastname) {
       id
     }
-  }  
+  }
 `;
+
+const EDIT_EMPLOYEE = gql`
+    mutation editEmployee($id: ID, $firstname: String, $lastname: String) {
+     editEmployee(id: $id, firstname:  $firstname, lastname: $lastname) {
+      id
+    }
+  }
+`;
+
+/*
+const DELETE_EMPLOYEE = gql`
+    mutation deleteEmployee($id: ID) {
+     deleteEmployee(id: $id) {
+      id
+    }
+  }
+`;*/
 
 class EmployeesEditMutation extends Component {
 
@@ -48,19 +65,39 @@ class EmployeesEditMutation extends Component {
             }
 
             return (
-                <Mutation mutation={NEW_EMPLOYEE} onCompleted={() => refetch()}>
+                <Mutation mutation={NEW_EMPLOYEE}
+                          onCompleted={() => refetch()}>
                   {createNewEmployee => (
-                      <EmployeesEdit
-                          employees={data.organisationById.employees}
-                          onNewEmployee={newEmployee => {
-                            createNewEmployee({
-                              variables: {
-                                organisationId: this.props.id,
-                                firstname: newEmployee.firstname,
-                                lastname: newEmployee.lastname
-                              }
-                            });
-                          }}/>
+
+                      <Mutation mutation={EDIT_EMPLOYEE}
+                                onCompleted={() => refetch()}>
+                        {editEmployee => (
+
+                            <EmployeesEdit
+                                employees={data.organisationById.employees}
+
+                                onNewEmployee={newEmployee => {
+                                  createNewEmployee({
+                                    variables: {
+                                      organisationId: this.props.id,
+                                      firstname: newEmployee.firstname,
+                                      lastname: newEmployee.lastname
+                                    }
+                                  });
+                                }}
+
+                                onEmployeeEdited={editedEmployee => {
+                                  editEmployee({
+                                    variables: {
+                                      id: editedEmployee.id,
+                                      firstname: editedEmployee.firstname,
+                                      lastname: editedEmployee.lastname
+                                    }
+                                  });
+                                }}
+                            />
+                        )}
+                      </Mutation>
                   )}
                 </Mutation>
             );
