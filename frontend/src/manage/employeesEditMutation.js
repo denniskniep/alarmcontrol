@@ -32,14 +32,11 @@ const EDIT_EMPLOYEE = gql`
   }
 `;
 
-/*
 const DELETE_EMPLOYEE = gql`
     mutation deleteEmployee($id: ID) {
-     deleteEmployee(id: $id) {
-      id
-    }
+     deleteEmployee(id: $id) 
   }
-`;*/
+`;
 
 class EmployeesEditMutation extends Component {
 
@@ -49,7 +46,7 @@ class EmployeesEditMutation extends Component {
   }
 
   render() {
-    return (//
+    return (
         <Query fetchPolicy="no-cache" query={EMPLOYEES_BY_ORGANISATION_ID}
                variables={{id: this.props.id}}>
           {({loading, error, data, refetch}) => {
@@ -59,7 +56,7 @@ class EmployeesEditMutation extends Component {
             if (error) {
               return <p>Error: ${error.message}</p>;
             }
-            console.log(data)
+
             if (!data.organisationById) {
               return <p>NO DATA</p>;
             }
@@ -73,29 +70,43 @@ class EmployeesEditMutation extends Component {
                                 onCompleted={() => refetch()}>
                         {editEmployee => (
 
-                            <EmployeesEdit
-                                employees={data.organisationById.employees}
+                            <Mutation mutation={DELETE_EMPLOYEE}
+                                      onCompleted={() => refetch()}>
+                              {deleteEmployee => (
 
-                                onNewEmployee={newEmployee => {
-                                  createNewEmployee({
-                                    variables: {
-                                      organisationId: this.props.id,
-                                      firstname: newEmployee.firstname,
-                                      lastname: newEmployee.lastname
-                                    }
-                                  });
-                                }}
+                                  <EmployeesEdit
+                                      employees={data.organisationById.employees}
 
-                                onEmployeeEdited={editedEmployee => {
-                                  editEmployee({
-                                    variables: {
-                                      id: editedEmployee.id,
-                                      firstname: editedEmployee.firstname,
-                                      lastname: editedEmployee.lastname
-                                    }
-                                  });
-                                }}
-                            />
+                                      onNewEmployee={newEmployee => {
+                                        createNewEmployee({
+                                          variables: {
+                                            organisationId: this.props.id,
+                                            firstname: newEmployee.firstname,
+                                            lastname: newEmployee.lastname
+                                          }
+                                        });
+                                      }}
+
+                                      onEmployeeEdited={editedEmployee => {
+                                        editEmployee({
+                                          variables: {
+                                            id: editedEmployee.id,
+                                            firstname: editedEmployee.firstname,
+                                            lastname: editedEmployee.lastname
+                                          }
+                                        });
+                                      }}
+
+                                      onEmployeeDeleted={deletedEmployee => {
+                                        deleteEmployee({
+                                          variables: {
+                                            id: deletedEmployee.id
+                                          }
+                                        });
+                                      }}
+                                  />
+                              )}
+                            </Mutation>
                         )}
                       </Mutation>
                   )}

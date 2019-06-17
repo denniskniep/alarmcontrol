@@ -16,6 +16,7 @@ type Mutation {
 
   newEmployee(organisationId: ID, firstname: String, lastname: String) : Employee
   editEmployee(id: ID, firstname: String, lastname: String) : Employee
+  deleteEmployee(id: ID) : ID
 
   setEmployeeFeedbackForAlert(employeeId: ID, alertId:ID, feedback: EmployeeFeedback) : EmployeeFeedbackForAlert
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean

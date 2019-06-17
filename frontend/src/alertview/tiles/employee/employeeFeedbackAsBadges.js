@@ -22,7 +22,7 @@ class EmployeeFeedbackAsBadges extends Component {
             {this.props.employeeFeedback.map((ef, index) => {
               return (
 
-                  <Badge className={"badgeSpace badgeEmployee"}
+                  <Badge key={ef.employee.id} className={"badgeSpace badgeEmployee"}
                          variant={this.mapColorForFeedback(ef.feedback)}>
                     {ef.employee.firstname} {ef.employee.lastname}
                   </Badge>

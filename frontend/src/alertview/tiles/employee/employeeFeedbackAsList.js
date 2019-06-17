@@ -23,13 +23,13 @@ class EmployeeFeedbackAsList extends Component {
               <tbody>
               {this.props.employeeFeedback.map((ef, index) => {
                 return (
-                    <tr className={this.mapClassForFeedback(ef.feedback)}>
+                    <tr key={ef.employee.id} className={this.mapClassForFeedback(ef.feedback)}>
                       <td>{ef.employee.firstname} {ef.employee.lastname}</td>
                       <td>
                       {ef.employee.skills.map((skill, index) => {
                         return (
 
-                            <Badge className={"badgeSpace"} pill
+                            <Badge key={ef.employee.id + "-"+ skill.id} className={"badgeSpace"} pill
                                    variant="secondary">
                               {skill.shortName}
                             </Badge>

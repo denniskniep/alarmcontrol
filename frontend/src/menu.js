@@ -35,7 +35,7 @@ class Menu extends Component {
                     }
 
                     return data.alertsByOrganisationId.map((value, index) => {
-                        return <NavDropdown.Item href={"/alertview/" + value.id}>{value.keyword}</NavDropdown.Item>
+                        return <NavDropdown.Item key={value.id} href={"/alertview/" + value.id}>{value.keyword}</NavDropdown.Item>
                       });
                   }}
                 </Query>
