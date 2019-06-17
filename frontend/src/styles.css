@@ -64,3 +64,31 @@ html,body,#app{
 .badgeEmployee.badge-light{
   background-color: #d8d8d8 !important;
 }
+
+.btn-icon{
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.btn-icon-space{
+  margin-left: 5px;
+}
+
+.row-header{
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.row-mid{
+  padding-bottom: 75px;
+}
+
+thead{
+  font-weight: bold;
+}
+
+thead tr td{
+  border-top-width: 0px !important;
+}

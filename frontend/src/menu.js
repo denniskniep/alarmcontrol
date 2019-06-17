@@ -24,6 +24,9 @@ class Menu extends Component {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
               <NavLink className={"nav-link"} exact to="/">Home</NavLink>
+              <NavDropdown title="Manage">
+                <NavDropdown.Item href="/manage/organisation">Organisations</NavDropdown.Item>
+              </NavDropdown>
               <NavDropdown title="Alerts">
                 <Query query={ALERTS_BY_ORGANISATION} variables={{id: 1}}>
                   {({loading, error, data}) => {

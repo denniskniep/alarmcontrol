@@ -2,11 +2,14 @@ type Query {
   alertById(id: ID): Alert
   alertsByOrganisationId(organisationId: ID): [Alert]
   skillsByOrganisationId(organisationId: ID): [Skill]
+  organisations : [Organisation]
+  organisationById(organisationId: ID): Organisation
 }
 
 type Mutation {
   newAlert(organisationId: ID, keyword: String, dateTime: DateTime, description: String, address: String): Alert
   newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
+  editOrganisation(id: ID, name: String, addressLat: String, addressLng: String): Organisation
   newSkill(organisationId: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
   newEmployee(organisationId: ID, firstname: String, lastname: String) : Employee
   setEmployeeFeedbackForAlert(employeeId: ID, alertId:ID, feedback: EmployeeFeedback) : EmployeeFeedbackForAlert
@@ -36,6 +39,7 @@ type Organisation {
   name: String
   addressLat: String
   addressLng: String
+  employees: [Employee]
 }
 
 type EmployeeFeedbackForAlert {

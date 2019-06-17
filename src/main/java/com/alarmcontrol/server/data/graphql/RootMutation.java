@@ -15,6 +15,7 @@ import com.alarmcontrol.server.data.repositories.SkillRepository;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -79,6 +80,20 @@ public class RootMutation implements GraphQLMutationResolver {
     Organisation org = new Organisation(name, addressLat, addressLng);
     organisationRepository.save(org);
     return org;
+  }
+
+  public Organisation editOrganisation(Long id, String name, String addressLat, String addressLng) {
+    Optional<Organisation> organisationById = organisationRepository.findById(id);
+    if(!organisationById.isPresent()){
+      throw new RuntimeException("No Organisation found for id:"+id);
+    }
+
+    Organisation organisation = organisationById.get();
+    organisation.setName(name);
+    organisation.setAddressLat(addressLat);
+    organisation.setAddressLng(addressLng);
+    organisationRepository.save(organisation);
+    return organisation;
   }
 
   public Skill newSkill(Long organisationId, String name, String shortName, boolean displayAtOverview) {
