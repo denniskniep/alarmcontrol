@@ -235,3 +235,10 @@ Some villages does not provide house number accurate information for geocoding v
 
 **Workaround:**
 Use MapBox for geocoding
+
+
+### Apollo Subscription generates React warning
+`Can't perform a React state update on an unmounted component.`
+
+There is already an issue created in Apollo Repository
+https://github.com/apollographql/react-apollo/issues/2681

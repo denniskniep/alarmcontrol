@@ -13,6 +13,7 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import {InMemoryCache} from "apollo-cache-inmemory";
+import Home from "./home";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -55,14 +56,6 @@ function App() {
           <Route exact path="/manage/organisation/:id" component={OrganisationView} />
       </Router>
     </ApolloProvider>
-  );
-}
-
-function Home() {
-  return (
-      <div>
-        <h2>Home</h2>
-      </div>
   );
 }
 
