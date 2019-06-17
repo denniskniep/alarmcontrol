@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import EditableTable from "../components/EditableTable";
+import EditableTable from "../components/editableTable";
 
 class EmployeesEdit extends Component {
 

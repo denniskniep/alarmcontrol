@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import EditableTable from "../components/EditableTable";
+import EditableTable from "../components/editableTable";
 import BooleanViewer from "../components/booleanViewer";
 import BooleanEditor from "../components/booleanEditor";
 
@@ -36,7 +36,6 @@ class SkillsEdit extends Component {
                                  name: "Anzeige in Übersicht",
                                  viewer: BooleanViewer,
                                  editor: BooleanEditor
-
                                }
                              ]}
 

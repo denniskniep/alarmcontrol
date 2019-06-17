@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom'
-import EditableTable from "../components/EditableTable";
+import EditableTable from "../components/editableTable";
 
 class OrganisationsEdit extends Component {
   render() {

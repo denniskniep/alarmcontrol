@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, ButtonGroup, ButtonToolbar, Table} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import EditableRow from "./EditableRow";
+import EditableRow from "./editableRow";
 import {chooseViewer} from "./defaultsChooser";
 
 class EditableTable extends Component {
