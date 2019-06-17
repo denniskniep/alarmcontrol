@@ -25,6 +25,7 @@ type Mutation {
 
 type Subscription {
     alertAdded: AlertAdded
+    employeeFeedbackForAlertAdded : EmployeeFeedbackForAlertAdded
 }
 
 type Alert {
@@ -47,6 +48,11 @@ type Alert {
 
 type AlertAdded {
   id: ID
+}
+
+type EmployeeFeedbackForAlertAdded {
+  alertId: ID
+  employeeId: ID
 }
 
 type Organisation {

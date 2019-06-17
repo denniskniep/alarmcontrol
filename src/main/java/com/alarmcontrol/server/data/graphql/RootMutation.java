@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
+import com.alarmcontrol.server.data.graphql.alert.EmployeeFeedbackForAlertAddedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertEmployee;
 import com.alarmcontrol.server.data.models.Employee;
@@ -27,19 +28,22 @@ public class RootMutation implements GraphQLMutationResolver {
   private AlertEmployeeRepository alertEmployeeRepository;
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
+  private EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher;
 
   public RootMutation(AlertService alertService,
       OrganisationRepository organisationRepository,
       EmployeeRepository employeeRepository,
       AlertEmployeeRepository alertEmployeeRepository,
       SkillRepository skillRepository,
-      EmployeeSkillRepository employeeSkillRepository) {
+      EmployeeSkillRepository employeeSkillRepository,
+      EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
     this.employeeRepository = employeeRepository;
     this.alertEmployeeRepository = alertEmployeeRepository;
     this.skillRepository = skillRepository;
     this.employeeSkillRepository = employeeSkillRepository;
+    this.employeeFeedbackForAlertAddedPublisher = employeeFeedbackForAlertAddedPublisher;
   }
 
   public Alert newAlert(Long organisationId,
@@ -66,6 +70,7 @@ public class RootMutation implements GraphQLMutationResolver {
       alertEmployee = new AlertEmployee(employeeId, alertId, feedback, new Date());
     }
     alertEmployee.setFeedback(feedback);
+    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(alertEmployee.getAlertId(), alertEmployee.getEmployeeId());
     return alertEmployeeRepository.save(alertEmployee);
   }
 
