@@ -8,6 +8,9 @@ import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.data.repositories.SkillRepository;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import java.util.Optional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,7 +29,7 @@ public class RootQuery implements GraphQLQueryResolver {
 
   public Alert alertById(Long id) {
     Optional<Alert> alert = alertRepository.findById(id);
-    if(alert.isPresent()){
+    if (alert.isPresent()) {
       return alert.get();
     }
     return null;
@@ -34,6 +37,15 @@ public class RootQuery implements GraphQLQueryResolver {
 
   public Iterable<Alert> alertsByOrganisationId(Long organisationId) {
     return alertRepository.findByOrganisationId(organisationId);
+  }
+
+  public Iterable<Alert> alertsByOrganisationId(Long organisationId, int page, int size) {
+    Pageable sortedByDateDesc = PageRequest.of(page, size,
+        Sort.by("dateTime")
+            .descending().and(
+            Sort.by("id")
+                .descending()));
+    return alertRepository.findByOrganisationId(organisationId, sortedByDateDesc);
   }
 
   public Iterable<Skill> skillsByOrganisationId(Long organisationId) {
@@ -46,7 +58,7 @@ public class RootQuery implements GraphQLQueryResolver {
 
   public Organisation organisationById(Long organisationId) {
     Optional<Organisation> organisation = organisationRepository.findById(organisationId);
-    if(organisation.isPresent()){
+    if (organisation.isPresent()) {
       return organisation.get();
     }
     return null;

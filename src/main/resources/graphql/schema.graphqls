@@ -1,6 +1,7 @@
 type Query {
   alertById(id: ID): Alert
   alertsByOrganisationId(organisationId: ID): [Alert]
+  alertsByOrganisationId(organisationId: ID, page: Int, size: Int): [Alert]
   skillsByOrganisationId(organisationId: ID): [Skill]
   organisations : [Organisation]
   organisationById(organisationId: ID): Organisation
