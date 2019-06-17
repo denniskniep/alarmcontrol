@@ -146,6 +146,32 @@ public class RootMutation implements GraphQLMutationResolver {
     return skill;
   }
 
+  public Skill editSkill(Long id, String name, String shortName, boolean displayAtOverview) {
+    Optional<Skill> skillById = skillRepository.findById(id);
+    if(!skillById.isPresent()){
+      throw new RuntimeException("No Skill found for id:" +id);
+    }
+
+    Skill skill = skillById.get();
+    skill.setName(name);
+    skill.setShortName(shortName);
+    skill.setDisplayAtOverview(displayAtOverview);
+
+    skillRepository.save(skill);
+    return skill;
+  }
+
+  public Long deleteSkill(Long id) {
+    Optional<Skill> skillById = skillRepository.findById(id);
+    if(!skillById.isPresent()){
+      throw new RuntimeException("No Skill found for id:" +id);
+    }
+
+    Skill skill = skillById.get();
+    skillRepository.delete(skill);
+    return skill.getId();
+  }
+
   public boolean addEmployeeSkill(Long employeeId, Long skillId) {
     List<EmployeeSkill> existingEmployeeSkill = employeeSkillRepository
         .findByEmployeeIdAndSkillId(employeeId, skillId);

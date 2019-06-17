@@ -44,6 +44,10 @@ public class AlertService {
       String description,
       String address){
 
+    if(dateTime == null){
+      dateTime = new Date();
+    }
+
     GeocodingResult geocodedAddress = geocodingService.geocode(address);
     Coordinate orgCoordinate = getOrgCoordinate(organisationId);
     Coordinate targetCoordinate = geocodedAddress.getCoordinate();

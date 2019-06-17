@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import OrganisationEditMutation from "./organisationEditMutation";
 import EmployeesEditMutation from "./employeesEditMutation";
+import SkillsEditMutation from "./skillsEditMutation";
 
 class OrganisationView extends Component {
 
@@ -31,6 +32,16 @@ class OrganisationView extends Component {
 
       <Row className={"row-mid"}>
         <EmployeesEditMutation id={this.props.match.params.id}/>
+      </Row>
+
+      <Row>
+        <Col md="10">
+          <h4>Skills</h4>
+        </Col>
+      </Row>
+
+      <Row className={"row-mid"}>
+        <SkillsEditMutation id={this.props.match.params.id}/>
       </Row>
     </Container>);
   }

@@ -33,6 +33,7 @@ class Menu extends Component {
               </NavDropdown>
               <NavDropdown title="Last Alerts">
                 <Query query={ALERTS_BY_ORGANISATION}
+                       fetchPolicy="no-cache"
                        variables={{id: 1, page: 0, size: 10}}>
                   {({loading, error, data}) => {
                     if (loading || error || !data.alertsByOrganisationId) {
