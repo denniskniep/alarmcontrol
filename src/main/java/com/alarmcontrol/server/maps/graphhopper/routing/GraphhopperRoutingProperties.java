@@ -1,9 +1,8 @@
-package com.alarmcontrol.server.maps;
+package com.alarmcontrol.server.maps.graphhopper.routing;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
-@ConfigurationProperties(prefix = "map.routing.graphhopper")
+@ConfigurationProperties(prefix = "map.graphhopper.routing")
 public class GraphhopperRoutingProperties {
 
   private String url;

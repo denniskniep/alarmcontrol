@@ -42,10 +42,11 @@ public class CachingRestService {
 
   private String asJsonString(ResponseEntity<Object> result) {
     try {
-      return objectMapper.writeValueAsString(result.getBody());
+      String json = objectMapper.writeValueAsString(result.getBody());
+      logger.debug("Serialized body into following json:\n" + json);
+      return json;
     } catch (JsonProcessingException e) {
-      logger.error("Can not serialize into json", e);
-      return null;
+      throw new RuntimeException("Can not serialize the following response body into json:\n"+result.getBody(), e);
     }
   }
 
@@ -56,16 +57,7 @@ public class CachingRestService {
         request.getEntity(),
         Object.class);
 
-    if(result.getStatusCode().isError()){
-      String errMessage = "Error during request. "
-          + "Uri="+request.getUri()
-          + ", StatusCode="+result.getStatusCodeValue()
-          + ", Body="+result.getBody().toString();
-      logger.error(errMessage);
-      throw new RuntimeException(errMessage);
-    }
-
-    logger.info("Request successful");
+    logger.info("Request successful, StatusCode=" + result.getStatusCodeValue());
     return result;
   }
 
