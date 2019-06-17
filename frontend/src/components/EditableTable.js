@@ -15,7 +15,12 @@ class EditableTable extends Component {
     }
   }
 
-  startEditMode(dataIndex) {
+  startEditMode(dataIndex, obj) {
+    //is startEditModeHandler defined and should or should not start the edit Mode?
+    if(this.props.onStartEditMode && !this.props.onStartEditMode(obj)){
+      return;
+    }
+
     this.setState((state, props) => {
       state.rowsInEditMode.push(dataIndex);
       return {rowsInEditMode: state.rowsInEditMode}
@@ -86,7 +91,7 @@ class EditableTable extends Component {
                         <ButtonGroup className="mr-2">
                           <Button className={"btn-icon"}
                                   variant="outline-secondary"
-                                  onClick={e => this.startEditMode(dataIndex)}>
+                                  onClick={e => this.startEditMode(dataIndex, obj)}>
                             <FontAwesomeIcon icon={["far", "edit"]}/>
                           </Button>
                           <Button className={"btn-icon"}

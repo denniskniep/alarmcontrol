@@ -18,7 +18,7 @@ function App() {
           <Menu/>
           <Route exact path="/" component={Home} />
           <Route exact path="/alertview/:id" component={AlertView} />
-          <Route exact path="/manage/organisation/" component={OrganisationsView} />
+          <Route exact path="/manage/organisation" component={OrganisationsView} />
           <Route exact path="/manage/organisation/:id" component={OrganisationView} />
       </Router>
     </ApolloProvider>

@@ -124,6 +124,17 @@ public class RootMutation implements GraphQLMutationResolver {
     return organisation;
   }
 
+  public Long deleteOrganisation(Long id) {
+    Optional<Organisation> organisationById = organisationRepository.findById(id);
+    if(!organisationById.isPresent()){
+      throw new RuntimeException("No Organisation found for id:" +id);
+    }
+
+    Organisation organisation = organisationById.get();
+    organisationRepository.delete(organisation);
+    return organisation.getId();
+  }
+
   public Skill newSkill(Long organisationId, String name, String shortName, boolean displayAtOverview) {
     Skill skill = new Skill(organisationId, name, shortName, displayAtOverview);
     skillRepository.save(skill);

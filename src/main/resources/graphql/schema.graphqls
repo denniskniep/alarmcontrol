@@ -11,6 +11,7 @@ type Mutation {
 
   newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
   editOrganisation(id: ID, name: String, addressLat: String, addressLng: String): Organisation
+  deleteOrganisation(id: ID) : ID
 
   newSkill(organisationId: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
 
