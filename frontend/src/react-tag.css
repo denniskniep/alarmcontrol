@@ -1,12 +1,12 @@
 .react-tags {
   position: relative;
-  padding: 6px 0 0 6px;
+  padding: 2px 2px 2px 6px;
   border: 1px solid #D1D1D1;
-  border-radius: 1px;
+  border-radius: 4px;
 
   /* shared font styles */
-  font-size: 1em;
-  line-height: 1.2;
+  font-size: 14px;
+  line-height: 0.8;
 
   /* clicking anywhere will focus the input */
   cursor: text;
@@ -23,7 +23,7 @@
 .react-tags__selected-tag {
   display: inline-block;
   box-sizing: border-box;
-  margin: 0 6px 6px 0;
+  margin: 0 6px 0px 0;
   padding: 6px 8px;
   border: 1px solid #D1D1D1;
   border-radius: 2px;
@@ -50,7 +50,7 @@
 
   /* match tag layout */
   padding: 7px 2px;
-  margin-bottom: 6px;
+  margin-bottom: 1px;
 
   /* prevent autoresize overflowing the container */
   max-width: 100%;

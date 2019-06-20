@@ -26,11 +26,13 @@ class TagEditor extends Component {
 
   suggestionsFilter(suggestion, query) {
     const existing = this.props.value.map(v => v.id);
-
-    return suggestion &&
+    const startingWith = suggestion &&
         suggestion.name &&
-        suggestion.name.startsWith(query) &&
-        !existing.includes(suggestion.id);
+        suggestion.name.toLowerCase().startsWith(query.toLowerCase());
+    const expandAll = query === " ";
+
+    return !existing.includes(suggestion.id) &&
+        (startingWith || expandAll);
   }
 
   render() {
