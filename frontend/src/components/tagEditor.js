@@ -24,6 +24,15 @@ class TagEditor extends Component {
     }
   }
 
+  suggestionsFilter(suggestion, query) {
+    const existing = this.props.value.map(v => v.id);
+
+    return suggestion &&
+        suggestion.name &&
+        suggestion.name.startsWith(query) &&
+        !existing.includes(suggestion.id);
+  }
+
   render() {
     return (
         <ReactTags
@@ -31,6 +40,7 @@ class TagEditor extends Component {
             autofocus={false}
             tags={this.props.value}
             suggestions={this.props.suggestions}
+            suggestionsFilter={(suggestion, query) => this.suggestionsFilter(suggestion, query)}
             handleDelete={this.handleDelete.bind(this)}
             handleAddition={this.handleAddition.bind(this)} />)
   }

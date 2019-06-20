@@ -87,6 +87,10 @@ public class RootMutation implements GraphQLMutationResolver {
       throw new RuntimeException("No Employee found for id:" +id);
     }
 
+    List<EmployeeSkill> employeeSkills = employeeSkillRepository
+        .findByEmployeeId(id);
+    employeeSkillRepository.deleteAll(employeeSkills);
+
     Employee employee = employeeById.get();
     employeeRepository.delete(employee);
     return employee.getId();
@@ -178,6 +182,17 @@ public class RootMutation implements GraphQLMutationResolver {
 
     if(existingEmployeeSkill.size() == 0) {
       employeeSkillRepository.save(new EmployeeSkill(employeeId, skillId));
+      return true;
+    }
+    return false;
+  }
+
+  public boolean deleteEmployeeSkill(Long employeeId, Long skillId) {
+    List<EmployeeSkill> existingEmployeeSkill = employeeSkillRepository
+        .findByEmployeeIdAndSkillId(employeeId, skillId);
+
+    if(existingEmployeeSkill.size() != 0) {
+      employeeSkillRepository.deleteAll(existingEmployeeSkill);
       return true;
     }
     return false;

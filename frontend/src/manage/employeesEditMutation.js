@@ -49,16 +49,99 @@ const DELETE_EMPLOYEE = gql`
   }
 `;
 
+const ADD_EMPLOYEE_SKILL = gql`
+  mutation addEmployeeSkill($employeeId: ID, $skillId: ID) {
+     addEmployeeSkill(employeeId: $employeeId, skillId: $skillId)
+  }
+`;
+
+const DELETE_EMPLOYEE_SKILL = gql`
+  mutation deleteEmployeeSkill($employeeId: ID, $skillId: ID) {
+     deleteEmployeeSkill(employeeId: $employeeId, skillId: $skillId)
+  }
+`;
+
 class EmployeesEditMutation extends Component {
 
   constructor(props) {
     super(props);
   }
 
+  handleNewEmployee(newEmployee, createNewEmployee, addEmployeeSkill) {
+    createNewEmployee({
+      variables: {
+        organisationId: this.props.id,
+        firstname: newEmployee.firstname,
+        lastname: newEmployee.lastname
+      }
+    }).then((result) => {
+      newEmployee.skills.forEach(
+          (s) => {
+            addEmployeeSkill({
+              variables: {
+                employeeId: result.data.newEmployee.id,
+                skillId: s.id
+              }
+            });
+          })
+    });
+  }
+
+  handleEmployeeEdited(oldEmployee,
+      newEmployee,
+      editEmployee,
+      addEmployeeSkill,
+      deleteEmployeeSkill) {
+    editEmployee({
+      variables: {
+        id: newEmployee.id,
+        firstname: newEmployee.firstname,
+        lastname: newEmployee.lastname
+      }
+    });
+
+    const oldIds = oldEmployee.skills.map(s => s.id);
+    const newIds = newEmployee.skills.map(s => s.id);
+
+    const toDelete = oldIds.filter(id => !newIds.includes(id));
+    const toAdd = newIds.filter(id => !oldIds.includes(id));
+
+    toDelete.forEach(
+        (id) => {
+          deleteEmployeeSkill({
+            variables: {
+              employeeId: newEmployee.id,
+              skillId: id
+            }
+          });
+        });
+
+    toAdd.forEach(
+        (id) => {
+          addEmployeeSkill({
+            variables: {
+              employeeId: newEmployee.id,
+              skillId: id
+            }
+          });
+        });
+  }
+
+  handleEmployeeDeleted(deletedEmployee, deleteEmployee) {
+    deleteEmployee({
+      variables: {
+        id: deletedEmployee.id
+      }
+    });
+  }
+
   render() {
     return (
         <Query fetchPolicy="no-cache" query={EMPLOYEES_BY_ORGANISATION_ID}
-               variables={{id: this.props.id, shouldRefetch: this.props.refetch}}>
+               variables={{
+                 id: this.props.id,
+                 shouldRefetch: this.props.refetch
+               }}>
           {({loading, error, data, refetch}) => {
             if (loading) {
               return <p>Loading...</p>;
@@ -84,39 +167,47 @@ class EmployeesEditMutation extends Component {
                                       onCompleted={() => refetch()}>
                               {deleteEmployee => (
 
-                                  <EmployeesEdit
-                                      employees={data.organisationById.employees}
+                                  <Mutation mutation={ADD_EMPLOYEE_SKILL}
+                                            onCompleted={() => refetch()}>
+                                    {addEmployeeSkill => (
 
-                                      skills={data.organisationById.skills}
+                                        <Mutation
+                                            mutation={DELETE_EMPLOYEE_SKILL}
+                                            onCompleted={() => refetch()}>
+                                          {deleteEmployeeSkill => (
 
-                                      onNewEmployee={newEmployee => {
-                                        createNewEmployee({
-                                          variables: {
-                                            organisationId: this.props.id,
-                                            firstname: newEmployee.firstname,
-                                            lastname: newEmployee.lastname
-                                          }
-                                        });
-                                      }}
+                                              <EmployeesEdit
+                                                  employees={data.organisationById.employees}
 
-                                      onEmployeeEdited={editedEmployee => {
-                                        editEmployee({
-                                          variables: {
-                                            id: editedEmployee.id,
-                                            firstname: editedEmployee.firstname,
-                                            lastname: editedEmployee.lastname
-                                          }
-                                        });
-                                      }}
+                                                  skills={data.organisationById.skills}
 
-                                      onEmployeeDeleted={deletedEmployee => {
-                                        deleteEmployee({
-                                          variables: {
-                                            id: deletedEmployee.id
-                                          }
-                                        });
-                                      }}
-                                  />
+                                                  onNewEmployee={newEmployee =>
+                                                      this.handleNewEmployee(
+                                                          newEmployee,
+                                                          createNewEmployee,
+                                                          addEmployeeSkill)}
+
+                                                  onEmployeeEdited={
+                                                    (oldEmployee, newEmployee )=>
+                                                        this.handleEmployeeEdited(
+                                                            oldEmployee,
+                                                            newEmployee,
+                                                            editEmployee,
+                                                            addEmployeeSkill,
+                                                            deleteEmployeeSkill
+                                                        )}
+
+                                                  onEmployeeDeleted={
+                                                    deletedEmployee =>
+                                                        this.handleEmployeeDeleted(
+                                                            deletedEmployee,
+                                                            deleteEmployee)
+                                                  }
+                                              />
+                                          )}
+                                        </Mutation>
+                                    )}
+                                  </Mutation>
                               )}
                             </Mutation>
                         )}

@@ -50,7 +50,7 @@ class EmployeesEdit extends Component {
 
                              onRowEdited={(oldRow, newRow) =>
                                  this.props.onEmployeeEdited
-                                 && this.props.onEmployeeEdited(newRow)}
+                                 && this.props.onEmployeeEdited(oldRow, newRow)}
 
                              onRowDeleted={(deletedRow) =>
                                  this.props.onEmployeeDeleted
