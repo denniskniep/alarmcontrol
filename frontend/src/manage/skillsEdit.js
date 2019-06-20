@@ -35,7 +35,8 @@ class SkillsEdit extends Component {
                                  key: "displayAtOverview",
                                  name: "Anzeige in Übersicht",
                                  viewer: BooleanViewer,
-                                 editor: BooleanEditor
+                                 editor: BooleanEditor,
+                                 defaultValue: false
                                }
                              ]}
 

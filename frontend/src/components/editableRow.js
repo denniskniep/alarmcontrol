@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, ButtonToolbar} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {chooseEditor, chooseViewer} from "./defaultsChooser";
+import {chooseEditor, chooseViewer, chooseDefaultValue} from "./defaultsChooser";
 
 class EditableRow extends Component {
 
@@ -10,7 +10,7 @@ class EditableRow extends Component {
     let obj = {...this.props.obj};
     for (let column of this.props.columns) {
       if (!obj.hasOwnProperty(column.key)) {
-        obj[column.key] = "";
+        obj[column.key] = chooseDefaultValue(column.defaultValue);
       }
     }
 
@@ -20,7 +20,6 @@ class EditableRow extends Component {
   }
 
   handleChange(newValue, column) {
-    debugger;
     this.setState((state, props) => {
       state.obj[column.key] = newValue;
       return {obj: state.obj}
@@ -39,14 +38,15 @@ class EditableRow extends Component {
                     React.createElement(chooseEditor(column.editor,
                         this.state.obj[column.key]), {
                       value: this.state.obj[column.key],
-                      onChange: newValue => this.handleChange(newValue, column)
+                      onChange: newValue => this.handleChange(newValue, column),
+                      ...column.editorProps
                     })}
 
                     {
                       column.readOnly &&
                       React.createElement(chooseViewer(column.viewer,
                           this.state.obj[column.key]), {
-                        value: this.state.obj[column.key]
+                        value:  this.state.obj[column.key]
                       })
                     }
                   </td>

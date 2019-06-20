@@ -43,7 +43,6 @@ class SkillsEditMutation extends Component {
 
   constructor(props) {
     super(props);
-
   }
 
   render() {
@@ -64,16 +63,28 @@ class SkillsEditMutation extends Component {
 
             return (
                 <Mutation mutation={NEW_SKILL}
-                          onCompleted={() => refetch()}>
-                  {createNewSkill => (
+                          onCompleted={() => {
+                            this.props.onSkillsChanged
+                            && this.props.onSkillsChanged();
+                            refetch();
+                          }}>
+                  { createNewSkill => (
 
                       <Mutation mutation={EDIT_SKILL}
-                                onCompleted={() => refetch()}>
-                        {editSkill => (
+                                onCompleted={() => {
+                                  this.props.onSkillsChanged
+                                  && this.props.onSkillsChanged();
+                                  refetch();
+                                }}>
+                        { editSkill => (
 
                             <Mutation mutation={DELETE_SKILL}
-                                      onCompleted={() => refetch()}>
-                              {deleteSkill => (
+                                      onCompleted={() => {
+                                        this.props.onSkillsChanged
+                                        && this.props.onSkillsChanged();
+                                        refetch();
+                                      }}>
+                              { deleteSkill => (
 
                                   <SkillsEdit
                                       skills={data.organisationById.skills}

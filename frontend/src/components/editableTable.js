@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Button, ButtonGroup, ButtonToolbar, Table} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import EditableRow from "./editableRow";
-import {chooseViewer} from "./defaultsChooser";
+import {chooseDefaultValue, chooseViewer} from "./defaultsChooser";
 
 class EditableTable extends Component {
 
@@ -87,7 +87,7 @@ class EditableTable extends Component {
                               React.createElement(
                                   chooseViewer(column.viewer, obj[column.key]),
                                   {
-                                    value: obj[column.key]
+                                    value: obj.hasOwnProperty(column.key) ? obj[column.key] : chooseDefaultValue(column.defaultValue)
                                   })
                             }
                             </td>

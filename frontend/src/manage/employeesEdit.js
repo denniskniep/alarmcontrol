@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import EditableTable from "../components/editableTable";
+import TagViewer from "../components/tagViewer";
+import TagEditor from "../components/tagEditor";
 
 class EmployeesEdit extends Component {
 
@@ -28,12 +30,22 @@ class EmployeesEdit extends Component {
                                {
                                  key: "lastname",
                                  name: "Nachname"
+                               },
+                               {
+                                 key: "skills",
+                                 name: "Skills",
+                                 viewer: TagViewer,
+                                 editor: TagEditor,
+                                 editorProps : {
+                                   suggestions : this.props.skills
+                                 },
+                                 defaultValue: []
                                }
                              ]}
 
-                             onNewRow={newRow =>{
-                                 this.props.onNewEmployee
-                                 && this.props.onNewEmployee(newRow);
+                             onNewRow={newRow => {
+                               this.props.onNewEmployee
+                               && this.props.onNewEmployee(newRow);
                              }}
 
                              onRowEdited={(oldRow, newRow) =>

@@ -8,6 +8,15 @@ class OrganisationView extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      refetchEmployees: 0
+    }
+  }
+
+  handleSkillsChanged(){
+    this.setState((state, props) => {
+      return {refetchEmployees: ++state.refetchEmployees}
+    });
   }
 
   render() {
@@ -31,7 +40,7 @@ class OrganisationView extends Component {
       </Row>
 
       <Row className={"row-mid"}>
-        <EmployeesEditMutation id={this.props.match.params.id}/>
+        <EmployeesEditMutation id={this.props.match.params.id} refetch={this.state.refetchEmployees} />
       </Row>
 
       <Row>
@@ -41,7 +50,7 @@ class OrganisationView extends Component {
       </Row>
 
       <Row className={"row-mid"}>
-        <SkillsEditMutation id={this.props.match.params.id}/>
+        <SkillsEditMutation id={this.props.match.params.id} onSkillsChanged={()=> this.handleSkillsChanged()}/>
       </Row>
     </Container>);
   }

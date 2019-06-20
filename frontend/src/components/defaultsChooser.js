@@ -16,3 +16,10 @@ export function chooseEditor(editor, value) {
   return editor;
 }
 
+export function chooseDefaultValue(defaultValue) {
+  if(!defaultValue){
+    return "";
+  }
+  return defaultValue;
+}
+

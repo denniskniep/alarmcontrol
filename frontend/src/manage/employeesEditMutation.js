@@ -11,6 +11,17 @@ const EMPLOYEES_BY_ORGANISATION_ID = gql`
         id
         firstname
         lastname
+        skills {
+          id
+          name
+          shortName
+        }
+      }
+      skills {
+        id
+        name
+        shortName
+        displayAtOverview
       }
     }
   }
@@ -42,13 +53,12 @@ class EmployeesEditMutation extends Component {
 
   constructor(props) {
     super(props);
-
   }
 
   render() {
     return (
         <Query fetchPolicy="no-cache" query={EMPLOYEES_BY_ORGANISATION_ID}
-               variables={{id: this.props.id}}>
+               variables={{id: this.props.id, shouldRefetch: this.props.refetch}}>
           {({loading, error, data, refetch}) => {
             if (loading) {
               return <p>Loading...</p>;
@@ -76,6 +86,8 @@ class EmployeesEditMutation extends Component {
 
                                   <EmployeesEdit
                                       employees={data.organisationById.employees}
+
+                                      skills={data.organisationById.skills}
 
                                       onNewEmployee={newEmployee => {
                                         createNewEmployee({
