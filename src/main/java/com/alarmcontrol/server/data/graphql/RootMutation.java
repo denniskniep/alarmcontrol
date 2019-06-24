@@ -1,14 +1,18 @@
 package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
+import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackForAlertAddedPublisher;
-import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertCall;
+import com.alarmcontrol.server.data.models.AlertCallEmployee;
 import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
+import com.alarmcontrol.server.data.models.Feedback;
 import com.alarmcontrol.server.data.models.Organisation;
 import com.alarmcontrol.server.data.models.Skill;
+import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
+import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
@@ -30,6 +34,8 @@ public class RootMutation implements GraphQLMutationResolver {
   private EmployeeSkillRepository employeeSkillRepository;
   private EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher;
   private AlertNumberRepository alertNumberRepository;
+  private AlertCallRepository alertCallRepository;
+  private AlertCallEmployeeRepository alertCallEmployeeRepository;
 
   public RootMutation(AlertService alertService,
       OrganisationRepository organisationRepository,
@@ -37,7 +43,9 @@ public class RootMutation implements GraphQLMutationResolver {
       SkillRepository skillRepository,
       EmployeeSkillRepository employeeSkillRepository,
       EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher,
-      AlertNumberRepository alertNumberRepository) {
+      AlertNumberRepository alertNumberRepository,
+      AlertCallRepository alertCallRepository,
+      AlertCallEmployeeRepository alertCallEmployeeRepository) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
     this.employeeRepository = employeeRepository;
@@ -45,38 +53,57 @@ public class RootMutation implements GraphQLMutationResolver {
     this.employeeSkillRepository = employeeSkillRepository;
     this.employeeFeedbackForAlertAddedPublisher = employeeFeedbackForAlertAddedPublisher;
     this.alertNumberRepository = alertNumberRepository;
+    this.alertCallRepository = alertCallRepository;
+    this.alertCallEmployeeRepository = alertCallEmployeeRepository;
   }
 
-  public List<AlertCall> newAlert(String alertCallNumber,
-      String referenceId,
-      String referenceCallId,
+  public AlertCall newAlertCall(Long organisationId,
+      String alertNumber,
+      String alertReferenceId,
+      String alertCallReferenceId,
       String keyword,
       Date dateTime,
       String address) {
-    return alertService.create(alertCallNumber, referenceId, referenceCallId, keyword, dateTime, address);
+    return alertService
+        .create(organisationId, alertNumber, alertReferenceId, alertCallReferenceId, keyword, dateTime, address);
   }
 
-/*
-  public AlertCallEmployee setEmployeeFeedbackForAlert(Long employeeId, Long alertId, AlertCallEmployee.Feedback feedback) {
-    List<AlertCallEmployee> existingFeedback = alertEmployeeRepository
-        .findByAlertIdAndEmployeeId(alertId, employeeId);
 
-    if(existingFeedback.size() > 1){
-      throw new RuntimeException("There should be at most one existing feedback per alert and employee, but "
-          +existingFeedback.size()+ " were found");
+  public EmployeeFeedback addEmployeeFeedback(Long organisationId,
+      String alertCallReferenceId,
+      String employeeReferenceId,
+      Feedback feedback) {
+
+    Date dateTime = new Date();
+
+    Optional<AlertCall> foundAlertCall = alertCallRepository
+        .findByOrganisationIdAndReferenceId(organisationId, alertCallReferenceId);
+
+    if (foundAlertCall.isEmpty()) {
+      throw new IllegalArgumentException("No AlertCall found for referenceId '" + alertCallReferenceId + "'"
+          + " in organisationId '" + organisationId + "'");
     }
 
-    AlertCallEmployee alertCallEmployee;
-    if(existingFeedback.size() == 1){
-      alertCallEmployee = existingFeedback.get(0);
-    }else{
-      alertCallEmployee = new AlertCallEmployee(employeeId, alertId, feedback, "", new Date());
+    Optional<Employee> foundEmployee = employeeRepository
+        .findByOrganisationIdAndReferenceId(organisationId, employeeReferenceId);
+
+    if (foundEmployee.isEmpty()) {
+      throw new IllegalArgumentException("No Employee found for referenceId '" + employeeReferenceId + "'"
+          + " in organisationId '" + organisationId + "'");
     }
-    alertCallEmployee.setFeedback(feedback);
-    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(alertCallEmployee.getAlertCallId(), alertCallEmployee
-        .getEmployeeId());
-    return alertEmployeeRepository.save(alertCallEmployee);
-  }*/
+
+    AlertCallEmployee alertCallEmployee = new AlertCallEmployee(foundEmployee.get().getId(),
+        foundAlertCall.get().getId(), feedback, "", dateTime);
+
+    alertCallEmployeeRepository.save(alertCallEmployee);
+
+    employeeFeedbackForAlertAddedPublisher
+        .emitEmployeeFeedbackForAlertAdded(alertCallEmployee.getAlertCallId(), alertCallEmployee.getEmployeeId());
+
+    return new EmployeeFeedback(alertCallEmployee.getEmployeeId(),
+        alertCallEmployee.getFeedback(),
+        alertCallEmployee.getDateTime());
+  }
 
   public Employee newEmployee(Long organisationId,
       String firstname,
@@ -88,8 +115,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Long deleteEmployee(Long id) {
     Optional<Employee> employeeById = employeeRepository.findById(id);
-    if(!employeeById.isPresent()){
-      throw new RuntimeException("No Employee found for id:" +id);
+    if (!employeeById.isPresent()) {
+      throw new RuntimeException("No Employee found for id:" + id);
     }
 
     List<EmployeeSkill> employeeSkills = employeeSkillRepository
@@ -107,8 +134,8 @@ public class RootMutation implements GraphQLMutationResolver {
       String referenceId) {
 
     Optional<Employee> employeeById = employeeRepository.findById(id);
-    if(!employeeById.isPresent()){
-      throw new RuntimeException("No Employee found for id:" +id);
+    if (!employeeById.isPresent()) {
+      throw new RuntimeException("No Employee found for id:" + id);
     }
 
     Employee employee = employeeById.get();
@@ -128,8 +155,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Organisation editOrganisation(Long id, String name, String addressLat, String addressLng) {
     Optional<Organisation> organisationById = organisationRepository.findById(id);
-    if(!organisationById.isPresent()){
-      throw new RuntimeException("No Organisation found for id:"+id);
+    if (!organisationById.isPresent()) {
+      throw new RuntimeException("No Organisation found for id:" + id);
     }
 
     Organisation organisation = organisationById.get();
@@ -142,8 +169,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Long deleteOrganisation(Long id) {
     Optional<Organisation> organisationById = organisationRepository.findById(id);
-    if(!organisationById.isPresent()){
-      throw new RuntimeException("No Organisation found for id:" +id);
+    if (!organisationById.isPresent()) {
+      throw new RuntimeException("No Organisation found for id:" + id);
     }
 
     Organisation organisation = organisationById.get();
@@ -159,8 +186,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Skill editSkill(Long id, String name, String shortName, boolean displayAtOverview) {
     Optional<Skill> skillById = skillRepository.findById(id);
-    if(!skillById.isPresent()){
-      throw new RuntimeException("No Skill found for id:" +id);
+    if (!skillById.isPresent()) {
+      throw new RuntimeException("No Skill found for id:" + id);
     }
 
     Skill skill = skillById.get();
@@ -174,8 +201,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Long deleteSkill(Long id) {
     Optional<Skill> skillById = skillRepository.findById(id);
-    if(!skillById.isPresent()){
-      throw new RuntimeException("No Skill found for id:" +id);
+    if (!skillById.isPresent()) {
+      throw new RuntimeException("No Skill found for id:" + id);
     }
 
     Skill skill = skillById.get();
@@ -192,8 +219,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public AlertNumber editAlertNumber(Long id, String number, String description) {
     Optional<AlertNumber> alertNumberById = alertNumberRepository.findById(id);
-    if(!alertNumberById.isPresent()){
-      throw new RuntimeException("No AlertNumber found for id:" +id);
+    if (!alertNumberById.isPresent()) {
+      throw new RuntimeException("No AlertNumber found for id:" + id);
     }
 
     AlertNumber alertNumber = alertNumberById.get();
@@ -206,8 +233,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Long deleteAlertNumber(Long id) {
     Optional<AlertNumber> alertNumberById = alertNumberRepository.findById(id);
-    if(!alertNumberById.isPresent()){
-      throw new RuntimeException("No AlertNumber found for id:" +id);
+    if (!alertNumberById.isPresent()) {
+      throw new RuntimeException("No AlertNumber found for id:" + id);
     }
 
     AlertNumber alertNumber = alertNumberById.get();
@@ -219,7 +246,7 @@ public class RootMutation implements GraphQLMutationResolver {
     List<EmployeeSkill> existingEmployeeSkill = employeeSkillRepository
         .findByEmployeeIdAndSkillId(employeeId, skillId);
 
-    if(existingEmployeeSkill.size() == 0) {
+    if (existingEmployeeSkill.size() == 0) {
       employeeSkillRepository.save(new EmployeeSkill(employeeId, skillId));
       return true;
     }
@@ -230,7 +257,7 @@ public class RootMutation implements GraphQLMutationResolver {
     List<EmployeeSkill> existingEmployeeSkill = employeeSkillRepository
         .findByEmployeeIdAndSkillId(employeeId, skillId);
 
-    if(existingEmployeeSkill.size() != 0) {
+    if (existingEmployeeSkill.size() != 0) {
       employeeSkillRepository.deleteAll(existingEmployeeSkill);
       return true;
     }

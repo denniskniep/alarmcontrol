@@ -18,6 +18,8 @@ public class AlertCall {
 
   private Long alertId;
 
+  private Long organisationId;
+
   private Long alertNumberId;
 
   private String referenceId;
@@ -31,8 +33,10 @@ public class AlertCall {
   protected AlertCall() {
   }
 
-  public AlertCall(Long alertId, Long alertNumberId, String referenceId, String raw, Date dateTime) {
+  public AlertCall(Long alertId, Long organisationId, Long alertNumberId, String referenceId, String raw,
+      Date dateTime) {
     this.alertId = alertId;
+    this.organisationId = organisationId;
     this.alertNumberId = alertNumberId;
     this.referenceId = referenceId;
     this.raw = raw;

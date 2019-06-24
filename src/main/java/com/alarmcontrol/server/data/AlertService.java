@@ -51,10 +51,11 @@ public class AlertService {
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public List<AlertCall> create(
-      String alertCallNumber,
-      String referenceId,
-      String referenceCallId,
+  public AlertCall create(
+      Long organisationId,
+      String alertNumber,
+      String alertReferenceId,
+      String alertCallReferenceId,
       String keyword,
       Date dateTime,
       String address){
@@ -63,17 +64,13 @@ public class AlertService {
       dateTime = new Date();
     }
 
-    List<AlertNumber> foundAlertNumbers = alertNumberRepository.findByNumberIgnoreCase(alertCallNumber);
-    if(foundAlertNumbers.size() == 0){
-      throw new IllegalArgumentException("No AlertNumber found for number '"+alertCallNumber+"'");
+    Optional<AlertNumber> foundAlertNumber = alertNumberRepository.findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
+    if(foundAlertNumber.isEmpty()){
+      throw new IllegalArgumentException("No AlertNumber found for number '"+alertNumber+"'"
+          + " in organisationId '"+organisationId+"'");
     }
 
-    List<AlertCall> alertCalls = new ArrayList<>();
-    for (AlertNumber alertNumber : foundAlertNumbers) {
-      AlertCall alertCall = create(alertNumber, referenceId, referenceCallId, keyword, dateTime, address);
-      alertCalls.add(alertCall);
-    }
-    return alertCalls;
+    return create(foundAlertNumber.get(), alertReferenceId, alertCallReferenceId, keyword, dateTime, address);
   }
 
   private AlertCall create(
@@ -90,7 +87,7 @@ public class AlertService {
         .findByOrganisationIdAndReferenceId(organisationId, referenceId);
     Alert alert = null;
     if(existingAlerts.size() == 0){
-      createAlert(organisationId, referenceId, keyword, dateTime, address);
+      alert = createAlert(organisationId, referenceId, keyword, dateTime, address);
     }else{
       alert = existingAlerts.get(0);
     }
@@ -99,7 +96,6 @@ public class AlertService {
 
     alertAddedPublisher.emitAlertAdded(alert.getId());
     return alertCall;
-
   }
 
   private Alert createAlert(Long organisationId,
@@ -144,8 +140,12 @@ public class AlertService {
     return new Coordinate(orgLat, orgLng);
   }
 
-  private AlertCall createAlertCall(AlertNumber alertNumber, Alert alert, String referenceCallId, Date dateTime){
+  private AlertCall createAlertCall(AlertNumber alertNumber,
+      Alert alert,
+      String referenceCallId,
+      Date dateTime){
     AlertCall alertCall = new AlertCall(alert.getId(),
+        alertNumber.getOrganisationId(),
         alertNumber.getId(),
         referenceCallId,
         "",

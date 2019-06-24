@@ -24,6 +24,11 @@ databaseChangeLog:
               - column:
                   name: address_lng
                   type: nvarchar(30)
+        - addUniqueConstraint:
+            tableName: organisation
+            columnNames: name
+            constraintName: uk_organisation-name
+
         - createTable:
             tableName: alert
             columns:
@@ -120,12 +125,18 @@ databaseChangeLog:
               - column:
                   name: reference_id
                   type: nvarchar(255)
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             constraintName: fk_organisation-id_employee-organisation_id
             referencedTableName: organisation
             referencedColumnNames: id
             baseTableName: employee
             baseColumnNames: organisation_id
+        - addUniqueConstraint:
+            tableName: employee
+            columnNames: organisation_id, reference_id
+            constraintName: uk_employee-organisation_id-reference_id
 
         - createTable:
             tableName: skill
@@ -230,6 +241,10 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: alert_number
             baseColumnNames: organisation_id
+        - addUniqueConstraint:
+            tableName: alert_number
+            columnNames: organisation_id, number
+            constraintName: uk_alert_number-organisation_id-number
 
         - createTable:
             tableName: alert_call
@@ -240,6 +255,11 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisation_id
+                  type: bigint
+                  constraints:
                     nullable: false
               - column:
                   name: alert_id
@@ -265,9 +285,9 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             constraintName: fk_alert-id-alert_call-alert_id
             referencedTableName: alert
-            referencedColumnNames: id
+            referencedColumnNames: id, organisation_id
             baseTableName: alert_call
-            baseColumnNames: alert_id
+            baseColumnNames: alert_id, organisation_id
         - addForeignKeyConstraint:
             constraintName: fk_alert_number-id-alert_call-alert_number_id
             referencedTableName: alert_number
@@ -276,9 +296,8 @@ databaseChangeLog:
             baseColumnNames: alert_number_id
         - addUniqueConstraint:
             tableName: alert_call
-            columnNames: alert_id, reference_id
-            constraintName: uk_alert_call-alert_id-reference_id
-
+            columnNames: organisation_id, reference_id
+            constraintName: uk_alert_call-organisation_id-reference_id
         - createTable:
             tableName: alert_call_employee
             columns:

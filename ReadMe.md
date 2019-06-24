@@ -43,6 +43,18 @@ mutation {
 }
 ```
 
+#### Add AlertNumber
+```
+mutation { 
+  newAlertNumber (
+    organisationId: 1
+    number: "S4"
+    description: "Pager"
+  ){id}
+}
+```
+
+
 #### Add Skills
 ```
 mutation { 
@@ -84,6 +96,7 @@ mutation {
     organisationId: 1
     firstname: "Lars"
     lastname: "Laune"
+    referenceId: "1234"
   ){id}
 }
 ```
@@ -93,6 +106,7 @@ mutation {
     organisationId: 1
     firstname: "Malte"
     lastname: "Malteser"
+    referenceId: "2345"
   ){id}
 }
 ```
@@ -102,6 +116,7 @@ mutation {
     organisationId: 1
     firstname: "Erika"
     lastname: "Mustermann"
+    referenceId: "3456"
   ){id}
 }
 ```
@@ -111,6 +126,7 @@ mutation {
     organisationId: 1
     firstname: "Max"
     lastname: "Mustermann"
+    referenceId: "4567"
   ){id}
 }
 ```
@@ -134,26 +150,33 @@ mutation {
 }
 ```
 
-#### Add an Alert
+#### Add an AlertCall 
+Implicitly creates an Alert 
 ```
 mutation { 
-  newAlert(
-    alertCallNumber: "S4"
-    referenceId: "B123456"
-    referenceCallId: "123"
+  newAlertCall(
+    organisationId: 1
+    alertNumber: "S4"
+    alertReferenceId: "B123456"
+    alertCallReferenceId: "123"
     keyword: "H1"
-    dateTime: "2019-05-03T12:23:32.456Z"
     address:"Hinter den Gärten 8, 34379 Calden"
-  ){id}
+  ){
+    id
+    alert {
+      id
+    }
+  }
 }
 ```
 
 #### Set Employee Feedback to Alert
 ```
 mutation { 
-  setEmployeeFeedbackForAlert(
-    alertCallId: 1
-    employeeId: 1
+  addEmployeeFeedback(
+    organisationId: 1
+    alertCallReferenceId: "123"
+    employeeReferenceId: "2345"
     feedback: COMMIT) {
     feedback
   }
@@ -162,9 +185,10 @@ mutation {
 
 ```
 mutation { 
-  setEmployeeFeedbackForAlert(
-    alertCallId: 1
-    employeeId: 2
+  addEmployeeFeedback(
+    organisationId: 1
+    alertCallReferenceId: "123"
+    employeeReferenceId: "4567"
     feedback: CANCEL) {
     feedback
   }
