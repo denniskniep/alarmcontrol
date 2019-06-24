@@ -22,6 +22,15 @@ const ALERT_BY_ID = gql`
       addressInfo2
       addressLat,
       addressLng,
+      alertCalls{
+        id
+        dateTime
+        alertNumber{
+          id
+          number
+          description
+        }
+      }
     }
   }
 `;
