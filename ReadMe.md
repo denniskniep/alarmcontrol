@@ -205,12 +205,6 @@ The client is running by default at http://localhost:1234
 * **Icons**: React-Fontawesome (https://github.com/FortAwesome/react-fontawesome) (Browse: https://fontawesome.com/icons?d=gallery) Don't forget to add the icon to the icon-lib in `index.js`
 
 ## ToDos
-### Real-Time
-Client should be up to date without manually refreshing the page. This is necessary if someone respond with a status.
-
-> Polling is an excellent way to achieve near-realtime data without the complexity of setting up GraphQL subscriptions.
-
-https://www.apollographql.com/docs/react/essentials/queries#refetching
 
 ### Docker
 Dockerize it (Multistage)
