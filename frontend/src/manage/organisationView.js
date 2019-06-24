@@ -3,6 +3,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import OrganisationEditMutation from "./organisationEditMutation";
 import EmployeesEditMutation from "./employeesEditMutation";
 import SkillsEditMutation from "./skillsEditMutation";
+import AlertNumbersEditMutation from "./alertNumbersEditMutation";
 
 class OrganisationView extends Component {
 
@@ -35,12 +36,12 @@ class OrganisationView extends Component {
 
       <Row>
         <Col md="10">
-          <h4>Employees</h4>
+          <h4>AlertNumbers</h4>
         </Col>
       </Row>
 
       <Row className={"row-mid"}>
-        <EmployeesEditMutation id={this.props.match.params.id} refetch={this.state.refetchEmployees} />
+        <AlertNumbersEditMutation id={this.props.match.params.id} />
       </Row>
 
       <Row>
@@ -52,6 +53,19 @@ class OrganisationView extends Component {
       <Row className={"row-mid"}>
         <SkillsEditMutation id={this.props.match.params.id} onSkillsChanged={()=> this.handleSkillsChanged()}/>
       </Row>
+
+      <Row>
+        <Col md="10">
+          <h4>Employees</h4>
+        </Col>
+      </Row>
+
+      <Row className={"row-mid"}>
+        <EmployeesEditMutation id={this.props.match.params.id} refetch={this.state.refetchEmployees} />
+      </Row>
+
+
+
     </Container>);
   }
 }

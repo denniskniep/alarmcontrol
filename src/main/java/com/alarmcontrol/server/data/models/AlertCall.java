@@ -28,7 +28,11 @@ public class AlertCall {
   @Temporal(TemporalType.TIMESTAMP)
   Date dateTime;
 
-  public AlertCall(Long alertNumberId, String referenceId, String raw, Date dateTime) {
+  protected AlertCall() {
+  }
+
+  public AlertCall(Long alertId, Long alertNumberId, String referenceId, String raw, Date dateTime) {
+    this.alertId = alertId;
     this.alertNumberId = alertNumberId;
     this.referenceId = referenceId;
     this.raw = raw;

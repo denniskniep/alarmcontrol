@@ -20,8 +20,14 @@ type Mutation {
   editEmployee(id: ID, firstname: String, lastname: String, referenceId: String) : Employee
   deleteEmployee(id: ID) : ID
 
+  newAlertNumber(organisationId: ID, number: String, description: String) : AlertNumber
+  editAlertNumber(id: ID, number: String, description: String) : AlertNumber
+  deleteAlertNumber(id: ID) : ID
+
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
   deleteEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
+
+  newAlert(organisationId: ID, referenceId: String, referenceCallId: String, alertNumber: String, keyword: String, dateTime: DateTime, address: String): Alert
 }
 
 type Subscription {
@@ -78,6 +84,7 @@ type Organisation {
   addressLng: String
   employees: [Employee]
   skills: [Skill]
+  alertNumbers: [AlertNumber]
 }
 
 type EmployeeFeedback {

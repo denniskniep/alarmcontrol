@@ -2,15 +2,19 @@ package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackForAlertAddedPublisher;
+import com.alarmcontrol.server.data.models.Alert;
+import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.models.Organisation;
 import com.alarmcontrol.server.data.models.Skill;
+import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.data.repositories.SkillRepository;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -24,28 +28,33 @@ public class RootMutation implements GraphQLMutationResolver {
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
   private EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher;
+  private AlertNumberRepository alertNumberRepository;
 
   public RootMutation(AlertService alertService,
       OrganisationRepository organisationRepository,
       EmployeeRepository employeeRepository,
       SkillRepository skillRepository,
       EmployeeSkillRepository employeeSkillRepository,
-      EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher) {
+      EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher,
+      AlertNumberRepository alertNumberRepository) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
     this.employeeRepository = employeeRepository;
     this.skillRepository = skillRepository;
     this.employeeSkillRepository = employeeSkillRepository;
     this.employeeFeedbackForAlertAddedPublisher = employeeFeedbackForAlertAddedPublisher;
+    this.alertNumberRepository = alertNumberRepository;
   }
-/*
+
   public Alert newAlert(Long organisationId,
+      String referenceId,
+      String referenceCallId,
+      String alertNumber,
       String keyword,
       Date dateTime,
-      String description,
       String address) {
-    return alertService.create(organisationId, keyword, dateTime, description, address);
-  }*/
+    return alertService.create(organisationId, referenceId, referenceCallId, alertNumber, keyword, dateTime, address);
+  }
 
 /*
   public AlertCallEmployee setEmployeeFeedbackForAlert(Long employeeId, Long alertId, AlertCallEmployee.Feedback feedback) {
@@ -172,6 +181,38 @@ public class RootMutation implements GraphQLMutationResolver {
     Skill skill = skillById.get();
     skillRepository.delete(skill);
     return skill.getId();
+  }
+
+
+  public AlertNumber newAlertNumber(Long organisationId, String number, String description) {
+    AlertNumber alertNumber = new AlertNumber(organisationId, number, description);
+    alertNumberRepository.save(alertNumber);
+    return alertNumber;
+  }
+
+  public AlertNumber editAlertNumber(Long id, String number, String description) {
+    Optional<AlertNumber> alertNumberById = alertNumberRepository.findById(id);
+    if(!alertNumberById.isPresent()){
+      throw new RuntimeException("No AlertNumber found for id:" +id);
+    }
+
+    AlertNumber alertNumber = alertNumberById.get();
+    alertNumber.setNumber(number);
+    alertNumber.setDescription(description);
+
+    alertNumberRepository.save(alertNumber);
+    return alertNumber;
+  }
+
+  public Long deleteAlertNumber(Long id) {
+    Optional<AlertNumber> alertNumberById = alertNumberRepository.findById(id);
+    if(!alertNumberById.isPresent()){
+      throw new RuntimeException("No AlertNumber found for id:" +id);
+    }
+
+    AlertNumber alertNumber = alertNumberById.get();
+    alertNumberRepository.delete(alertNumber);
+    return alertNumber.getId();
   }
 
   public boolean addEmployeeSkill(Long employeeId, Long skillId) {
