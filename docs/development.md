@@ -175,7 +175,7 @@ mutation {
 }
 ```
 
-##### Set Employee Feedback to Alert
+##### Add Employee Feedback
 ```
 mutation { 
   addEmployeeFeedback(

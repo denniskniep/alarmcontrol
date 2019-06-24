@@ -24,6 +24,8 @@ public class SkillFieldAtEmployeeResolver implements GraphQLResolver<Employee> {
   }
 
   public List<Skill> skills(Employee employee) {
+
+    //TODO: Refactor to INNER JOIN
     List<Long> skillIds = employeeSkillRepository
         .findByEmployeeId(employee.getId())
         .stream()
