@@ -3,6 +3,7 @@ package com.alarmcontrol.server.data.graphql;
 import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackForAlertAddedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
+import com.alarmcontrol.server.data.models.AlertCall;
 import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
@@ -46,14 +47,13 @@ public class RootMutation implements GraphQLMutationResolver {
     this.alertNumberRepository = alertNumberRepository;
   }
 
-  public Alert newAlert(Long organisationId,
+  public List<AlertCall> newAlert(String alertCallNumber,
       String referenceId,
       String referenceCallId,
-      String alertNumber,
       String keyword,
       Date dateTime,
       String address) {
-    return alertService.create(organisationId, referenceId, referenceCallId, alertNumber, keyword, dateTime, address);
+    return alertService.create(alertCallNumber, referenceId, referenceCallId, keyword, dateTime, address);
   }
 
 /*

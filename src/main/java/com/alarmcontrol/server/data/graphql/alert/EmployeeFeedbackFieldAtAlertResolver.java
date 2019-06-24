@@ -1,6 +1,6 @@
 package com.alarmcontrol.server.data.graphql.alert;
 
-import com.alarmcontrol.server.data.AlertEmployeeService;
+import com.alarmcontrol.server.data.EmployeeFeedbackService;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertCallEmployee;
@@ -15,17 +15,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeFeedbackFieldAtAlertResolver implements GraphQLResolver<Alert> {
 
-  private AlertEmployeeService alertEmployeeService;
+  private EmployeeFeedbackService employeeFeedbackService;
   private EmployeeRepository employeeRepository;
 
-  public EmployeeFeedbackFieldAtAlertResolver(AlertEmployeeService alertEmployeeService,
+  public EmployeeFeedbackFieldAtAlertResolver(EmployeeFeedbackService employeeFeedbackService,
       EmployeeRepository employeeRepository) {
-    this.alertEmployeeService = alertEmployeeService;
+    this.employeeFeedbackService = employeeFeedbackService;
     this.employeeRepository = employeeRepository;
   }
 
   public List<EmployeeFeedback> employeeFeedback(Alert alert) {
-    List<AlertCallEmployee> existingResponses = alertEmployeeService.findByAlertId(alert.getId());
+    List<EmployeeFeedback> existingResponses = employeeFeedbackService.findByAlertId(alert.getId());
 
     List<EmployeeFeedback> allEmployeesWithoutExistingResponses = employeeRepository
         .findByOrganisationId(alert.getOrganisationId())
@@ -43,7 +43,7 @@ public class EmployeeFeedbackFieldAtAlertResolver implements GraphQLResolver<Ale
     return responses;
   }
 
-  private boolean existsIn(List<AlertCallEmployee> existingResponses, Long employeeId) {
+  private boolean existsIn(List<EmployeeFeedback> existingResponses, Long employeeId) {
     return existingResponses.stream().anyMatch(e -> e.getEmployeeId().equals(employeeId));
   }
 }

@@ -138,10 +138,11 @@ mutation {
 ```
 mutation { 
   newAlert(
+    alertCallNumber: "S4"
+    referenceId: "B123456"
+    referenceCallId: "123"
     keyword: "H1"
-    organisationId: 1
     dateTime: "2019-05-03T12:23:32.456Z"
-    description: ""
     address:"Hinter den Gärten 8, 34379 Calden"
   ){id}
 }
