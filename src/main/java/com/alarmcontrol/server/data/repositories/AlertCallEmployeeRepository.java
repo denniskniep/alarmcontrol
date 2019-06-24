@@ -6,9 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 public interface AlertCallEmployeeRepository extends CrudRepository<AlertCallEmployee, Long> {
-  List<AlertCallEmployee> findByAlertCallId(Long alertCallId);
-  List<AlertCallEmployee> findByAlertCallIdAndEmployeeId(Long alertCallId, Long employeeId);
-
   @Query(value = "SELECT ace FROM AlertCallEmployee ace "
                 + "JOIN AlertCall ac "
                 + "on ace.alertCallId = ac.id "

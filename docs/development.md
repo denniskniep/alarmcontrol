@@ -20,16 +20,18 @@ src/main/resources/db/changelog/db.changelog-master.yaml
 ![database_erm.png](database_erm.png)
 
 ## GraphQL
-Entrypoint for Webrequests:
-* src/main/java/com/alarmcontrol/server/data/graphql/RootQuery.java
-* src/main/java/com/alarmcontrol/server/data/graphql/RootMutation.java
+Entrypoint for Webrequests `src/main/java/com/alarmcontrol/server/data/graphql/*`:
 
-Schema:
+All classes that implements 
+`GraphQLQueryResolver`, 
+`GraphQLMutationResolver` or 
+`GraphQLSubscriptionResolver`
+
+GraphQL-Schema:
 src/main/resources/graphql/schema.graphqls
 
 Introduction:
 https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
-
 
 * **Editor**: http://localhost:8080/graphiql
 * **Schema**: http://localhost:8080/graphql/schema.json

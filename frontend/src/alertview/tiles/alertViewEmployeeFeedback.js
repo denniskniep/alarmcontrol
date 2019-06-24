@@ -12,6 +12,13 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
   query alertById($id: ID) {
     alertById(id: $id) {
       id    
+      organisation{
+        skills{
+          id,
+          shortName
+          displayAtOverview
+        }
+      },
       employeeFeedback{
         feedback
         employee{
@@ -39,16 +46,6 @@ const ALERT_EMPLOYEE_FEEDBACK_ADDED = gql`
   }
 `;
 
-const SKILLS_BY_ORGANISATION_ID = gql`
-  query skillsByOrganisationId($id: ID){
-    skillsByOrganisationId(organisationId: $id) {
-      id,
-      shortName
-      displayAtOverview
-    }
-  }
-`;
-
 class AlertViewEmployeeFeedback extends Component {
 
   filterAndSortByFeedback(employeeFeedback, filterAndOrder) {
@@ -66,135 +63,122 @@ class AlertViewEmployeeFeedback extends Component {
 
   render() {
     return (
-        <Query query={SKILLS_BY_ORGANISATION_ID}
-               variables={{id: this.props.alert.organisation.id}}>
+        <React.Fragment>
+          <Query fetchPolicy="no-cache" query={ALERT_WITH_EMPLOYEE_BY_ID}
+                 variables={{id: this.props.alert.id}}>
+            {({loading, error, data, refetch}) => {
+              if (loading || error || !data.alertById) {
+                return <p></p>;
+              }
 
-          {({loading, error, data}) => {
-            if (loading || error || !data || !data.skillsByOrganisationId) {
-              return <p></p>;
-            }
+              let alertData = data;
+              let hasEmployeeThatAreLater = this.filterAndSortByFeedback(
+                  alertData.alertById.employeeFeedback, [
+                    EmployeeFeedbackStates.getLater()
+                  ]).length > 0
 
-            let skills = data.skillsByOrganisationId;
+              let skills = alertData.alertById.organisation.skills;
 
-            return (
+              return (
+                  <Subscription fetchPolicy="no-cache"
+                                subscription={ALERT_EMPLOYEE_FEEDBACK_ADDED}>
+                    {({loading, error, data}) => {
 
-                <React.Fragment>
-                  <Query fetchPolicy="no-cache" query={ALERT_WITH_EMPLOYEE_BY_ID}
-                         variables={{id: this.props.alert.id}}>
-                    {({loading, error, data, refetch}) => {
-                      if (loading || error || !data.alertById) {
-                        return <p></p>;
+                      let subscriptionData = data;
+                      if (subscriptionData
+                          && subscriptionData.employeeFeedbackAdded) {
+                        refetch();
                       }
 
-                      let alertData = data;
-                      let hasEmployeeThatAreLater = this.filterAndSortByFeedback(
-                          alertData.alertById.employeeFeedback, [
-                            EmployeeFeedbackStates.getLater()
-                          ]).length > 0
-
                       return (
-                          <Subscription fetchPolicy="no-cache"
-                                        subscription={ALERT_EMPLOYEE_FEEDBACK_ADDED}>
-                            {({loading, error, data}) => {
+                          <AlertViewBox>
+                            <Container fluid="true"
+                                       className={"d-flex flex-column h-100"}>
 
-                              let subscriptionData = data;
-                              if(subscriptionData && subscriptionData.employeeFeedbackAdded){
-                                refetch();
+                              <EmployeeFeedbackAggregated
+                                  icon={["far", "check-circle"]}
+                                  badgeVariant="success"
+                                  skills={skills}
+                                  employeeFeedback={
+                                    this.filterAndSortByFeedback(
+                                        alertData.alertById.employeeFeedback,
+                                        [
+                                          EmployeeFeedbackStates.getCommit()
+                                        ])
+                                  }
+                              />
+
+                              <EmployeeFeedbackAsList
+                                  employeeFeedback={
+                                    this.filterAndSortByFeedback(
+                                        alertData.alertById.employeeFeedback,
+                                        [
+                                          EmployeeFeedbackStates.getCommit()
+                                        ])
+                                  }
+                              />
+
+                              <Row>
+                                <Col>
+                                  <hr/>
+                                </Col>
+                              </Row>
+
+
+                              {hasEmployeeThatAreLater &&
+                              <EmployeeFeedbackAggregated
+                                  icon={["far", "clock"]}
+                                  badgeVariant="info"
+                                  skills={skills}
+                                  employeeFeedback={
+                                    this.filterAndSortByFeedback(
+                                        alertData.alertById.employeeFeedback,
+                                        [
+                                          EmployeeFeedbackStates.getLater()
+                                        ])
+                                  }
+                              />}
+
+                              {hasEmployeeThatAreLater &&
+                              <EmployeeFeedbackAsList
+                                  employeeFeedback={
+                                    this.filterAndSortByFeedback(
+                                        alertData.alertById.employeeFeedback,
+                                        [
+                                          EmployeeFeedbackStates.getLater()
+                                        ])
+                                  }
+                              />}
+
+                              {hasEmployeeThatAreLater &&
+                              <Row>
+                                <Col>
+                                  <hr/>
+                                </Col>
+                              </Row>
                               }
 
-                              return (
-                                  <AlertViewBox>
-                                    <Container fluid="true"
-                                               className={"d-flex flex-column h-100"}>
+                              <EmployeeFeedbackAsBadges
+                                  employeeFeedback={
+                                    this.filterAndSortByFeedback(
+                                        alertData.alertById.employeeFeedback,
+                                        [
+                                          EmployeeFeedbackStates.getNoResponse(),
+                                          EmployeeFeedbackStates.getCancel()
+                                        ])
+                                  }
+                              />
 
-                                      <EmployeeFeedbackAggregated
-                                          icon={["far", "check-circle"]}
-                                          badgeVariant="success"
-                                          skills={skills}
-                                          employeeFeedback={
-                                            this.filterAndSortByFeedback(
-                                                alertData.alertById.employeeFeedback,
-                                                [
-                                                  EmployeeFeedbackStates.getCommit()
-                                                ])
-                                          }
-                                      />
-
-                                      <EmployeeFeedbackAsList
-                                          employeeFeedback={
-                                            this.filterAndSortByFeedback(
-                                                alertData.alertById.employeeFeedback,
-                                                [
-                                                  EmployeeFeedbackStates.getCommit()
-                                                ])
-                                          }
-                                      />
-
-                                      <Row>
-                                        <Col>
-                                          <hr/>
-                                        </Col>
-                                      </Row>
-
-
-                                      {hasEmployeeThatAreLater &&
-                                      <EmployeeFeedbackAggregated
-                                          icon={["far", "clock"]}
-                                          badgeVariant="info"
-                                          skills={skills}
-                                          employeeFeedback={
-                                            this.filterAndSortByFeedback(
-                                                alertData.alertById.employeeFeedback,
-                                                [
-                                                  EmployeeFeedbackStates.getLater()
-                                                ])
-                                          }
-                                      />}
-
-                                      {hasEmployeeThatAreLater &&
-                                      <EmployeeFeedbackAsList
-                                          employeeFeedback={
-                                            this.filterAndSortByFeedback(
-                                                alertData.alertById.employeeFeedback,
-                                                [
-                                                  EmployeeFeedbackStates.getLater()
-                                                ])
-                                          }
-                                      />}
-
-                                      {hasEmployeeThatAreLater &&
-                                      <Row>
-                                        <Col>
-                                          <hr/>
-                                        </Col>
-                                      </Row>
-                                      }
-
-                                      <EmployeeFeedbackAsBadges
-                                          employeeFeedback={
-                                            this.filterAndSortByFeedback(
-                                                alertData.alertById.employeeFeedback,
-                                                [
-                                                  EmployeeFeedbackStates.getNoResponse(),
-                                                  EmployeeFeedbackStates.getCancel()
-                                                ])
-                                          }
-                                      />
-
-                                    </Container>
-                                  </AlertViewBox>
-                              );
-                            }}
-                          </Subscription>
-                      )
+                            </Container>
+                          </AlertViewBox>
+                      );
                     }}
-                  </Query>
-                </React.Fragment>
-            )
-
-          }}
-        </Query>);
-    ;
+                  </Subscription>
+              )
+            }}
+          </Query>
+        </React.Fragment>
+    )
   }
 }
 
