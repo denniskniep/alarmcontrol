@@ -2,7 +2,7 @@ package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
-import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackForAlertAddedPublisher;
+import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackAddedPublisher;
 import com.alarmcontrol.server.data.models.AlertCall;
 import com.alarmcontrol.server.data.models.AlertCallEmployee;
 import com.alarmcontrol.server.data.models.AlertNumber;
@@ -32,7 +32,7 @@ public class RootMutation implements GraphQLMutationResolver {
   private EmployeeRepository employeeRepository;
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
-  private EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher;
+  private EmployeeFeedbackAddedPublisher employeeFeedbackForAlertAddedPublisher;
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
@@ -42,7 +42,7 @@ public class RootMutation implements GraphQLMutationResolver {
       EmployeeRepository employeeRepository,
       SkillRepository skillRepository,
       EmployeeSkillRepository employeeSkillRepository,
-      EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher,
+      EmployeeFeedbackAddedPublisher employeeFeedbackForAlertAddedPublisher,
       AlertNumberRepository alertNumberRepository,
       AlertCallRepository alertCallRepository,
       AlertCallEmployeeRepository alertCallEmployeeRepository) {
@@ -97,8 +97,9 @@ public class RootMutation implements GraphQLMutationResolver {
 
     alertCallEmployeeRepository.save(alertCallEmployee);
 
-    employeeFeedbackForAlertAddedPublisher
-        .emitEmployeeFeedbackForAlertAdded(alertCallEmployee.getAlertCallId(), alertCallEmployee.getEmployeeId());
+    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(foundAlertCall.get().getAlertId(),
+        alertCallEmployee.getAlertCallId(),
+        alertCallEmployee.getEmployeeId());
 
     return new EmployeeFeedback(alertCallEmployee.getEmployeeId(),
         alertCallEmployee.getFeedback(),

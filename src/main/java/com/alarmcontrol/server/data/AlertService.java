@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.data;
 
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
+import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertCall;
 import com.alarmcontrol.server.data.models.AlertNumber;
@@ -31,6 +32,7 @@ public class AlertService {
   private GraphhopperRoutingService routingService;
   private OrganisationRepository organisationRepository;
   private AlertAddedPublisher alertAddedPublisher;
+  private AlertChangedPublisher alertChangedPublisher;
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
 
@@ -39,6 +41,7 @@ public class AlertService {
       GraphhopperRoutingService routingService,
       OrganisationRepository organisationRepository,
       AlertAddedPublisher alertAddedPublisher,
+      AlertChangedPublisher alertChangedPublisher,
       AlertNumberRepository alertNumberRepository,
       AlertCallRepository alertCallRepository) {
     this.alertRepository = alertRepository;
@@ -46,6 +49,7 @@ public class AlertService {
     this.routingService = routingService;
     this.organisationRepository = organisationRepository;
     this.alertAddedPublisher = alertAddedPublisher;
+    this.alertChangedPublisher = alertChangedPublisher;
     this.alertNumberRepository = alertNumberRepository;
     this.alertCallRepository = alertCallRepository;
   }
@@ -85,16 +89,23 @@ public class AlertService {
 
     List<Alert> existingAlerts = alertRepository
         .findByOrganisationIdAndReferenceId(organisationId, referenceId);
-    Alert alert = null;
+    Alert alert;
+    boolean alertCreated = false;
+
     if(existingAlerts.size() == 0){
       alert = createAlert(organisationId, referenceId, keyword, dateTime, address);
+      alertCreated = true;
     }else{
       alert = existingAlerts.get(0);
     }
 
     AlertCall alertCall = createAlertCall(alertNumber, alert, referenceCallId, dateTime);
 
-    alertAddedPublisher.emitAlertAdded(alert.getId());
+    if(alertCreated){
+      alertAddedPublisher.emitAlertAdded(alert.getId());
+    }else {
+      alertChangedPublisher.emitAlertChanged(alert.getId());
+    }
     return alertCall;
   }
 

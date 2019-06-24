@@ -30,9 +30,10 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
 `;
 
 const ALERT_EMPLOYEE_FEEDBACK_ADDED = gql`
-  subscription employeeFeedbackForAlertAdded{
-    employeeFeedbackForAlertAdded {
+  subscription employeeFeedbackAdded{
+    employeeFeedbackAdded {
       alertId
+      alertCallId
       employeeId
     }
   }
