@@ -1,6 +1,5 @@
-package com.alarmcontrol.server.data.graphql.alert;
+package com.alarmcontrol.server.data.graphql.employeeFeedback.publisher;
 
-import com.alarmcontrol.server.data.graphql.models.EmployeeFeedbackForAlertAdded;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;

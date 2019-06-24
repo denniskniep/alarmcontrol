@@ -151,7 +151,7 @@ mutation {
 ```
 mutation { 
   setEmployeeFeedbackForAlert(
-    alertId: 1
+    alertCallId: 1
     employeeId: 1
     feedback: COMMIT) {
     feedback
@@ -162,7 +162,7 @@ mutation {
 ```
 mutation { 
   setEmployeeFeedbackForAlert(
-    alertId: 1
+    alertCallId: 1
     employeeId: 2
     feedback: CANCEL) {
     feedback

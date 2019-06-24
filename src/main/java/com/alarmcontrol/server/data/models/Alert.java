@@ -18,8 +18,7 @@ public class Alert {
 
   private Long organisationId;
 
-  @Column(columnDefinition="clob")
-  private String raw;
+  private String referenceId;
 
   private boolean active;
 
@@ -29,8 +28,6 @@ public class Alert {
   Date dateTime;
 
   private String description;
-
-  private String addressType;
 
   private String address;
 
@@ -55,12 +52,11 @@ public class Alert {
   protected Alert() {}
 
   public Alert(Long organisationId,
-      String raw,
+      String referenceId,
       boolean active,
       String keyword,
       Date dateTime,
       String description,
-      String addressType,
       String address,
       String addressInfo1,
       String addressInfo2,
@@ -71,12 +67,11 @@ public class Alert {
       Double distance,
       Integer duration) {
     this.organisationId = organisationId;
-    this.raw = raw;
+    this.referenceId = referenceId;
     this.active = active;
     this.keyword = keyword;
     this.dateTime = dateTime;
     this.description = description;
-    this.addressType = addressType;
     this.address = address;
     this.addressInfo1 = addressInfo1;
     this.addressInfo2 = addressInfo2;
@@ -96,8 +91,8 @@ public class Alert {
     return organisationId;
   }
 
-  public String getRaw() {
-    return raw;
+  public String getReferenceId() {
+    return referenceId;
   }
 
   public boolean isActive() {
@@ -114,10 +109,6 @@ public class Alert {
 
   public String getDescription() {
     return description;
-  }
-
-  public String getAddressType() {
-    return addressType;
   }
 
   public String getAddress() {

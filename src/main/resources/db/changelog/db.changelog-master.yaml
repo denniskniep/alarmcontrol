@@ -4,6 +4,27 @@ databaseChangeLog:
       author: dkniep
       changes:
         - createTable:
+            tableName: organisation
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_lat
+                  type: nvarchar(30)
+              - column:
+                  name: address_lng
+                  type: nvarchar(30)
+        - createTable:
             tableName: alert
             columns:
               - column:
@@ -19,8 +40,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: raw
-                  type: clob
+                  name: reference_id
+                  type: nvarchar(255)
               - column:
                   name: active
                   type: boolean
@@ -32,9 +53,6 @@ databaseChangeLog:
                   type: datetime
               - column:
                   name: description
-                  type: nvarchar(255)
-              - column:
-                  name: address_type
                   type: nvarchar(255)
               - column:
                   name: address
@@ -63,31 +81,17 @@ databaseChangeLog:
               - column:
                   name: duration
                   type: int
-        - createTable:
-            tableName: organisation
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: nvarchar(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: address_lat
-                  type: nvarchar(30)
-              - column:
-                  name: address_lng
-                  type: nvarchar(30)
-  - changeSet:
-      id: 2
-      author: dkniep
-      changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_alert-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: alert
+            baseColumnNames: organisation_id
+        - addUniqueConstraint:
+            tableName: alert
+            columnNames: organisation_id, reference_id
+            constraintName: uk_alert-organisation_id-reference_id
+
         - createTable:
             tableName: employee
             columns:
@@ -113,6 +117,16 @@ databaseChangeLog:
                   type: nvarchar(255)
                   constraints:
                     nullable: false
+              - column:
+                  name: reference_id
+                  type: nvarchar(255)
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_employee-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: employee
+            baseColumnNames: organisation_id
+
         - createTable:
             tableName: skill
             columns:
@@ -143,6 +157,13 @@ databaseChangeLog:
                   type: boolean
                   constraints:
                     nullable: false
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id_skill-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: skill
+            baseColumnNames: organisation_id
+
         - createTable:
             tableName: employee_skill
             columns:
@@ -163,8 +184,103 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+        - addForeignKeyConstraint:
+            constraintName: fk_skill-id-employee_skill-skill_id
+            referencedTableName: skill
+            referencedColumnNames: id
+            baseTableName: employee_skill
+            baseColumnNames: skill_id
+        - addForeignKeyConstraint:
+            constraintName: fk_employee-id-employee_skill-employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+            baseTableName: employee_skill
+            baseColumnNames: employee_id
+        - addUniqueConstraint:
+            tableName: employee_skill
+            columnNames: employee_id, skill_id
+            constraintName: uk_employee_skill-employee_id-skill_id
+
         - createTable:
-            tableName: alert_employee
+            tableName: alert_number
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisation_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: number
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: nvarchar(255)
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id-alert_number-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: alert_number
+            baseColumnNames: organisation_id
+
+        - createTable:
+            tableName: alert_call
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: alert_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: alert_number_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reference_id
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: raw
+                  type: clob
+              - column:
+                  name: date_time
+                  type: datetime
+        - addForeignKeyConstraint:
+            constraintName: fk_alert-id-alert_call-alert_id
+            referencedTableName: alert
+            referencedColumnNames: id
+            baseTableName: alert_call
+            baseColumnNames: alert_id
+        - addForeignKeyConstraint:
+            constraintName: fk_alert_number-id-alert_call-alert_number_id
+            referencedTableName: alert_number
+            referencedColumnNames: id
+            baseTableName: alert_call
+            baseColumnNames: alert_number_id
+        - addUniqueConstraint:
+            tableName: alert_call
+            columnNames: alert_id, reference_id
+            constraintName: uk_alert_call-alert_id-reference_id
+
+        - createTable:
+            tableName: alert_call_employee
             columns:
               - column:
                   name: id
@@ -179,8 +295,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: alert_id
+                  name: alert_call_id
                   type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: raw
+                  type: clob
                   constraints:
                     nullable: false
               - column:
@@ -194,52 +315,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            constraintName: fk_organisation-id_alert-organisation_id
-            referencedTableName: organisation
-            referencedColumnNames: id
-            baseTableName: alert
-            baseColumnNames: organisation_id
-        - addForeignKeyConstraint:
-            constraintName: fk_organisation-id_employee-organisation_id
-            referencedTableName: organisation
-            referencedColumnNames: id
-            baseTableName: employee
-            baseColumnNames: organisation_id
-        - addForeignKeyConstraint:
-            constraintName: fk_employee-id-alert_employee-employee_id
+            constraintName: fk_employee-id-alert_call_employee-employee_id
             referencedTableName: employee
             referencedColumnNames: id
-            baseTableName: alert_employee
+            baseTableName: alert_call_employee
             baseColumnNames: employee_id
         - addForeignKeyConstraint:
-            constraintName: fk_alert-id-alert_employee-alert_id
+            constraintName: fk_alert-id-alert_call_employee-alert_id
             referencedTableName: alert
             referencedColumnNames: id
-            baseTableName: alert_employee
-            baseColumnNames: alert_id
-        - addUniqueConstraint:
-            tableName: alert_employee
-            columnNames: employee_id, alert_id
-            constraintName: uk_alert_employee-employee_id-alert_id
-        - addForeignKeyConstraint:
-            constraintName: fk_organisation-id_skill-organisation_id
-            referencedTableName: organisation
-            referencedColumnNames: id
-            baseTableName: skill
-            baseColumnNames: organisation_id
-        - addForeignKeyConstraint:
-            constraintName: fk_employee-id-employee_skill-employee_id
-            referencedTableName: employee
-            referencedColumnNames: id
-            baseTableName: employee_skill
-            baseColumnNames: employee_id
-        - addForeignKeyConstraint:
-            constraintName: fk_skill-id-employee_skill-skill_id
-            referencedTableName: skill
-            referencedColumnNames: id
-            baseTableName: employee_skill
-            baseColumnNames: skill_id
-        - addUniqueConstraint:
-            tableName: employee_skill
-            columnNames: employee_id, skill_id
-            constraintName: uk_employee_skill-employee_id-skill_id
+            baseTableName: alert_call_employee
+            baseColumnNames: alert_call_id

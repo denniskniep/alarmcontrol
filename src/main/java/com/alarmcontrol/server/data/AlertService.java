@@ -1,20 +1,10 @@
 package com.alarmcontrol.server.data;
 
-import com.alarmcontrol.server.data.graphql.alert.AlertAddedPublisher;
-import com.alarmcontrol.server.data.models.AddressTypes;
-import com.alarmcontrol.server.data.models.Alert;
-import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
-import com.alarmcontrol.server.maps.Coordinate;
-import com.alarmcontrol.server.maps.GeocodingResult;
-import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.graphhopper.routing.GraphhopperRoutingService;
 import com.alarmcontrol.server.maps.mapbox.geocoding.MapboxGeocodingService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,7 +27,7 @@ public class AlertService {
     this.organisationRepository = organisationRepository;
     this.alertAddedPublisher = alertAddedPublisher;
   }
-
+/*
   public Alert create(Long organisationId,
       String keyword,
       Date dateTime,
@@ -59,7 +49,6 @@ public class AlertService {
         keyword,
         dateTime,
         description,
-        AddressTypes.STREET,
         address,
         geocodedAddress.getAddressInfo1(),
         geocodedAddress.getAddressInfo2(),
@@ -85,5 +74,5 @@ public class AlertService {
     String orgLat = organisation.getAddressLat();
     String orgLng = organisation.getAddressLng();
     return new Coordinate(orgLat, orgLng);
-  }
+  }*/
 }

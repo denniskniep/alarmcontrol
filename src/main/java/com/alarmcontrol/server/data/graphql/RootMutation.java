@@ -1,20 +1,16 @@
 package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
-import com.alarmcontrol.server.data.graphql.alert.EmployeeFeedbackForAlertAddedPublisher;
-import com.alarmcontrol.server.data.models.Alert;
-import com.alarmcontrol.server.data.models.AlertEmployee;
+import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackForAlertAddedPublisher;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.models.Organisation;
 import com.alarmcontrol.server.data.models.Skill;
-import com.alarmcontrol.server.data.repositories.AlertEmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.data.repositories.SkillRepository;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -25,7 +21,6 @@ public class RootMutation implements GraphQLMutationResolver {
   private AlertService alertService;
   private OrganisationRepository organisationRepository;
   private EmployeeRepository employeeRepository;
-  private AlertEmployeeRepository alertEmployeeRepository;
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
   private EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher;
@@ -33,29 +28,28 @@ public class RootMutation implements GraphQLMutationResolver {
   public RootMutation(AlertService alertService,
       OrganisationRepository organisationRepository,
       EmployeeRepository employeeRepository,
-      AlertEmployeeRepository alertEmployeeRepository,
       SkillRepository skillRepository,
       EmployeeSkillRepository employeeSkillRepository,
       EmployeeFeedbackForAlertAddedPublisher employeeFeedbackForAlertAddedPublisher) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
     this.employeeRepository = employeeRepository;
-    this.alertEmployeeRepository = alertEmployeeRepository;
     this.skillRepository = skillRepository;
     this.employeeSkillRepository = employeeSkillRepository;
     this.employeeFeedbackForAlertAddedPublisher = employeeFeedbackForAlertAddedPublisher;
   }
-
+/*
   public Alert newAlert(Long organisationId,
       String keyword,
       Date dateTime,
       String description,
       String address) {
     return alertService.create(organisationId, keyword, dateTime, description, address);
-  }
+  }*/
 
-  public AlertEmployee setEmployeeFeedbackForAlert(Long employeeId, Long alertId, AlertEmployee.Feedback feedback) {
-    List<AlertEmployee> existingFeedback = alertEmployeeRepository
+/*
+  public AlertCallEmployee setEmployeeFeedbackForAlert(Long employeeId, Long alertId, AlertCallEmployee.Feedback feedback) {
+    List<AlertCallEmployee> existingFeedback = alertEmployeeRepository
         .findByAlertIdAndEmployeeId(alertId, employeeId);
 
     if(existingFeedback.size() > 1){
@@ -63,21 +57,23 @@ public class RootMutation implements GraphQLMutationResolver {
           +existingFeedback.size()+ " were found");
     }
 
-    AlertEmployee alertEmployee;
+    AlertCallEmployee alertCallEmployee;
     if(existingFeedback.size() == 1){
-      alertEmployee = existingFeedback.get(0);
+      alertCallEmployee = existingFeedback.get(0);
     }else{
-      alertEmployee = new AlertEmployee(employeeId, alertId, feedback, new Date());
+      alertCallEmployee = new AlertCallEmployee(employeeId, alertId, feedback, "", new Date());
     }
-    alertEmployee.setFeedback(feedback);
-    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(alertEmployee.getAlertId(), alertEmployee.getEmployeeId());
-    return alertEmployeeRepository.save(alertEmployee);
-  }
+    alertCallEmployee.setFeedback(feedback);
+    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(alertCallEmployee.getAlertCallId(), alertCallEmployee
+        .getEmployeeId());
+    return alertEmployeeRepository.save(alertCallEmployee);
+  }*/
 
   public Employee newEmployee(Long organisationId,
       String firstname,
-      String lastname) {
-    Employee employee = new Employee(organisationId, firstname, lastname);
+      String lastname,
+      String referenceId) {
+    Employee employee = new Employee(organisationId, firstname, lastname, referenceId);
     return employeeRepository.save(employee);
   }
 
@@ -98,7 +94,8 @@ public class RootMutation implements GraphQLMutationResolver {
 
   public Employee editEmployee(Long id,
       String firstname,
-      String lastname) {
+      String lastname,
+      String referenceId) {
 
     Optional<Employee> employeeById = employeeRepository.findById(id);
     if(!employeeById.isPresent()){
@@ -108,6 +105,7 @@ public class RootMutation implements GraphQLMutationResolver {
     Employee employee = employeeById.get();
     employee.setFirstname(firstname);
     employee.setLastname(lastname);
+    employee.setReferenceId(referenceId);
 
     employeeRepository.save(employee);
     return employee;

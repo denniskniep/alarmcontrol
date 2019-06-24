@@ -1,9 +1,10 @@
 package com.alarmcontrol.server.data.graphql.alert;
 
+import com.alarmcontrol.server.data.AlertEmployeeService;
+import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
 import com.alarmcontrol.server.data.models.Alert;
-import com.alarmcontrol.server.data.models.AlertEmployee;
-import com.alarmcontrol.server.data.models.AlertEmployee.Feedback;
-import com.alarmcontrol.server.data.repositories.AlertEmployeeRepository;
+import com.alarmcontrol.server.data.models.AlertCallEmployee;
+import com.alarmcontrol.server.data.models.Feedback;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import java.util.ArrayList;
@@ -14,32 +15,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeFeedbackFieldAtAlertResolver implements GraphQLResolver<Alert> {
 
-  private AlertEmployeeRepository alertEmployeeRepository;
+  private AlertEmployeeService alertEmployeeService;
   private EmployeeRepository employeeRepository;
 
-  public EmployeeFeedbackFieldAtAlertResolver(AlertEmployeeRepository alertEmployeeRepository,
+  public EmployeeFeedbackFieldAtAlertResolver(AlertEmployeeService alertEmployeeService,
       EmployeeRepository employeeRepository) {
-    this.alertEmployeeRepository = alertEmployeeRepository;
+    this.alertEmployeeService = alertEmployeeService;
     this.employeeRepository = employeeRepository;
   }
 
-  public List<AlertEmployee> employeeFeedback(Alert alert) {
-    List<AlertEmployee> existingResponses = alertEmployeeRepository.findByAlertId(alert.getId());
+  public List<EmployeeFeedback> employeeFeedback(Alert alert) {
+    List<AlertCallEmployee> existingResponses = alertEmployeeService.findByAlertId(alert.getId());
 
-    List<AlertEmployee> allEmployeesWithoutExistingResponses = employeeRepository
+    List<EmployeeFeedback> allEmployeesWithoutExistingResponses = employeeRepository
         .findByOrganisationId(alert.getOrganisationId())
         .stream()
-        .map(e -> new AlertEmployee(e.getId(), alert.getId(), Feedback.NO_RESPONSE, null))
-        .filter(e-> !existsIn(existingResponses, e.getEmployeeId()))
+        .map(e -> new EmployeeFeedback(e.getId(), Feedback.NO_RESPONSE, null))
+        .filter(e -> !existsIn(existingResponses, e.getEmployeeId()))
         .collect(Collectors.toList());
 
-    List<AlertEmployee> responses = new ArrayList<>();
+    List<EmployeeFeedback> responses = new ArrayList<>();
     responses.addAll(allEmployeesWithoutExistingResponses);
-    responses.addAll(existingResponses);
+    responses.addAll(existingResponses
+        .stream()
+        .map(e -> new EmployeeFeedback(e.getEmployeeId(), e.getFeedback(), e.getDateTime()))
+        .collect(Collectors.toList()));
     return responses;
   }
 
-  private boolean existsIn(List<AlertEmployee> existingResponses, Long employeeId) {
-    return existingResponses.stream().anyMatch( e -> e.getEmployeeId().equals(employeeId));
+  private boolean existsIn(List<AlertCallEmployee> existingResponses, Long employeeId) {
+    return existingResponses.stream().anyMatch(e -> e.getEmployeeId().equals(employeeId));
   }
 }
