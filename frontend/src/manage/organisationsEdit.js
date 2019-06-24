@@ -26,7 +26,7 @@ class OrganisationsEdit extends Component {
                            }}
 
                            onStartEditMode={(row) => {
-                             history.push("/manage/organisation/" + row.id)
+                             history.push("/app/manage/organisation/" + row.id)
                              return true;
                            }}
 

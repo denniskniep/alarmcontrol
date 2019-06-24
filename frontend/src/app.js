@@ -50,10 +50,10 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
           <Menu/>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/alertview/:id" component={AlertView} />
-          <Route exact path="/manage/organisation" component={OrganisationsView} />
-          <Route exact path="/manage/organisation/:id" component={OrganisationView} />
+          <Route exact path="/app/" component={Home} />
+          <Route exact path="/app/alertview/:id" component={AlertView} />
+          <Route exact path="/app/manage/organisation" component={OrganisationsView} />
+          <Route exact path="/app/manage/organisation/:id" component={OrganisationView} />
       </Router>
     </ApolloProvider>
   );

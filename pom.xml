@@ -139,7 +139,7 @@
         <version>3.0.1</version>
         <executions>
           <execution>
-            <id>react-build-into-target</id>
+            <id>copy-react-build-into-static</id>
             <goals>
               <goal>copy-resources</goal>
             </goals>
@@ -156,7 +156,6 @@
           </execution>
         </executions>
       </plugin>
-
 
     </plugins>
   </build>
