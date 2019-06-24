@@ -1,16 +1,35 @@
 type Query {
   alertById(id: ID): Alert
   alertsByOrganisationId(organisationId: ID): [Alert]
+  alertsByOrganisationId(organisationId: ID, page: Int, size: Int): [Alert]
   skillsByOrganisationId(organisationId: ID): [Skill]
+  organisations : [Organisation]
+  organisationById(organisationId: ID): Organisation
 }
 
 type Mutation {
   newAlert(organisationId: ID, keyword: String, dateTime: DateTime, description: String, address: String): Alert
+
   newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
+  editOrganisation(id: ID, name: String, addressLat: String, addressLng: String): Organisation
+  deleteOrganisation(id: ID) : ID
+
   newSkill(organisationId: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
+  editSkill(id: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
+  deleteSkill(id: ID): ID
+
   newEmployee(organisationId: ID, firstname: String, lastname: String) : Employee
+  editEmployee(id: ID, firstname: String, lastname: String) : Employee
+  deleteEmployee(id: ID) : ID
+
   setEmployeeFeedbackForAlert(employeeId: ID, alertId:ID, feedback: EmployeeFeedback) : EmployeeFeedbackForAlert
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
+  deleteEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
+}
+
+type Subscription {
+    alertAdded: AlertAdded
+    employeeFeedbackForAlertAdded : EmployeeFeedbackForAlertAdded
 }
 
 type Alert {
@@ -31,11 +50,22 @@ type Alert {
   employeeFeedback: [EmployeeFeedbackForAlert]
 }
 
+type AlertAdded {
+  id: ID
+}
+
+type EmployeeFeedbackForAlertAdded {
+  alertId: ID
+  employeeId: ID
+}
+
 type Organisation {
   id: ID
   name: String
   addressLat: String
   addressLng: String
+  employees: [Employee]
+  skills: [Skill]
 }
 
 type EmployeeFeedbackForAlert {

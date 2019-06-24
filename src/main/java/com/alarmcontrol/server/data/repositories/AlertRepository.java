@@ -2,9 +2,11 @@ package com.alarmcontrol.server.data.repositories;
 
 import com.alarmcontrol.server.data.models.Alert;
 import java.util.List;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface AlertRepository extends CrudRepository<Alert, Long> {
+public interface AlertRepository extends PagingAndSortingRepository<Alert, Long> {
   List<Alert> findByOrganisationId(Long organisationId);
+  List<Alert> findByOrganisationId(Long organisationId, Pageable pageable);
 }
 

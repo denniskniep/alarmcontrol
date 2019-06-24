@@ -41,4 +41,16 @@ public class Organisation {
   public String getAddressLng() {
     return addressLng;
   }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setAddressLat(String addressLat) {
+    this.addressLat = addressLat;
+  }
+
+  public void setAddressLng(String addressLng) {
+    this.addressLng = addressLng;
+  }
 }

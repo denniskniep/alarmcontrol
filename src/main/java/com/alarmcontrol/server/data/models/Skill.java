@@ -48,4 +48,16 @@ public class Skill {
   public boolean isDisplayAtOverview() {
     return displayAtOverview;
   }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
+  }
+
+  public void setDisplayAtOverview(boolean displayAtOverview) {
+    this.displayAtOverview = displayAtOverview;
+  }
 }

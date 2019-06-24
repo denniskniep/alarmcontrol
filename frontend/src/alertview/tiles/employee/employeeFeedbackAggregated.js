@@ -43,7 +43,7 @@ class EmployeeFeedbackAggregated extends Component {
             let aggSkill = aggregatedSkills[skillId];
 
             return (
-                <Col className={"d-flex align-items-center"}>
+                <Col key={skillId} className={"d-flex align-items-center"}>
                   <h4>
                     <Badge variant={this.props.badgeVariant}>
                       <div>

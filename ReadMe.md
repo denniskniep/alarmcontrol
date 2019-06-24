@@ -5,6 +5,9 @@
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
 (register for a free account [here](https://graphhopper.com/dashboard/#/register) and generate your apikey) 
 
+* Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
+(register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
+
 Start react client inside the folder `frontend` with `npm run start`
 
 
@@ -192,7 +195,7 @@ The client is running by default at http://localhost:1234
 * **DB-Setup**: Spring Data JPA with Hibernate. Bootstrapped by Liquibase
 * **Data-API**: GraphQL
 * **Routing**: https://docs.graphhopper.com/
-* **Geocoding**: https://wiki.openstreetmap.org/wiki/Nominatim
+* **Geocoding**: https://wiki.openstreetmap.org/wiki/Nominatim or https://docs.mapbox.com/api/search/#geocoding
 
 ### Client
 * **Routing**: react-router
@@ -227,5 +230,15 @@ Later there could be dedicated permissions for each organisation
 What should be done if the Address can not be geocoded
 
 ## Known Problems
-### Geocoding house numbers
-Some villages does not provide house number accurate information for geocoding via Openstreetmap Nominatim  
+### Geocoding house numbers with Nominatim
+Some villages does not provide house number accurate information for geocoding via Openstreetmap Nominatim 
+
+**Workaround:**
+Use MapBox for geocoding
+
+
+### Apollo Subscription generates React warning
+`Can't perform a React state update on an unmounted component.`
+
+There is already an issue created in Apollo Repository
+https://github.com/apollographql/react-apollo/issues/2681
