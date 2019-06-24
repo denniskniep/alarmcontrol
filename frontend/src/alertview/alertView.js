@@ -1,4 +1,4 @@
-import {Query} from "react-apollo";
+import {Query, Subscription} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertViewLayout from "./alertViewLayout";
@@ -35,29 +35,57 @@ const ALERT_BY_ID = gql`
   }
 `;
 
+const ALERT_CHANGED = gql`
+  subscription alertChanged{
+    alertChanged {
+      id
+    }
+  }
+`;
+
 class AlertView extends Component {
+
+  handleSubscriptionData(options, refetch) {
+    if (options && options.subscriptionData && options.subscriptionData.data
+        && options.subscriptionData.data.alertChanged) {
+      let alertChanged = options.subscriptionData.data.alertChanged;
+      refetch();
+    }
+  }
+
   render() {
     return (
-
         <React.Fragment>
-          <AlertViewSwitcher />
+          <AlertViewSwitcher/>
           <Query query={ALERT_BY_ID}
+                 fetchPolicy="no-cache"
                  variables={{id: this.props.match.params.id}}>
-            {({loading, error, data}) => {
+            {({loading, error, data, refetch}) => {
+              let alertData = data;
               if (loading) {
                 return <p>Loading...</p>;
               }
               if (error) {
                 return <p>Error: ${error.message}</p>;
               }
-              if (!data.alertById) {
+              if (!alertData || !alertData.alertById) {
                 return <p>NO DATA</p>;
               }
 
-              return (<AlertViewLayout alert={data.alertById}/>);
+              return (
+                  <React.Fragment>
+                    <Subscription fetchPolicy="no-cache"
+                                  subscription={ALERT_CHANGED}
+                                  onSubscriptionData={
+                                    o => this.handleSubscriptionData(o,
+                                        refetch)}/>
+                    <AlertViewLayout alert={alertData.alertById}/>
+                  </React.Fragment>
+              );
             }}
           </Query>
-        </React.Fragment>);
+        </React.Fragment>
+    );
   }
 }
 
