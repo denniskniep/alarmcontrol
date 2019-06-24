@@ -29,6 +29,7 @@ const ALERT_BY_ID = gql`
           id
           number
           description
+          shortDescription
         }
       }
     }

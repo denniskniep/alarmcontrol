@@ -15,13 +15,13 @@ public class AlertNumberMutations implements GraphQLMutationResolver {
     this.alertNumberRepository = alertNumberRepository;
   }
 
-  public AlertNumber newAlertNumber(Long organisationId, String number, String description) {
-    AlertNumber alertNumber = new AlertNumber(organisationId, number, description);
+  public AlertNumber newAlertNumber(Long organisationId, String number, String description, String shortDescription) {
+    AlertNumber alertNumber = new AlertNumber(organisationId, number, description, shortDescription);
     alertNumberRepository.save(alertNumber);
     return alertNumber;
   }
 
-  public AlertNumber editAlertNumber(Long id, String number, String description) {
+  public AlertNumber editAlertNumber(Long id, String number, String description, String shortDescription) {
     Optional<AlertNumber> alertNumberById = alertNumberRepository.findById(id);
     if (!alertNumberById.isPresent()) {
       throw new RuntimeException("No AlertNumber found for id:" + id);
@@ -30,6 +30,7 @@ public class AlertNumberMutations implements GraphQLMutationResolver {
     AlertNumber alertNumber = alertNumberById.get();
     alertNumber.setNumber(number);
     alertNumber.setDescription(description);
+    alertNumber.setShortDescription(shortDescription);
 
     alertNumberRepository.save(alertNumber);
     return alertNumber;

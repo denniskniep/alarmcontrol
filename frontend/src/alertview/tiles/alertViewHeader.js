@@ -99,7 +99,7 @@ class AlertViewHeader extends Component {
                       return (
                           <Badge key={ac.id} className={"badgeSpace"}
                                  pill variant="info">
-                            {ac.alertNumber.number}
+                            {ac.alertNumber.shortDescription}
                           </Badge>
                       )
                     })

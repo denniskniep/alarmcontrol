@@ -10,23 +10,24 @@ const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
       alertNumbers {
         id
         number
-        description        
+        description
+        shortDescription
       }
     }
   }
 `;
 
 const NEW_ALERT_NUMBER = gql`
-    mutation newAlertNumber($organisationId: ID, $number: String, $description: String) {
-     newAlertNumber(organisationId: $organisationId, number: $number, description: $description) {
+    mutation newAlertNumber($organisationId: ID, $number: String, $description: String, $shortDescription: String) {
+     newAlertNumber(organisationId: $organisationId, number: $number, description: $description, shortDescription: $shortDescription) {
       id
     }
   }
 `;
 
 const EDIT_ALERT_NUMBER = gql`
-    mutation editAlertNumber($id: ID,  $number: String, $description: String) {
-     editAlertNumber(id: $id, number: $number, description: $description) {
+    mutation editAlertNumber($id: ID,  $number: String, $description: String, $shortDescription: String) {
+     editAlertNumber(id: $id, number: $number, description: $description, shortDescription: $shortDescription) {
       id
     }
   }
@@ -81,6 +82,7 @@ class AlertNumbersEditMutation extends Component {
                                           variables: {
                                             organisationId: this.props.id,
                                             number: newAlertNumber.number,
+                                            shortDescription: newAlertNumber.shortDescription,
                                             description: newAlertNumber.description
                                           }
                                         });
@@ -91,6 +93,7 @@ class AlertNumbersEditMutation extends Component {
                                           variables: {
                                             id: editedAlertNumber.id,
                                             number: editedAlertNumber.number,
+                                            shortDescription: editedAlertNumber.shortDescription,
                                             description: editedAlertNumber.description
                                           }
                                         });

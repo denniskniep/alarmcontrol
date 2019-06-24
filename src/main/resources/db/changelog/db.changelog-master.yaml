@@ -233,6 +233,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: short_description
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: description
                   type: nvarchar(255)
         - addForeignKeyConstraint:
@@ -345,3 +350,4 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: alert_call_employee
             baseColumnNames: alert_call_id
+

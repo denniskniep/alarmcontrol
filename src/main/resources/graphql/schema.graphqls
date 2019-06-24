@@ -19,8 +19,8 @@ type Mutation {
   editEmployee(id: ID, firstname: String, lastname: String, referenceId: String) : Employee
   deleteEmployee(id: ID) : ID
 
-  newAlertNumber(organisationId: ID, number: String, description: String) : AlertNumber
-  editAlertNumber(id: ID, number: String, description: String) : AlertNumber
+  newAlertNumber(organisationId: ID, number: String, description: String, shortDescription: String) : AlertNumber
+  editAlertNumber(id: ID, number: String, description: String, shortDescription: String) : AlertNumber
   deleteAlertNumber(id: ID) : ID
 
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
@@ -67,6 +67,7 @@ type AlertNumber {
   id: ID
   number: String
   description: String
+  shortDescription: String
 }
 
 type AlertAdded {

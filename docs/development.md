@@ -56,7 +56,54 @@ mutation {
   newAlertNumber (
     organisationId: 1
     number: "S4"
-    description: "Pager"
+    shortDescription: "Pager"
+    description: "Pager Meimbressen"
+  ){id}
+}
+```
+
+```
+mutation { 
+  newAlertNumber (
+    organisationId: 1
+    number: "S20"
+    shortDescription: "Pager (Volla.)"
+    description: "Vollalarm aller Pager"
+  ){id}
+}
+```
+
+
+```
+mutation { 
+  newAlertNumber (
+    organisationId: 1
+    number: "S54"
+    shortDescription: "Sirene"
+    description: "Sirene Meimbressen"
+  ){id}
+}
+```
+
+```
+mutation { 
+  newAlertNumber (
+    organisationId: 1
+    number: "S50"
+    shortDescription: "Sirene (Volla.)"
+    description: "Vollalarm aller Sirenen"
+  ){id}
+}
+```
+
+
+```
+mutation { 
+  newAlertNumber (
+    organisationId: 1
+    number: "S23"
+    shortDescription: "AGTs"
+    description: "Alle Atemschutzgeräteträger"
   ){id}
 }
 ```

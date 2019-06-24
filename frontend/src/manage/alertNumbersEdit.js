@@ -26,6 +26,10 @@ class AlertNumbersEdit extends Component {
                                  name: "Nummer"
                                },
                                {
+                                 key: "shortDescription",
+                                 name: "Kurzbeschreibung"
+                               },
+                               {
                                  key: "description",
                                  name: "Beschreibung"
                                }

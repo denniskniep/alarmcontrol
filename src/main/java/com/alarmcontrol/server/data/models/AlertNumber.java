@@ -18,13 +18,16 @@ public class AlertNumber {
 
   private String description;
 
+  private String shortDescription;
+
   protected AlertNumber() {
   }
 
-  public AlertNumber(Long organisationId, String number, String description) {
+  public AlertNumber(Long organisationId, String number, String description, String shortDescription) {
     this.organisationId = organisationId;
     this.number = number;
     this.description = description;
+    this.shortDescription = shortDescription;
   }
 
   public Long getId() {
@@ -49,5 +52,13 @@ public class AlertNumber {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getShortDescription() {
+    return shortDescription;
+  }
+
+  public void setShortDescription(String shortDescription) {
+    this.shortDescription = shortDescription;
   }
 }
