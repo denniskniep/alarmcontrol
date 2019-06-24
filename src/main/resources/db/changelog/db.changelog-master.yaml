@@ -340,8 +340,8 @@ databaseChangeLog:
             baseTableName: alert_call_employee
             baseColumnNames: employee_id
         - addForeignKeyConstraint:
-            constraintName: fk_alert-id-alert_call_employee-alert_id
-            referencedTableName: alert
+            constraintName: fk_alert_call-id-alert_call_employee-alert_call_id
+            referencedTableName: alert_call
             referencedColumnNames: id
             baseTableName: alert_call_employee
             baseColumnNames: alert_call_id

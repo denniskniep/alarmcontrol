@@ -98,7 +98,7 @@ class AlertViewEmployeeFeedback extends Component {
                             {({loading, error, data}) => {
 
                               let subscriptionData = data;
-                              if(subscriptionData && subscriptionData.employeeFeedbackForAlertAdded){
+                              if(subscriptionData && subscriptionData.employeeFeedbackAdded){
                                 refetch();
                               }
 

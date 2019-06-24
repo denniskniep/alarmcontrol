@@ -1,18 +1,15 @@
 package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.data.AlertService;
+import com.alarmcontrol.server.data.EmployeeFeedbackService;
 import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
-import com.alarmcontrol.server.data.graphql.employeeFeedback.publisher.EmployeeFeedbackAddedPublisher;
 import com.alarmcontrol.server.data.models.AlertCall;
-import com.alarmcontrol.server.data.models.AlertCallEmployee;
 import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.models.Feedback;
 import com.alarmcontrol.server.data.models.Organisation;
 import com.alarmcontrol.server.data.models.Skill;
-import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
-import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
@@ -32,29 +29,23 @@ public class RootMutation implements GraphQLMutationResolver {
   private EmployeeRepository employeeRepository;
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
-  private EmployeeFeedbackAddedPublisher employeeFeedbackForAlertAddedPublisher;
   private AlertNumberRepository alertNumberRepository;
-  private AlertCallRepository alertCallRepository;
-  private AlertCallEmployeeRepository alertCallEmployeeRepository;
+  private EmployeeFeedbackService employeeFeedbackService;
 
   public RootMutation(AlertService alertService,
       OrganisationRepository organisationRepository,
       EmployeeRepository employeeRepository,
       SkillRepository skillRepository,
       EmployeeSkillRepository employeeSkillRepository,
-      EmployeeFeedbackAddedPublisher employeeFeedbackForAlertAddedPublisher,
       AlertNumberRepository alertNumberRepository,
-      AlertCallRepository alertCallRepository,
-      AlertCallEmployeeRepository alertCallEmployeeRepository) {
+      EmployeeFeedbackService employeeFeedbackService) {
     this.alertService = alertService;
     this.organisationRepository = organisationRepository;
     this.employeeRepository = employeeRepository;
     this.skillRepository = skillRepository;
     this.employeeSkillRepository = employeeSkillRepository;
-    this.employeeFeedbackForAlertAddedPublisher = employeeFeedbackForAlertAddedPublisher;
     this.alertNumberRepository = alertNumberRepository;
-    this.alertCallRepository = alertCallRepository;
-    this.alertCallEmployeeRepository = alertCallEmployeeRepository;
+    this.employeeFeedbackService = employeeFeedbackService;
   }
 
   public AlertCall newAlertCall(Long organisationId,
@@ -68,42 +59,11 @@ public class RootMutation implements GraphQLMutationResolver {
         .create(organisationId, alertNumber, alertReferenceId, alertCallReferenceId, keyword, dateTime, address);
   }
 
-
   public EmployeeFeedback addEmployeeFeedback(Long organisationId,
       String alertCallReferenceId,
       String employeeReferenceId,
       Feedback feedback) {
-
-    Date dateTime = new Date();
-
-    Optional<AlertCall> foundAlertCall = alertCallRepository
-        .findByOrganisationIdAndReferenceId(organisationId, alertCallReferenceId);
-
-    if (foundAlertCall.isEmpty()) {
-      throw new IllegalArgumentException("No AlertCall found for referenceId '" + alertCallReferenceId + "'"
-          + " in organisationId '" + organisationId + "'");
-    }
-
-    Optional<Employee> foundEmployee = employeeRepository
-        .findByOrganisationIdAndReferenceId(organisationId, employeeReferenceId);
-
-    if (foundEmployee.isEmpty()) {
-      throw new IllegalArgumentException("No Employee found for referenceId '" + employeeReferenceId + "'"
-          + " in organisationId '" + organisationId + "'");
-    }
-
-    AlertCallEmployee alertCallEmployee = new AlertCallEmployee(foundEmployee.get().getId(),
-        foundAlertCall.get().getId(), feedback, "", dateTime);
-
-    alertCallEmployeeRepository.save(alertCallEmployee);
-
-    employeeFeedbackForAlertAddedPublisher.emitEmployeeFeedbackForAlertAdded(foundAlertCall.get().getAlertId(),
-        alertCallEmployee.getAlertCallId(),
-        alertCallEmployee.getEmployeeId());
-
-    return new EmployeeFeedback(alertCallEmployee.getEmployeeId(),
-        alertCallEmployee.getFeedback(),
-        alertCallEmployee.getDateTime());
+    return employeeFeedbackService.addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback);
   }
 
   public Employee newEmployee(Long organisationId,
