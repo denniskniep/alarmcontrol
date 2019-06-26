@@ -32,6 +32,10 @@ class EmployeesEdit extends Component {
                                  name: "Nachname"
                                },
                                {
+                                 key: "referenceId",
+                                 name: "Nummer"
+                               },
+                               {
                                  key: "skills",
                                  name: "Skills",
                                  viewer: TagViewer,

@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.data.models;
 
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class AlertEmployee {
+public class AlertCallEmployee {
 
   @Id
   @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -17,18 +18,22 @@ public class AlertEmployee {
 
   private Long employeeId;
 
-  private Long alertId;
+  private Long alertCallId;
+
+  @Column(columnDefinition="clob")
+  private String raw;
 
   private int feedback;
 
   @Temporal(TemporalType.TIMESTAMP)
   Date dateTime;
 
-  protected AlertEmployee() {}
+  protected AlertCallEmployee() {}
 
-  public AlertEmployee(Long employeeId, Long alertId, Feedback feedback, Date dateTime) {
+  public AlertCallEmployee(Long employeeId, Long alertCallId, Feedback feedback, String raw, Date dateTime) {
     this.employeeId = employeeId;
-    this.alertId = alertId;
+    this.alertCallId = alertCallId;
+    this.raw = raw;
     this.dateTime = dateTime;
     this.setFeedback(feedback);
   }
@@ -41,8 +46,8 @@ public class AlertEmployee {
     return employeeId;
   }
 
-  public Long getAlertId() {
-    return alertId;
+  public Long getAlertCallId() {
+    return alertCallId;
   }
 
   public Feedback getFeedback () {
@@ -53,27 +58,11 @@ public class AlertEmployee {
     this.feedback = feedback.getValue();
   }
 
-  public enum Feedback {
-    NO_RESPONSE(0),
-    COMMIT(1),
-    LATER(2),
-    CANCEL (3);
+  public String getRaw() {
+    return raw;
+  }
 
-    private int value;
-
-    Feedback(int value) { this.value = value; }
-
-    public int getValue() { return value; }
-
-    public static Feedback parse(int id) {
-      Feedback feedback = null;
-      for (Feedback item : Feedback.values()) {
-        if (item.getValue()==id) {
-          feedback = item;
-          break;
-        }
-      }
-      return feedback;
-    }
+  public Date getDateTime() {
+    return dateTime;
   }
 }

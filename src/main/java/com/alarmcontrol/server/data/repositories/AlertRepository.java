@@ -7,6 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface AlertRepository extends PagingAndSortingRepository<Alert, Long> {
   List<Alert> findByOrganisationId(Long organisationId);
+  List<Alert> findByOrganisationIdAndReferenceId(Long organisationId, String referenceId);
   List<Alert> findByOrganisationId(Long organisationId, Pageable pageable);
 }
 

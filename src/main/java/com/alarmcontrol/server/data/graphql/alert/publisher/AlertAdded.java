@@ -1,4 +1,4 @@
-package com.alarmcontrol.server.data.graphql.models;
+package com.alarmcontrol.server.data.graphql.alert.publisher;
 
 public class AlertAdded {
 

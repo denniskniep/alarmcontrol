@@ -2,14 +2,11 @@ type Query {
   alertById(id: ID): Alert
   alertsByOrganisationId(organisationId: ID): [Alert]
   alertsByOrganisationId(organisationId: ID, page: Int, size: Int): [Alert]
-  skillsByOrganisationId(organisationId: ID): [Skill]
   organisations : [Organisation]
   organisationById(organisationId: ID): Organisation
 }
 
 type Mutation {
-  newAlert(organisationId: ID, keyword: String, dateTime: DateTime, description: String, address: String): Alert
-
   newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
   editOrganisation(id: ID, name: String, addressLat: String, addressLng: String): Organisation
   deleteOrganisation(id: ID) : ID
@@ -18,25 +15,32 @@ type Mutation {
   editSkill(id: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
   deleteSkill(id: ID): ID
 
-  newEmployee(organisationId: ID, firstname: String, lastname: String) : Employee
-  editEmployee(id: ID, firstname: String, lastname: String) : Employee
+  newEmployee(organisationId: ID, firstname: String, lastname: String, referenceId: String) : Employee
+  editEmployee(id: ID, firstname: String, lastname: String, referenceId: String) : Employee
   deleteEmployee(id: ID) : ID
 
-  setEmployeeFeedbackForAlert(employeeId: ID, alertId:ID, feedback: EmployeeFeedback) : EmployeeFeedbackForAlert
+  newAlertNumber(organisationId: ID, number: String, description: String, shortDescription: String) : AlertNumber
+  editAlertNumber(id: ID, number: String, description: String, shortDescription: String) : AlertNumber
+  deleteAlertNumber(id: ID) : ID
+
   addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
   deleteEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
+
+  newAlertCall(organisationId: ID, alertNumber: String, alertReferenceId: String, alertCallReferenceId: String, keyword: String, dateTime: DateTime, address: String): AlertCall
+  addEmployeeFeedback(organisationId: ID, alertCallReferenceId: String, employeeReferenceId : String, feedback : Feedback) : EmployeeFeedback
 }
 
 type Subscription {
     alertAdded: AlertAdded
-    employeeFeedbackForAlertAdded : EmployeeFeedbackForAlertAdded
+    alertChanged: AlertChanged
+    employeeFeedbackAdded : EmployeeFeedbackAdded
 }
 
 type Alert {
   id: ID
-  keyword: String
   organisation: Organisation
-  raw: String
+  referenceId: String
+  keyword: String
   active: Boolean
   dateTime: DateTime
   description: String
@@ -47,15 +51,36 @@ type Alert {
   route: String,
   distance: Float,
   duration: Int,
-  employeeFeedback: [EmployeeFeedbackForAlert]
+  employeeFeedback: [EmployeeFeedback]
+  alertCalls: [AlertCall]
+}
+
+type AlertCall {
+  id: ID
+  referenceId: String
+  alertNumber: AlertNumber
+  dateTime: DateTime
+  alert : Alert
+}
+
+type AlertNumber {
+  id: ID
+  number: String
+  description: String
+  shortDescription: String
 }
 
 type AlertAdded {
   id: ID
 }
 
-type EmployeeFeedbackForAlertAdded {
+type AlertChanged {
+  id: ID
+}
+
+type EmployeeFeedbackAdded {
   alertId: ID
+  alertCallId: ID
   employeeId: ID
 }
 
@@ -66,15 +91,16 @@ type Organisation {
   addressLng: String
   employees: [Employee]
   skills: [Skill]
+  alertNumbers: [AlertNumber]
 }
 
-type EmployeeFeedbackForAlert {
+type EmployeeFeedback {
   employee: Employee
-  feedback: EmployeeFeedback
+  feedback: Feedback
   dateTime: DateTime
 }
 
-enum EmployeeFeedback {
+enum Feedback {
   NO_RESPONSE,
   COMMIT,
   LATER,
@@ -85,6 +111,7 @@ type Employee {
   id: ID
   firstname: String
   lastname: String
+  referenceId: String
   skills : [Skill]
 }
 

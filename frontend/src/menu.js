@@ -26,10 +26,10 @@ class Menu extends Component {
           <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
-              <NavLink className={"nav-link"} exact to="/">Home</NavLink>
+              <NavLink className={"nav-link"} exact to="/app/">Home</NavLink>
               <NavDropdown title="Manage">
                 <NavDropdown.Item
-                    href="/manage/organisation">Organisations</NavDropdown.Item>
+                    href="/app/manage/organisation">Organisations</NavDropdown.Item>
               </NavDropdown>
               <NavDropdown title="Last Alerts">
                 <Query query={ALERTS_BY_ORGANISATION}
@@ -42,7 +42,7 @@ class Menu extends Component {
 
                     return data.alertsByOrganisationId.map((alert, index) => {
                       return <NavDropdown.Item key={alert.id}
-                                               href={"/alertview/" + alert.id}>
+                                               href={"/app/alertview/" + alert.id}>
                         {
                           alert.keyword +
                           " - " +

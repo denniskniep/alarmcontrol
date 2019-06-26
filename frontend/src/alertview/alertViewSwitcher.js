@@ -16,7 +16,7 @@ class AlertViewSwitcher extends Component {
   handleSubscriptionData(options, history){
     if (options && options.subscriptionData && options.subscriptionData.data && options.subscriptionData.data.alertAdded) {
       let alertAdded = options.subscriptionData.data.alertAdded;
-      history.push("/alertview/" + alertAdded.id)
+      history.push("/app/alertview/" + alertAdded.id)
     }
   }
 

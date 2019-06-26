@@ -13,7 +13,8 @@ class AlertViewMapRoute extends Component {
   render() {
     return (
         <div className="alertViewOuterBox h-100">
-          <Map className={"alertViewBox"} viewport={{ zoom: 13}}>
+          <Map className={"alertViewBox"} viewport={{ zoom: 13, center:{lat:0, lng:0}}}>
+
 
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

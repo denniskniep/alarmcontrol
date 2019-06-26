@@ -11,6 +11,7 @@ const EMPLOYEES_BY_ORGANISATION_ID = gql`
         id
         firstname
         lastname
+        referenceId
         skills {
           id
           name
@@ -28,16 +29,16 @@ const EMPLOYEES_BY_ORGANISATION_ID = gql`
 `;
 
 const NEW_EMPLOYEE = gql`
-    mutation newEmployee($organisationId: ID, $firstname: String, $lastname: String) {
-     newEmployee(organisationId: $organisationId, firstname:  $firstname, lastname: $lastname) {
+    mutation newEmployee($organisationId: ID, $firstname: String, $lastname: String, $referenceId: String) {
+     newEmployee(organisationId: $organisationId, firstname:  $firstname, lastname: $lastname, referenceId: $referenceId) {
       id
     }
   }
 `;
 
 const EDIT_EMPLOYEE = gql`
-    mutation editEmployee($id: ID, $firstname: String, $lastname: String) {
-     editEmployee(id: $id, firstname:  $firstname, lastname: $lastname) {
+    mutation editEmployee($id: ID, $firstname: String, $lastname: String, $referenceId: String) {
+     editEmployee(id: $id, firstname:  $firstname, lastname: $lastname, referenceId: $referenceId) {
       id
     }
   }
@@ -72,7 +73,8 @@ class EmployeesEditMutation extends Component {
       variables: {
         organisationId: this.props.id,
         firstname: newEmployee.firstname,
-        lastname: newEmployee.lastname
+        lastname: newEmployee.lastname,
+        referenceId: newEmployee.referenceId
       }
     }).then((result) => {
       newEmployee.skills.forEach(
@@ -96,7 +98,8 @@ class EmployeesEditMutation extends Component {
       variables: {
         id: newEmployee.id,
         firstname: newEmployee.firstname,
-        lastname: newEmployee.lastname
+        lastname: newEmployee.lastname,
+        referenceId: newEmployee.referenceId
       }
     });
 
