@@ -1,12 +1,22 @@
 # Alarmcontrol
 
+## Getting Started
+Use docker-compose for testing (not for production)
+
+```
+sudo \
+DATABASE_NAME=alarmcontrol \
+DATABASE_USER=alarmcontrol \
+DATABASE_PASSWORD=xxx \
+GRAPHHOPPER_APIKEY=xxx \
+MAPBOX_ACCESS_TOKEN=xxx \
+docker-compose up --build
+```
+
 ## Development
 See [docs/development.md](docs/development.md)
 
 ## ToDos
-
-### Docker
-Dockerize it (Multistage)
 
 ### Security
 Activate Spring Security (CSRF + AuthN, AuthZ)

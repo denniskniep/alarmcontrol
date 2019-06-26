@@ -96,6 +96,10 @@ databaseChangeLog:
             tableName: alert
             columnNames: organisation_id, reference_id
             constraintName: uk_alert-organisation_id-reference_id
+        - addUniqueConstraint:
+            tableName: alert
+            columnNames: id, organisation_id
+            constraintName: uk_alert-id-organisation_id
 
         - createTable:
             tableName: employee
@@ -350,4 +354,3 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: alert_call_employee
             baseColumnNames: alert_call_id
-
