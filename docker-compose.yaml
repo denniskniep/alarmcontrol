@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+
+  alarmcontrol:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: alarmcontrol
+    ports:
+      - 8080:8080
+    volumes:
+      - ./scripts/wait-for.sh:/app/wait-for.sh:ro
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${DATABASE_NAME}"
+      SPRING_DATASOURCE_USERNAME: "${DATABASE_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${DATABASE_PASSWORD}"
+      SPRING_PROFILES_ACTIVE: postgres
+    command: ["/app/wait-for.sh", "postgres:5432", "--timeout=300", "--", "/app/docker-entrypoint.sh",
+              "-Xms1g", "-Xmx4g", "-Duser.timezone=UTC", "-jar", "/app/alarmcontrol-server.jar"]
+  postgres:
+    image: postgres:11.3
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+volumes:
+  database-data: {}
