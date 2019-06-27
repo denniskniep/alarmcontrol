@@ -45,8 +45,7 @@ class Menu extends Component {
                                                href={"/app/alertview/" + alert.id}>
                         {
                           alert.keyword +
-                          " - " +
-                          alert.addressInfo1 +
+                          (alert.addressInfo1 ? " - " + alert.addressInfo1 : "") +
                           " (" +
                           new PrettyPrinter().prettifyDateTimeLong(alert.dateTime) +
                           ")"
