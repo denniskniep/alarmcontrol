@@ -13,7 +13,7 @@ const ORGANISATIONS = gql`
 `;
 
 const NEW_ORGANISATION = gql`
-    mutation newOrganisation($name: String, $addressLat: String, $addressLng: String) {
+    mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!) {
      newOrganisation(name: $name, addressLat:  $addressLat, addressLng: $addressLng) {
       id
     }
@@ -21,7 +21,7 @@ const NEW_ORGANISATION = gql`
 `;
 
 const DELETE_ORGANISATION = gql`
-    mutation deleteOrganisation($id: ID) {
+    mutation deleteOrganisation($id: ID!) {
      deleteOrganisation(id: $id)
   }
 `;

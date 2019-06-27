@@ -4,7 +4,7 @@ import {gql} from "apollo-boost";
 import EmployeesEdit from "./employeesEdit";
 
 const EMPLOYEES_BY_ORGANISATION_ID = gql`
-  query organisationById($id: ID) {
+  query organisationById($id: ID!) {
     organisationById(organisationId: $id) {
       id
       employees {
@@ -29,7 +29,7 @@ const EMPLOYEES_BY_ORGANISATION_ID = gql`
 `;
 
 const NEW_EMPLOYEE = gql`
-    mutation newEmployee($organisationId: ID, $firstname: String, $lastname: String, $referenceId: String) {
+    mutation newEmployee($organisationId: ID!, $firstname: String!, $lastname: String!, $referenceId: String!) {
      newEmployee(organisationId: $organisationId, firstname:  $firstname, lastname: $lastname, referenceId: $referenceId) {
       id
     }
@@ -37,7 +37,7 @@ const NEW_EMPLOYEE = gql`
 `;
 
 const EDIT_EMPLOYEE = gql`
-    mutation editEmployee($id: ID, $firstname: String, $lastname: String, $referenceId: String) {
+    mutation editEmployee($id: ID!, $firstname: String!, $lastname: String!, $referenceId: String!) {
      editEmployee(id: $id, firstname:  $firstname, lastname: $lastname, referenceId: $referenceId) {
       id
     }
@@ -45,19 +45,19 @@ const EDIT_EMPLOYEE = gql`
 `;
 
 const DELETE_EMPLOYEE = gql`
-    mutation deleteEmployee($id: ID) {
+    mutation deleteEmployee($id: ID!) {
      deleteEmployee(id: $id) 
   }
 `;
 
 const ADD_EMPLOYEE_SKILL = gql`
-  mutation addEmployeeSkill($employeeId: ID, $skillId: ID) {
+  mutation addEmployeeSkill($employeeId: ID!, $skillId: ID!) {
      addEmployeeSkill(employeeId: $employeeId, skillId: $skillId)
   }
 `;
 
 const DELETE_EMPLOYEE_SKILL = gql`
-  mutation deleteEmployeeSkill($employeeId: ID, $skillId: ID) {
+  mutation deleteEmployeeSkill($employeeId: ID!, $skillId: ID!) {
      deleteEmployeeSkill(employeeId: $employeeId, skillId: $skillId)
   }
 `;

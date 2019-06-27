@@ -4,7 +4,7 @@ import {gql} from "apollo-boost";
 import SkillsEdit from "./skillsEdit";
 
 const SKILLS_BY_ORGANISATION_ID = gql`
-  query organisationById($id: ID) {
+  query organisationById($id: ID!) {
     organisationById(organisationId: $id) {
       id
       skills {
@@ -18,7 +18,7 @@ const SKILLS_BY_ORGANISATION_ID = gql`
 `;
 
 const NEW_SKILL = gql`
-    mutation newSkill($organisationId: ID, $name: String, $shortName: String, $displayAtOverview: Boolean) {
+    mutation newSkill($organisationId: ID!, $name: String!, $shortName: String!, $displayAtOverview: Boolean!) {
      newSkill(organisationId: $organisationId, name:  $name, shortName: $shortName, displayAtOverview: $displayAtOverview) {
       id
     }
@@ -26,7 +26,7 @@ const NEW_SKILL = gql`
 `;
 
 const EDIT_SKILL = gql`
-    mutation editSkill($id: ID, $name: String, $shortName: String, $displayAtOverview: Boolean) {
+    mutation editSkill($id: ID!, $name: String!, $shortName: String!, $displayAtOverview: Boolean!) {
      editSkill(id: $id, name:  $name, shortName: $shortName, displayAtOverview: $displayAtOverview) {
       id
     }
@@ -34,7 +34,7 @@ const EDIT_SKILL = gql`
 `;
 
 const DELETE_SKILL = gql`
-    mutation deleteSkill($id: ID) {
+    mutation deleteSkill($id: ID!) {
      deleteSkill(id: $id) 
   }
 `;

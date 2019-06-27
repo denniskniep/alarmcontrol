@@ -4,7 +4,7 @@ import {gql} from "apollo-boost";
 import AlertNumbersEdit from "./alertNumbersEdit";
 
 const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
-  query organisationById($id: ID) {
+  query organisationById($id: ID!) {
     organisationById(organisationId: $id) {
       id
       alertNumbers {
@@ -18,7 +18,7 @@ const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
 `;
 
 const NEW_ALERT_NUMBER = gql`
-    mutation newAlertNumber($organisationId: ID, $number: String, $description: String, $shortDescription: String) {
+    mutation newAlertNumber($organisationId: ID!, $number: String!, $description: String!, $shortDescription: String!) {
      newAlertNumber(organisationId: $organisationId, number: $number, description: $description, shortDescription: $shortDescription) {
       id
     }
@@ -26,7 +26,7 @@ const NEW_ALERT_NUMBER = gql`
 `;
 
 const EDIT_ALERT_NUMBER = gql`
-    mutation editAlertNumber($id: ID,  $number: String, $description: String, $shortDescription: String) {
+    mutation editAlertNumber($id: ID!,  $number: String!, $description: String!, $shortDescription: String!) {
      editAlertNumber(id: $id, number: $number, description: $description, shortDescription: $shortDescription) {
       id
     }
@@ -34,7 +34,7 @@ const EDIT_ALERT_NUMBER = gql`
 `;
 
 const DELETE_ALERT_NUMBER = gql`
-    mutation deleteAlertNumber($id: ID) {
+    mutation deleteAlertNumber($id: ID!) {
      deleteAlertNumber(id: $id) 
   }
 `;

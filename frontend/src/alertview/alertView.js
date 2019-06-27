@@ -5,7 +5,7 @@ import AlertViewLayout from "./alertViewLayout";
 import AlertViewSwitcher from "./alertViewSwitcher";
 
 const ALERT_BY_ID = gql`
-  query alertById($id: ID) {
+  query alertById($id: ID!) {
     alertById(id: $id) {
       id
       keyword

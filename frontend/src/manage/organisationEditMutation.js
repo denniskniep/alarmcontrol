@@ -4,7 +4,7 @@ import {gql} from "apollo-boost";
 import OrganisationEdit from "./organisationEdit";
 
 const ORGANISATION_BY_ID = gql`
-  query organisationById($id: ID) {
+  query organisationById($id: ID!) {
     organisationById(organisationId: $id) {
       id
       name
@@ -15,7 +15,7 @@ const ORGANISATION_BY_ID = gql`
 `;
 
 const UPDATE_ORGANISATION = gql`
-    mutation editOrganisation($id: ID, $name: String, $addressLat: String, $addressLng: String) {
+    mutation editOrganisation($id: ID!, $name: String!, $addressLat: String!, $addressLng: String!) {
      editOrganisation(id: $id, name: $name, addressLat: $addressLat, addressLng: $addressLng) {
       id
     }

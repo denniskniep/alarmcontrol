@@ -7,7 +7,7 @@ import {Query} from "react-apollo";
 import PrettyPrinter from "./utils/prettyPrinter";
 
 const ALERTS_BY_ORGANISATION = gql`
-  query alertsByOrganisationId($id: ID, $page: Int, $size: Int) {
+  query alertsByOrganisationId($id: ID!, $page: Int!, $size: Int!) {
     alertsByOrganisationId(organisationId: $id, page: $page, size: $size) {
       id,
       keyword,
