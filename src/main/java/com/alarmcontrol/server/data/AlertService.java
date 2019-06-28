@@ -98,8 +98,8 @@ public class AlertService {
     Optional<AlertNumber> foundAlertNumber = alertNumberRepository
         .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
     if (foundAlertNumber.isEmpty()) {
-      throw new IllegalArgumentException("No AlertNumber found for number '" + alertNumber + "'"
-          + " in organisationId '" + organisationId + "'");
+      logger.warn("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+      return null;
     }
 
     return create(foundAlertNumber.get(), alertReferenceId, alertCallReferenceId, keyword, dateTime, address,

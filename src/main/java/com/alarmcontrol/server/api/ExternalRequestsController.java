@@ -50,6 +50,10 @@ public class ExternalRequestsController {
         alertRequest.getDescription(),
         alertRequest.getRaw());
 
+    if(alertCall == null){
+      return ResponseEntity.ok("No AlertCall created!");
+    }
+
     return ResponseEntity.ok(alertCall.getId());
   }
 

@@ -36,6 +36,11 @@ public class AlertQueries implements GraphQLQueryResolver {
             .descending().and(
             Sort.by("id")
                 .descending()));
+
+    if(organisationId == null){
+      return alertRepository.findAll(sortedByDateDesc);
+    }
+
     return alertRepository.findByOrganisationId(organisationId, sortedByDateDesc);
   }
 }
