@@ -12,9 +12,7 @@ class AlertViewMapTarget extends Component {
   render() {
     return (
         <React.Fragment>
-          {
-            this.props.alert.route && this.props.alert.addressLat
-            && this.props.alert.addressLng &&
+          { this.props.alert.addressLat && this.props.alert.addressLng &&
             <div className="alertViewOuterBox h-100">
               <Map ref="map" className={"alertViewBox"}
                    viewport={{
@@ -26,7 +24,11 @@ class AlertViewMapTarget extends Component {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                 />
-                <Route route={this.props.alert.route}/>
+
+                { this.props.alert.route &&
+                  <Route route={this.props.alert.route}/>
+                }
+
                 <CircleMarker center={{
                   lat: this.props.alert.addressLat,
                   lng: this.props.alert.addressLng

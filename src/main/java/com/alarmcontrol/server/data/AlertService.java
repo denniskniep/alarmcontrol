@@ -161,18 +161,23 @@ public class AlertService {
     if (!StringUtils.isBlank(address)) {
       try {
         GeocodingResult geocodedAddress = geocodingService.geocode(address);
-        Coordinate orgCoordinate = getOrgCoordinate(organisationId);
-        Coordinate targetCoordinate = geocodedAddress.getCoordinate();
-        RoutingResult route = routingService.route(new ArrayList<>(Arrays.asList(orgCoordinate, targetCoordinate)));
-
         addressInfo1 = geocodedAddress.getAddressInfo1();
         addressInfo2 = geocodedAddress.getAddressInfo2();
         addressLat = geocodedAddress.getCoordinate().getLat();
         addressLng = geocodedAddress.getCoordinate().getLng();
         addressJson = geocodedAddress.getJson();
-        routeJson = route.getJson();
-        routeDistance = route.getDistance();
-        routeDuration = route.getDuration();
+
+        Coordinate orgCoordinate = getOrgCoordinate(organisationId);
+        if (orgCoordinate != null) {
+          Coordinate targetCoordinate = geocodedAddress.getCoordinate();
+          RoutingResult route = routingService.route(new ArrayList<>(Arrays.asList(orgCoordinate, targetCoordinate)));
+          routeJson = route.getJson();
+          routeDistance = route.getDistance();
+          routeDuration = route.getDuration();
+        }else {
+          logger.warn("Skipping routing due to lat or lng of organisation is blank!");
+        }
+
       } catch (Exception e) {
         logger.error("Error during geocoding and routing", e);
       }
@@ -208,6 +213,9 @@ public class AlertService {
     Organisation organisation = orgById.get();
     String orgLat = organisation.getAddressLat();
     String orgLng = organisation.getAddressLng();
+    if (StringUtils.isBlank(orgLat) || StringUtils.isBlank(orgLng)) {
+      return null;
+    }
     return new Coordinate(orgLat, orgLng);
   }
 

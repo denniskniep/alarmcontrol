@@ -2,6 +2,7 @@ import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationsEdit from "./organisationsEdit";
+import ErrorHandler from "../utils/errorHandler";
 
 const ORGANISATIONS = gql`
   query organisations {
@@ -43,10 +44,18 @@ class OrganisationsView extends Component {
 
             return (
                 <Mutation mutation={NEW_ORGANISATION}
+
+                          onError={(error) =>
+                              new ErrorHandler().handleGraphQlMutationError(error)}
+
                           onCompleted={() => refetch()}>
                   {createNewOrganisation => (
 
                       <Mutation mutation={DELETE_ORGANISATION}
+
+                                onError={(error) =>
+                                    new ErrorHandler().handleGraphQlMutationError(error)}
+
                                 onCompleted={() => refetch()}>
                         {deleteOrganisation => (
 

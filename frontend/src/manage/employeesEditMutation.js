@@ -2,6 +2,7 @@ import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import EmployeesEdit from "./employeesEdit";
+import ErrorHandler from "../utils/errorHandler";
 
 const EMPLOYEES_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -159,23 +160,43 @@ class EmployeesEditMutation extends Component {
 
             return (
                 <Mutation mutation={NEW_EMPLOYEE}
+
+                          onError={(error) =>
+                              new ErrorHandler().handleGraphQlMutationError(error)}
+
                           onCompleted={() => refetch()}>
                   {createNewEmployee => (
 
                       <Mutation mutation={EDIT_EMPLOYEE}
+
+                                onError={(error) =>
+                                    new ErrorHandler().handleGraphQlMutationError(error)}
+
                                 onCompleted={() => refetch()}>
                         {editEmployee => (
 
                             <Mutation mutation={DELETE_EMPLOYEE}
+
+                                      onError={(error) =>
+                                          new ErrorHandler().handleGraphQlMutationError(error)}
+
                                       onCompleted={() => refetch()}>
                               {deleteEmployee => (
 
                                   <Mutation mutation={ADD_EMPLOYEE_SKILL}
+
+                                            onError={(error) =>
+                                                new ErrorHandler().handleGraphQlMutationError(error)}
+
                                             onCompleted={() => refetch()}>
                                     {addEmployeeSkill => (
 
                                         <Mutation
                                             mutation={DELETE_EMPLOYEE_SKILL}
+
+                                            onError={(error) =>
+                                                new ErrorHandler().handleGraphQlMutationError(error)}
+
                                             onCompleted={() => refetch()}>
                                           {deleteEmployeeSkill => (
 

@@ -2,6 +2,7 @@ import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import SkillsEdit from "./skillsEdit";
+import ErrorHandler from "../utils/errorHandler";
 
 const SKILLS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -63,28 +64,41 @@ class SkillsEditMutation extends Component {
 
             return (
                 <Mutation mutation={NEW_SKILL}
+
+                          onError={(error) =>
+                              new ErrorHandler().handleGraphQlMutationError(error)}
+
                           onCompleted={() => {
                             this.props.onSkillsChanged
                             && this.props.onSkillsChanged();
                             refetch();
                           }}>
-                  { createNewSkill => (
+                  {createNewSkill => (
 
                       <Mutation mutation={EDIT_SKILL}
+
+                                onError={(error) =>
+                                    new ErrorHandler().handleGraphQlMutationError(error)}
+
                                 onCompleted={() => {
                                   this.props.onSkillsChanged
                                   && this.props.onSkillsChanged();
                                   refetch();
                                 }}>
-                        { editSkill => (
+                        {editSkill => (
 
                             <Mutation mutation={DELETE_SKILL}
+
+                                      onError={(error) =>
+                                          new ErrorHandler().handleGraphQlMutationError(error)}
+
                                       onCompleted={() => {
                                         this.props.onSkillsChanged
                                         && this.props.onSkillsChanged();
                                         refetch();
+
                                       }}>
-                              { deleteSkill => (
+                              {deleteSkill => (
 
                                   <SkillsEdit
                                       skills={data.organisationById.skills}

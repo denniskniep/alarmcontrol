@@ -13,19 +13,25 @@ class AlertViewMapRoute extends Component {
     return (
         <React.Fragment>
           {
-            this.props.alert.route &&  this.props.alert.addressLat && this.props.alert.addressLng &&
+            this.props.alert.addressLat && this.props.alert.addressLng &&
             <div className="alertViewOuterBox h-100">
               <Map className={"alertViewBox"}
-                   viewport={{zoom: 13, center: {lat: 0, lng: 0}}}>
-
+                   viewport={{zoom: 13,
+                     center: {
+                       lat: this.props.alert.addressLat,
+                       lng: this.props.alert.addressLng
+                     }
+                   }}>
 
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                 />
 
-                <Route route={this.props.alert.route}
-                       fitSelectedRoutes={"smart"}/>
+                { this.props.alert.route &&
+                  <Route route={this.props.alert.route}
+                         fitSelectedRoutes={"smart"}/>
+                }
 
                 <CircleMarker center={{
                   lat: this.props.alert.addressLat,
