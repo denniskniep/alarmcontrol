@@ -1,4 +1,5 @@
 import {toast} from "react-toastify";
+import React from 'react';
 
 class ErrorHandler {
 
@@ -17,7 +18,6 @@ class ErrorHandler {
       draggable: true
     });
   }
-
 }
 
 export default ErrorHandler;

@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationsEdit from "./organisationsEdit";
 import ErrorHandler from "../utils/errorHandler";
+import QueryDefaultHandler from "../utils/queryDefaultHandler";
 
 const ORGANISATIONS = gql`
   query organisations {
@@ -30,16 +31,15 @@ const DELETE_ORGANISATION = gql`
 class OrganisationsView extends Component {
   render() {
     return (
-        <Query query={ORGANISATIONS}>
+        <Query fetchPolicy="no-cache" query={ORGANISATIONS}>
           {({loading, error, data, refetch}) => {
-            if (loading) {
-              return <p>Loading...</p>;
-            }
-            if (error) {
-              return <p>Error: ${error.message}</p>;
-            }
-            if (!data.organisations) {
-              return <p>NO DATA</p>;
+            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
+                error,
+                data,
+                data.organisations);
+
+            if(result){
+              return result;
             }
 
             return (

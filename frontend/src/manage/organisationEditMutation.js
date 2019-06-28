@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationEdit from "./organisationEdit";
 import ErrorHandler from "../utils/errorHandler";
+import QueryDefaultHandler from "../utils/queryDefaultHandler";
 
 const ORGANISATION_BY_ID = gql`
   query organisationById($id: ID!) {
@@ -34,15 +35,14 @@ class OrganisationEditMutation extends Component {
         <Query fetchPolicy="no-cache" query={ORGANISATION_BY_ID}
                variables={{id: this.props.id}}>
           {({loading, error, data, refetch}) => {
-            if (loading) {
-              return <p>Loading...</p>;
-            }
-            if (error) {
-              return <p>Error: ${error.message}</p>;
-            }
 
-            if (!data.organisationById) {
-              return <p>NO DATA</p>;
+            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
+                error,
+                data,
+                data.organisationById);
+
+            if(result){
+              return result;
             }
 
             return (

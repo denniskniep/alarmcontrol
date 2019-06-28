@@ -5,6 +5,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import {gql} from "apollo-boost";
 import {Query} from "react-apollo";
 import PrettyPrinter from "./utils/prettyPrinter";
+import QueryDefaultHandler from "./utils/queryDefaultHandler";
 
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($id: ID!, $page: Int!, $size: Int!) {
@@ -36,9 +37,15 @@ class Menu extends Component {
                        fetchPolicy="no-cache"
                        variables={{id: 1, page: 0, size: 10}}>
                   {({loading, error, data}) => {
-                    if (loading || error || !data.alertsByOrganisationId) {
-                      return <p></p>;
+                    let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
+                        error,
+                        data,
+                        data.alertsByOrganisationId);
+
+                    if (result) {
+                      return result;
                     }
+
 
                     return data.alertsByOrganisationId.map((alert, index) => {
                       return <NavDropdown.Item key={alert.id}

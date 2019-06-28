@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertViewLayout from "./alertViewLayout";
 import AlertViewSwitcher from "./alertViewSwitcher";
+import QueryDefaultHandler from "../utils/queryDefaultHandler";
 
 const ALERT_BY_ID = gql`
   query alertById($id: ID!) {
@@ -62,16 +63,16 @@ class AlertView extends Component {
                  fetchPolicy="no-cache"
                  variables={{id: this.props.match.params.id}}>
             {({loading, error, data, refetch}) => {
+              let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
+                  error,
+                  data,
+                  data.alertById);
+
+              if (result) {
+                return result;
+              }
+
               let alertData = data;
-              if (loading) {
-                return <p>Loading...</p>;
-              }
-              if (error) {
-                return <p>Error: ${error.message}</p>;
-              }
-              if (!alertData || !alertData.alertById) {
-                return <p>NO DATA</p>;
-              }
 
               return (
                   <React.Fragment>
