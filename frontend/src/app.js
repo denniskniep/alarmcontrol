@@ -14,6 +14,9 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import {InMemoryCache} from "apollo-cache-inmemory";
 import Home from "./home";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import AlertViewSwitcher from "./alertview/alertViewSwitcher";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -50,6 +53,18 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
           <Menu/>
+          <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnVisibilityChange
+              draggable
+              pauseOnHover
+          />
+          <AlertViewSwitcher/>
           <Route exact path="/app/" component={Home} />
           <Route exact path="/app/alertview/:id" component={AlertView} />
           <Route exact path="/app/manage/organisation" component={OrganisationsView} />

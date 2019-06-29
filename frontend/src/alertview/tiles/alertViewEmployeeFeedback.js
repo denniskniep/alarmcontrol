@@ -9,7 +9,7 @@ import EmployeeFeedbackAsList from "./employee/employeeFeedbackAsList";
 import EmployeeFeedbackAggregated from "./employee/employeeFeedbackAggregated";
 
 const ALERT_WITH_EMPLOYEE_BY_ID = gql`
-  query alertById($id: ID) {
+  query alertById($id: ID!) {
     alertById(id: $id) {
       id    
       organisation{

@@ -1,33 +1,33 @@
 type Query {
-  alertById(id: ID): Alert
-  alertsByOrganisationId(organisationId: ID): [Alert]
-  alertsByOrganisationId(organisationId: ID, page: Int, size: Int): [Alert]
+  alertById(id: ID!): Alert
+  alertsByOrganisationId(organisationId: ID!): [Alert]
+  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): [Alert]
   organisations : [Organisation]
-  organisationById(organisationId: ID): Organisation
+  organisationById(organisationId: ID!): Organisation
 }
 
 type Mutation {
-  newOrganisation(name: String, addressLat: String, addressLng: String): Organisation
-  editOrganisation(id: ID, name: String, addressLat: String, addressLng: String): Organisation
-  deleteOrganisation(id: ID) : ID
+  newOrganisation(name: String!, addressLat: String!, addressLng: String!): Organisation
+  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!): Organisation
+  deleteOrganisation(id: ID!) : ID
 
-  newSkill(organisationId: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
-  editSkill(id: ID, name: String, shortName: String, displayAtOverview: Boolean): Skill
-  deleteSkill(id: ID): ID
+  newSkill(organisationId: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
+  editSkill(id: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
+  deleteSkill(id: ID!): ID
 
-  newEmployee(organisationId: ID, firstname: String, lastname: String, referenceId: String) : Employee
-  editEmployee(id: ID, firstname: String, lastname: String, referenceId: String) : Employee
-  deleteEmployee(id: ID) : ID
+  newEmployee(organisationId: ID!, firstname: String!, lastname: String!, referenceId: String!) : Employee
+  editEmployee(id: ID!, firstname: String!, lastname: String!, referenceId: String!) : Employee
+  deleteEmployee(id: ID!) : ID
 
-  newAlertNumber(organisationId: ID, number: String, description: String, shortDescription: String) : AlertNumber
-  editAlertNumber(id: ID, number: String, description: String, shortDescription: String) : AlertNumber
-  deleteAlertNumber(id: ID) : ID
+  newAlertNumber(organisationId: ID!, number: String!, description: String, shortDescription: String!) : AlertNumber
+  editAlertNumber(id: ID!, number: String!, description: String, shortDescription: String!) : AlertNumber
+  deleteAlertNumber(id: ID!) : ID
 
-  addEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
-  deleteEmployeeSkill(employeeId: ID, skillId: ID) : Boolean
+  addEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
+  deleteEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
 
-  newAlertCall(organisationId: ID, alertNumber: String, alertReferenceId: String, alertCallReferenceId: String, keyword: String, dateTime: DateTime, address: String): AlertCall
-  addEmployeeFeedback(organisationId: ID, alertCallReferenceId: String, employeeReferenceId : String, feedback : Feedback, dateTime: DateTime) : EmployeeFeedback
+  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, dateTime: DateTime, address: String): AlertCall
+  addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, dateTime: DateTime) : EmployeeFeedback
 }
 
 type Subscription {
@@ -72,6 +72,7 @@ type AlertNumber {
 
 type AlertAdded {
   id: ID
+  organisationId: ID
 }
 
 type AlertChanged {

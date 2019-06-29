@@ -2,6 +2,8 @@ import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationsEdit from "./organisationsEdit";
+import ErrorHandler from "../utils/errorHandler";
+import QueryDefaultHandler from "../utils/queryDefaultHandler";
 
 const ORGANISATIONS = gql`
   query organisations {
@@ -13,7 +15,7 @@ const ORGANISATIONS = gql`
 `;
 
 const NEW_ORGANISATION = gql`
-    mutation newOrganisation($name: String, $addressLat: String, $addressLng: String) {
+    mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!) {
      newOrganisation(name: $name, addressLat:  $addressLat, addressLng: $addressLng) {
       id
     }
@@ -21,7 +23,7 @@ const NEW_ORGANISATION = gql`
 `;
 
 const DELETE_ORGANISATION = gql`
-    mutation deleteOrganisation($id: ID) {
+    mutation deleteOrganisation($id: ID!) {
      deleteOrganisation(id: $id)
   }
 `;
@@ -29,24 +31,31 @@ const DELETE_ORGANISATION = gql`
 class OrganisationsView extends Component {
   render() {
     return (
-        <Query query={ORGANISATIONS}>
+        <Query fetchPolicy="no-cache" query={ORGANISATIONS}>
           {({loading, error, data, refetch}) => {
-            if (loading) {
-              return <p>Loading...</p>;
-            }
-            if (error) {
-              return <p>Error: ${error.message}</p>;
-            }
-            if (!data.organisations) {
-              return <p>NO DATA</p>;
+            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
+                error,
+                data,
+                data.organisations);
+
+            if(result){
+              return result;
             }
 
             return (
                 <Mutation mutation={NEW_ORGANISATION}
+
+                          onError={(error) =>
+                              new ErrorHandler().handleGraphQlMutationError(error)}
+
                           onCompleted={() => refetch()}>
                   {createNewOrganisation => (
 
                       <Mutation mutation={DELETE_ORGANISATION}
+
+                                onError={(error) =>
+                                    new ErrorHandler().handleGraphQlMutationError(error)}
+
                                 onCompleted={() => refetch()}>
                         {deleteOrganisation => (
 

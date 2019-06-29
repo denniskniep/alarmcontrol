@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data.graphql.employee;
 
+import com.alarmcontrol.server.data.graphql.ClientValidationException;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
@@ -7,6 +8,7 @@ import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +27,19 @@ public class EmployeeMutations implements GraphQLMutationResolver {
       String firstname,
       String lastname,
       String referenceId) {
+
+    if (StringUtils.isBlank(firstname)) {
+      throw new ClientValidationException("Firstname should not be blank");
+    }
+
+    if (StringUtils.isBlank(lastname)) {
+      throw new ClientValidationException("Lastname should not be blank");
+    }
+
+    if (StringUtils.isBlank(referenceId)) {
+      throw new ClientValidationException("ReferenceId should not be blank");
+    }
+
     Employee employee = new Employee(organisationId, firstname, lastname, referenceId);
     return employeeRepository.save(employee);
   }
@@ -32,7 +47,7 @@ public class EmployeeMutations implements GraphQLMutationResolver {
   public Long deleteEmployee(Long id) {
     Optional<Employee> employeeById = employeeRepository.findById(id);
     if (!employeeById.isPresent()) {
-      throw new RuntimeException("No Employee found for id:" + id);
+      throw new ClientValidationException("No Employee found for id:" + id);
     }
 
     List<EmployeeSkill> employeeSkills = employeeSkillRepository
@@ -51,7 +66,19 @@ public class EmployeeMutations implements GraphQLMutationResolver {
 
     Optional<Employee> employeeById = employeeRepository.findById(id);
     if (!employeeById.isPresent()) {
-      throw new RuntimeException("No Employee found for id:" + id);
+      throw new ClientValidationException("No Employee found for id:" + id);
+    }
+
+    if (StringUtils.isBlank(firstname)) {
+      throw new ClientValidationException("Firstname should not be blank");
+    }
+
+    if (StringUtils.isBlank(lastname)) {
+      throw new ClientValidationException("Lastname should not be blank");
+    }
+
+    if (StringUtils.isBlank(referenceId)) {
+      throw new ClientValidationException("ReferenceId should not be blank");
     }
 
     Employee employee = employeeById.get();
