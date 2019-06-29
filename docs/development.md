@@ -291,12 +291,22 @@ Add an Alert
 ```
 curl  -X POST localhost:8080/api/alert \
       -H 'Content-Type: application/json' \
-      -d '{ "organisationId":"1", "gssi":"123456", "id":"321", "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN" }'
+      -d '{ 
+            "organisationId":"1", 
+            "gssi":"123456", 
+            "id":"321", 
+            "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN" 
+          }'
 ```
 
 An an EmployeeFeedback
 ```
 curl  -X POST localhost:8080/api/employeeFeedback \
       -H 'Content-Type: application/json' \
-      -d '{ "organisationId":"1", "issi":"1234", "id":"321", "ur":"32768" }'
+      -d '{ 
+            "organisationId":"1", 
+            "issi":"1234", 
+            "id":"321", 
+            "ur":"32768" 
+          }'
 ```
