@@ -58,7 +58,6 @@ class AlertView extends Component {
   render() {
     return (
         <React.Fragment>
-          <AlertViewSwitcher/>
           <Query query={ALERT_BY_ID}
                  fetchPolicy="no-cache"
                  variables={{id: this.props.match.params.id}}>

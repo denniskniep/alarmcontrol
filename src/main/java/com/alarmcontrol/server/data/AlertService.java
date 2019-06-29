@@ -134,7 +134,7 @@ public class AlertService {
     AlertCall alertCall = createAlertCall(alertNumber, alert, referenceCallId, dateTime, raw);
 
     if (alertCreated) {
-      alertAddedPublisher.emitAlertAdded(alert.getId());
+      alertAddedPublisher.emitAlertAdded(alert.getId(), organisationId);
     } else {
       alertChangedPublisher.emitAlertChanged(alert.getId());
     }

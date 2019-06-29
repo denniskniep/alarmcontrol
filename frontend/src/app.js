@@ -16,6 +16,7 @@ import {InMemoryCache} from "apollo-cache-inmemory";
 import Home from "./home";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import AlertViewSwitcher from "./alertview/alertViewSwitcher";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -63,6 +64,7 @@ function App() {
               draggable
               pauseOnHover
           />
+          <AlertViewSwitcher/>
           <Route exact path="/app/" component={Home} />
           <Route exact path="/app/alertview/:id" component={AlertView} />
           <Route exact path="/app/manage/organisation" component={OrganisationsView} />

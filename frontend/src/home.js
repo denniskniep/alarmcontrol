@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import AlertViewSwitcher from "./alertview/alertViewSwitcher";
 
 class Home extends Component {
 
@@ -11,7 +10,6 @@ class Home extends Component {
           <Row>
             <Col>
                 <h2>Home</h2>
-                <AlertViewSwitcher/>
             </Col>
           </Row>
         </Container>)

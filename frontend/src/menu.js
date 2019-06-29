@@ -7,6 +7,7 @@ import {Query} from "react-apollo";
 import PrettyPrinter from "./utils/prettyPrinter";
 import QueryDefaultHandler from "./utils/queryDefaultHandler";
 import Form from "react-bootstrap/Form";
+import store from "./utils/store";
 
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
@@ -39,16 +40,14 @@ class Menu extends Component {
   }
 
   componentWillMount() {
-    let organisationId = localStorage.getItem('organisationId');
+    let organisationId = store.getCurrentOrganisationId();
     if (organisationId) {
       this.setState({organisationId: organisationId});
     }
   }
 
   handleOrganisationChanged(changed, refetch) {
-    console.log(changed.target.value);
-
-    localStorage.setItem('organisationId', changed.target.value);
+    store.setCurrentOrganisationId(changed.target.value);
     this.setState({organisationId: changed.target.value});
     refetch();
   }
