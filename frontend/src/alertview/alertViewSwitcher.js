@@ -19,7 +19,6 @@ class AlertViewSwitcher extends Component {
   handleSubscriptionData(options, history){
     if (options && options.subscriptionData && options.subscriptionData.data && options.subscriptionData.data.alertAdded) {
       let alertAdded = options.subscriptionData.data.alertAdded;
-      console.log(alertAdded)
       toast.info("New Alert!", {
         position: "top-right",
         autoClose: 3000,
@@ -31,7 +30,6 @@ class AlertViewSwitcher extends Component {
 
       let currentOrganisationId = store.getCurrentOrganisationId();
       if(currentOrganisationId == 0 || currentOrganisationId == alertAdded.organisationId){
-        console.log("orgid okay", currentOrganisationId)
         history.push("/app/alertview/" + alertAdded.id)
       }
     }
