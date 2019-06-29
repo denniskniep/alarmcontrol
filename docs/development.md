@@ -55,7 +55,7 @@ mutation {
 mutation { 
   newAlertNumber (
     organisationId: 1
-    number: "S4"
+    number: "123456-S04"
     shortDescription: "Pager"
     description: "Pager Meimbressen"
   ){id}
@@ -66,7 +66,7 @@ mutation {
 mutation { 
   newAlertNumber (
     organisationId: 1
-    number: "S20"
+    number: "123456-S20"
     shortDescription: "Pager (Volla.)"
     description: "Vollalarm aller Pager"
   ){id}
@@ -78,7 +78,7 @@ mutation {
 mutation { 
   newAlertNumber (
     organisationId: 1
-    number: "S54"
+    number: "123456-S54"
     shortDescription: "Sirene"
     description: "Sirene Meimbressen"
   ){id}
@@ -89,7 +89,7 @@ mutation {
 mutation { 
   newAlertNumber (
     organisationId: 1
-    number: "S50"
+    number: "123456-S50"
     shortDescription: "Sirene (Volla.)"
     description: "Vollalarm aller Sirenen"
   ){id}
@@ -101,7 +101,7 @@ mutation {
 mutation { 
   newAlertNumber (
     organisationId: 1
-    number: "S23"
+    number: "123456-S23"
     shortDescription: "AGTs"
     description: "Alle Atemschutzgeräteträger"
   ){id}
@@ -282,3 +282,21 @@ The client is running by default at http://localhost:1234
 * **GraphQl**: Apollo Client (https://www.apollographql.com/docs/react/essentials/get-started)
 * **GUI**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
 * **Icons**: React-Fontawesome (https://github.com/FortAwesome/react-fontawesome) (Browse: https://fontawesome.com/icons?d=gallery) Don't forget to add the icon to the icon-lib in `index.js`
+
+## API
+Use the api if you want your device to add alerts to the system.
+
+
+Add an Alert
+```
+curl  -X POST localhost:8080/api/alert \
+      -H 'Content-Type: application/json' \
+      -d '{ "organisationId":"1", "gssi":"123456", "id":"321", "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN" }'
+```
+
+An an EmployeeFeedback
+```
+curl  -X POST localhost:8080/api/employeeFeedback \
+      -H 'Content-Type: application/json' \
+      -d '{ "organisationId":"1", "issi":"1234", "id":"321", "ur":"32768" }'
+```

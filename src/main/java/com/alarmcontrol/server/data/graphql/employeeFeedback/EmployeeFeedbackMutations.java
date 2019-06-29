@@ -3,6 +3,7 @@ package com.alarmcontrol.server.data.graphql.employeeFeedback;
 import com.alarmcontrol.server.data.EmployeeFeedbackService;
 import com.alarmcontrol.server.data.models.Feedback;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,8 +18,9 @@ public class EmployeeFeedbackMutations implements GraphQLMutationResolver {
   public EmployeeFeedback addEmployeeFeedback(Long organisationId,
       String alertCallReferenceId,
       String employeeReferenceId,
-      Feedback feedback) {
+      Feedback feedback,
+      Date dateTime) {
     return employeeFeedbackService
-        .addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback);
+        .addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback, dateTime);
   }
 }

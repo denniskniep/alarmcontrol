@@ -47,9 +47,21 @@ public class EmployeeFeedbackService {
   public EmployeeFeedback addEmployeeFeedback(Long organisationId,
       String alertCallReferenceId,
       String employeeReferenceId,
-      Feedback feedback){
+      Feedback feedback,
+      Date dateTime) {
+    return addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback, dateTime, null);
+  }
 
-    Date dateTime = new Date();
+  public EmployeeFeedback addEmployeeFeedback(Long organisationId,
+      String alertCallReferenceId,
+      String employeeReferenceId,
+      Feedback feedback,
+      Date dateTime,
+      String raw){
+
+    if (dateTime == null) {
+      dateTime = new Date();
+    }
 
     Optional<AlertCall> foundAlertCall = alertCallRepository
         .findByOrganisationIdAndReferenceId(organisationId, alertCallReferenceId);
