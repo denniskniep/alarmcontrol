@@ -1,10 +1,13 @@
 FROM maven:3.6.1-jdk-11 AS build
 
-COPY ./ /app
-
 WORKDIR /app
 
-RUN mvn clean install --batch-mode
+# Cache mvn dependencies as docker layer
+COPY ./pom.xml /app
+RUN mvn --batch-mode dependency:go-offline
+
+COPY ./ /app
+RUN mvn --batch-mode clean install
 
 #--------------------------------------------------------
 FROM openjdk:11-jre-slim
