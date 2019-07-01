@@ -283,6 +283,9 @@ The client is running by default at http://localhost:1234
 * **GUI**: React-Bootstrap (https://react-bootstrap.github.io/layout/grid/)
 * **Icons**: React-Fontawesome (https://github.com/FortAwesome/react-fontawesome) (Browse: https://fontawesome.com/icons?d=gallery) Don't forget to add the icon to the icon-lib in `index.js`
 
+## Authentication
+Implemented stateless auth with jwt tokens. Oriented at the example [here](https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/)
+
 ## API
 Use the api if you want your device to add alerts to the system.
 

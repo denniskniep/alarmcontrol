@@ -354,3 +354,29 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: alert_call_employee
             baseColumnNames: alert_call_id
+  - changeSet:
+      id: 2
+      author: dkniep
+      changes:
+        - createTable:
+            tableName: application_user
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: nvarchar(255)
+        - addUniqueConstraint:
+            tableName: application_user
+            columnNames: username
+            constraintName: uk_application_user-username
