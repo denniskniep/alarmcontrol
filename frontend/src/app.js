@@ -17,15 +17,16 @@ import Home from "./home";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AlertViewSwitcher from "./alertview/alertViewSwitcher";
+import configuration from "./config/configuration";
 
 // Create an http link:
 const httpLink = new HttpLink({
-  uri: "http://localhost:8080/graphql"
+  uri: "http://" + configuration.getServer() + "/graphql"
 });
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:8080/subscriptions",
+  uri: "ws://" + configuration.getServer() + "/subscriptions",
   options: {
     reconnect: true
   }
