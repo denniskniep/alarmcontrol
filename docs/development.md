@@ -299,6 +299,19 @@ curl  -X POST localhost:8080/api/alert \
           }'
 ```
 
+Workaround for problems with spaces. Specify an character that is used as whitespace.
+```
+curl  -X POST localhost:8080/api/alert \
+      -H 'Content-Type: application/json' \
+      -d '{ 
+            "organisationId":"1", 
+            "gssi":"123456", 
+            "id":"321", 
+            "text":"&54S54*STELLEN#SIE#EINSATZBEREITSCHAFT#HER#B123456778*H1*FÜRSTENWALD#HINTER#DEN#GÄRTEN#8#CALDEN"
+            "whitespaceReplacementChar" : "#" 
+          }'
+```
+
 An an EmployeeFeedback
 ```
 curl  -X POST localhost:8080/api/employeeFeedback \
