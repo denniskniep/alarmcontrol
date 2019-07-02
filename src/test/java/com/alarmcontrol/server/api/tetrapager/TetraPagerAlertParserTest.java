@@ -33,6 +33,17 @@ public class TetraPagerAlertParserTest {
   }
 
   @Test
+  public void parseText_whitespaceReplacementChar(){
+    ExternalAlertRequest alertRequest = parseTextWithWhitespaceReplacementChar("&54S54*B123456778#STELLEN#SIE#EINSATZBEREITSCHAFT#HER*BF2*OBERMUSTERDORF#BERLINER#STRASSE#15#MUSTERDORF", "#");
+    assertThat(alertRequest.getAlertNumber()).isEqualTo("9876543-S54");
+    assertThat(alertRequest.getAlertReferenceId()).isEqualTo("B123456778");
+    assertThat(alertRequest.getAlertCallReferenceId()).isEqualTo("189");
+    assertThat(alertRequest.getDescription()).isEqualToIgnoringCase("STELLEN SIE EINSATZBEREITSCHAFT HER");
+    assertThat(alertRequest.getKeyword()).isEqualToIgnoringCase("BF2");
+    assertThat(alertRequest.getAddress()).isEqualToIgnoringCase("OBERMUSTERDORF BERLINER STRASSE 15 MUSTERDORF");
+  }
+
+  @Test
   public void parseText2_onlyAlertIdInDescription(){
     ExternalAlertRequest alertRequest = parseText("&06S06*B345432567*H1*OSTHAUSEN KIGASTRASSE 8 OSTHAUSEN");
     assertThat(alertRequest.getAlertNumber()).isEqualTo("9876543-S06");
@@ -62,6 +73,18 @@ public class TetraPagerAlertParserTest {
     params.put(TetraPagerAlertParser.GSSI, "9876543");
     params.put(TetraPagerAlertParser.ID, "189");
     params.put(TetraPagerAlertParser.TEXT, text);
+
+    return tetraPagerAlertParser.parse(params);
+  }
+
+  private ExternalAlertRequest parseTextWithWhitespaceReplacementChar(String text, String whitespaceReplacementChar) {
+    TetraPagerAlertParser tetraPagerAlertParser = new TetraPagerAlertParser();
+
+    Map<String,String> params = new HashMap<>();
+    params.put(TetraPagerAlertParser.GSSI, "9876543");
+    params.put(TetraPagerAlertParser.ID, "189");
+    params.put(TetraPagerAlertParser.TEXT, text);
+    params.put(TetraPagerAlertParser.WHITESPACE_REPLACEMENT_CHAR, whitespaceReplacementChar);
 
     return tetraPagerAlertParser.parse(params);
   }

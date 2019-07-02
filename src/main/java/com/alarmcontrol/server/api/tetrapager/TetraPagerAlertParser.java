@@ -17,6 +17,7 @@ public class TetraPagerAlertParser {
   public static final String GSSI = "gssi";
   public static final String ID = "id";
   public static final String TEXT = "text";
+  public static final String WHITESPACE_REPLACEMENT_CHAR = "whitespaceReplacementChar";
 
   private static final Pattern ALERT_ID_PATTERN = Pattern.compile("B\\d{4,}");
   private static final Pattern SUBADDRESS_PATTERN = Pattern.compile("S\\d{2}");
@@ -28,6 +29,12 @@ public class TetraPagerAlertParser {
     Parameter gssi = Parameter.getRequired(parameters, GSSI).expectNumber();
     Parameter id = Parameter.getRequired(parameters, ID).expectNumber();
     Parameter text = Parameter.getRequired(parameters, TEXT);
+    Parameter whitespaceReplacementChar = Parameter.getOptional(parameters, WHITESPACE_REPLACEMENT_CHAR);
+
+    if(whitespaceReplacementChar != null){
+      logger.info("Should replace '"+ whitespaceReplacementChar.getValue()+ "' with whitespace");
+      text = new Parameter(text.getKey(), text.getValue().replace(whitespaceReplacementChar.getValue(), " "));
+    }
 
     String raw = Parameter.asString(gssi, id, text);
     ParsedText parsedText = parseText(text);

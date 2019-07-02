@@ -43,6 +43,16 @@ public class Parameter {
   }
 
   public static Parameter getRequired(Map<String, String> parameter, String key) {
+    Parameter optionalParam = getOptional(parameter, key);
+
+    if (optionalParam == null) {
+      throw new IllegalArgumentException("Parameter does not contain required key '" + key + "'!");
+    }
+
+    return optionalParam;
+  }
+
+  public static Parameter getOptional(Map<String, String> parameter, String key) {
     Optional<String> foundKey = parameter
         .keySet()
         .stream()
@@ -50,7 +60,7 @@ public class Parameter {
         .findFirst();
 
     if (foundKey.isEmpty()) {
-      throw new IllegalArgumentException("Parameter does not contain required key '" + key + "'!");
+      return null;
     }
 
     String value = parameter.get(foundKey.get());
