@@ -80,12 +80,7 @@ class AlertViewHeader extends Component {
             <Row>
               <Col xs={3}>
              <span>
-               <Badge className={"badgeSpace"} pill variant="primary">
-                  LZ2
-               </Badge>
-               <Badge className={"badgeSpace"} pill variant="primary">
-                  ELW
-               </Badge>
+
              </span>
               </Col>
               <Col xs={6}>
