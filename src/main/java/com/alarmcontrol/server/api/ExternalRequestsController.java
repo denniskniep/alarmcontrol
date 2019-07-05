@@ -1,9 +1,5 @@
-package com.alarmcontrol.server;
+package com.alarmcontrol.server.api;
 
-
-import com.alarmcontrol.server.api.ExternalAlertRequest;
-import com.alarmcontrol.server.api.ExternalEmployeeFeedbackRequest;
-import com.alarmcontrol.server.api.Parameter;
 import com.alarmcontrol.server.api.tetrapager.TetraPagerAlertParser;
 import com.alarmcontrol.server.api.tetrapager.TetraPagerEmployeeFeedbackParser;
 import com.alarmcontrol.server.data.AlertService;

@@ -16,21 +16,6 @@ docker-compose up --build
 ## Development
 See [docs/development.md](docs/development.md)
 
-## ToDos
-
-### Security
-Activate Spring Security (CSRF + AuthN, AuthZ)
-
-Keep it simple at the beginning: 
-ADMIN can read and write
-USER can only read
-
---> Specify ADMIN User (name,password) via ENV Variables (if Password empty generate a password? and print to log)
-
-Later there could be dedicated permissions for each organisation
-
-### Routing/Geocoding API Error Handling
-What should be done if the Address can not be geocoded
 
 ## Known Problems
 ### Geocoding house numbers with Nominatim

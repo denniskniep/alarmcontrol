@@ -286,9 +286,25 @@ The client is running by default at http://localhost:1234
 ## Authentication
 Implemented stateless auth with jwt tokens. Oriented at the example [here](https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/)
 
+Login and extract the JWT from the Authorization Response Header
+```
+ curl -X POST -v localhost:8080/login \
+      -H 'Content-Type: application/json'\
+      -d '{ 
+            "username":"admin", 
+            "password":"xxx" 
+          }'
+```
+
+Attach the JWT to each Request in the Authentication Header
+```
+curl localhost:8080/app \
+     -H "Authorization: Bearer xxx.xxx.xxx"
+```
+
 ## API
 Use the api if you want your device to add alerts to the system.
-
+Entrypoint for Webrequests `src/main/java/com/alarmcontrol/server/api/ExternalRequestsController`:
 
 Add an Alert
 ```
@@ -315,7 +331,7 @@ curl  -X POST localhost:8080/api/alert \
           }'
 ```
 
-An an EmployeeFeedback
+Add an EmployeeFeedback
 ```
 curl  -X POST localhost:8080/api/employeeFeedback \
       -H 'Content-Type: application/json' \
