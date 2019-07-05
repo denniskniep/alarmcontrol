@@ -8,6 +8,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.8.1",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "acorn": "^6.2.0",
     "apollo-boost": "^0.3.1",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.2",
@@ -16,12 +17,15 @@
     "apollo-link-ws": "^1.0.17",
     "apollo-utilities": "^1.3.2",
     "bootstrap": "^4.3.1",
+    "browserslist": "^4.6.3",
+    "jquery": "^3.4.1",
     "leaflet": "^1.4.0",
     "leaflet-control-geocoder": "^1.7.0",
     "leaflet-routing-machine": "^3.2.12",
     "lrm-graphhopper": "^1.3.0",
     "moment": "^2.24.0",
     "polyline": "^0.2.0",
+    "postcss-browser-comments": "^2.0.0",
     "react": "^16.8.6",
     "react-apollo": "^2.5.5",
     "react-bootstrap": "^1.0.0-beta.8",
@@ -31,7 +35,8 @@
     "react-scripts": "^3.0.0",
     "react-tag-autocomplete": "^5.11.1",
     "react-toastify": "^5.3.1",
-    "subscriptions-transport-ws": "^0.9.16"
+    "subscriptions-transport-ws": "^0.9.16",
+    "typescript": "^3.5.2"
   },
   "scripts": {
     "start": "parcel src/index.html",
@@ -43,6 +48,10 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "graphql": "^14.2.1",
-    "parcel-bundler": "^1.12.3"
+    "parcel-bundler": "^1.12.3",
+    "jest": "^24.8.0",
+    "babel-jest": "^24.8.0",
+    "react-test-renderer": "^16.8.6",
+    "@testing-library/react": "^8.0.4"
   }
 }
