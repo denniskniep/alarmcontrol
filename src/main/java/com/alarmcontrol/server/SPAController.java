@@ -13,7 +13,7 @@ public class SPAController {
   }
 
   @RequestMapping({"/app", "/app/**"})
-  public String welcome() {
+  public String index() {
     return "/index.html";
   }
 

@@ -12,13 +12,12 @@ import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.maps.Coordinate;
 import com.alarmcontrol.server.maps.GeocodingResult;
+import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
-import com.alarmcontrol.server.maps.graphhopper.routing.GraphhopperRoutingService;
-import com.alarmcontrol.server.maps.mapbox.geocoding.MapboxGeocodingService;
+import com.alarmcontrol.server.maps.RoutingService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,8 +32,8 @@ public class AlertService {
   private Logger logger = LoggerFactory.getLogger(AlertService.class);
 
   private AlertRepository alertRepository;
-  private MapboxGeocodingService geocodingService;
-  private GraphhopperRoutingService routingService;
+  private GeocodingService geocodingService;
+  private RoutingService routingService;
   private OrganisationRepository organisationRepository;
   private AlertAddedPublisher alertAddedPublisher;
   private AlertChangedPublisher alertChangedPublisher;
@@ -42,8 +41,8 @@ public class AlertService {
   private AlertCallRepository alertCallRepository;
 
   public AlertService(AlertRepository alertRepository,
-      MapboxGeocodingService geocodingService,
-      GraphhopperRoutingService routingService,
+      GeocodingService geocodingService,
+      RoutingService routingService,
       OrganisationRepository organisationRepository,
       AlertAddedPublisher alertAddedPublisher,
       AlertChangedPublisher alertChangedPublisher,
@@ -59,27 +58,6 @@ public class AlertService {
     this.alertCallRepository = alertCallRepository;
   }
 
-  @Transactional(isolation = Isolation.READ_COMMITTED)
-  public AlertCall create(
-      Long organisationId,
-      String alertNumber,
-      String alertReferenceId,
-      String alertCallReferenceId,
-      String keyword,
-      Date dateTime,
-      String address) {
-    return create(organisationId,
-        alertNumber,
-        alertReferenceId,
-        alertCallReferenceId,
-        keyword,
-        dateTime,
-        address,
-        null,
-        null);
-  }
-
-  @Transactional(isolation = Isolation.READ_COMMITTED)
   public AlertCall create(
       Long organisationId,
       String alertNumber,
@@ -91,23 +69,40 @@ public class AlertService {
       String description,
       String raw) {
 
+    if(StringUtils.isBlank(alertReferenceId)){
+      throw new IllegalArgumentException("alertReferenceId can not be blank");
+    }
+
+    if(StringUtils.isBlank(alertCallReferenceId)){
+      throw new IllegalArgumentException("alertCallReferenceId can not be blank");
+    }
+
     if (dateTime == null) {
       dateTime = new Date();
     }
 
-    Optional<AlertNumber> foundAlertNumber = alertNumberRepository
-        .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
-    if (foundAlertNumber.isEmpty()) {
-      logger.warn("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+    AlertCallCreated createdAlertCall = createWithinTransaction(organisationId, alertNumber, alertReferenceId,
+        alertCallReferenceId, keyword, dateTime, address,
+        description, raw);
+
+    if(createdAlertCall == null){
       return null;
     }
 
-    return create(foundAlertNumber.get(), alertReferenceId, alertCallReferenceId, keyword, dateTime, address,
-        description, raw);
+    // Its important that this code is outside of the db-transaction. Because of notification
+    // is triggered through websocket, but isolation level protects new alert to be read until commit.
+    if (createdAlertCall.isAlertCreated()) {
+      alertAddedPublisher.emitAlertAdded(createdAlertCall.getAlert().getId(), organisationId);
+    } else {
+      alertChangedPublisher.emitAlertChanged(createdAlertCall.getAlert().getId());
+    }
+    return createdAlertCall.getAlertCall();
   }
 
-  private AlertCall create(
-      AlertNumber alertNumber,
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  protected AlertCallCreated createWithinTransaction(
+      Long organisationId,
+      String alertNumber,
       String referenceId,
       String referenceCallId,
       String keyword,
@@ -116,29 +111,28 @@ public class AlertService {
       String description,
       String raw) {
 
-    Long organisationId = alertNumber.getOrganisationId();
+    Optional<AlertNumber> foundAlertNumber = alertNumberRepository
+        .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
+    if (foundAlertNumber.isEmpty()) {
+      logger.info("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+      return null;
+    }
 
-    List<Alert> existingAlerts = alertRepository
+    Optional<Alert> foundAlert = alertRepository
         .findByOrganisationIdAndReferenceId(organisationId, referenceId);
 
     Alert alert;
     boolean alertCreated = false;
 
-    if (existingAlerts.size() == 0) {
+    if (foundAlert.isEmpty()) {
       alert = createAlert(organisationId, referenceId, keyword, dateTime, address, description);
       alertCreated = true;
     } else {
-      alert = existingAlerts.get(0);
+      alert = foundAlert.get();
     }
 
-    AlertCall alertCall = createAlertCall(alertNumber, alert, referenceCallId, dateTime, raw);
-
-    if (alertCreated) {
-      alertAddedPublisher.emitAlertAdded(alert.getId(), organisationId);
-    } else {
-      alertChangedPublisher.emitAlertChanged(alert.getId());
-    }
-    return alertCall;
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, dateTime, raw);
+    return new AlertCallCreated(alertCall, alert, alertCreated);
   }
 
   private Alert createAlert(Long organisationId,
@@ -232,5 +226,29 @@ public class AlertService {
         dateTime);
     alertCallRepository.save(alertCall);
     return alertCall;
+  }
+
+  private static class AlertCallCreated {
+    private AlertCall alertCall;
+    private Alert alert;
+    private boolean alertCreated;
+
+    public AlertCallCreated(AlertCall alertCall, Alert alert, boolean alertCreated) {
+      this.alertCall = alertCall;
+      this.alert = alert;
+      this.alertCreated = alertCreated;
+    }
+
+    public AlertCall getAlertCall() {
+      return alertCall;
+    }
+
+    public Alert getAlert() {
+      return alert;
+    }
+
+    public boolean isAlertCreated() {
+      return alertCreated;
+    }
   }
 }

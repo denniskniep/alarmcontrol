@@ -65,6 +65,17 @@ public class TetraPagerAlertParserTest {
     assertThat(alertRequest.getAddress()).isEqualToIgnoringCase(null);
   }
 
+  @Test
+  public void parseText_DescriptionWithoutId(){
+    ExternalAlertRequest alertRequest = parseText("&02S02*Description");
+    assertThat(alertRequest.getAlertNumber()).isEqualTo("9876543-S02");
+    assertThat(alertRequest.getAlertReferenceId()).isEqualTo("189");
+    assertThat(alertRequest.getAlertCallReferenceId()).isEqualTo("189");
+    assertThat(alertRequest.getDescription()).isEqualToIgnoringCase("Description");
+    assertThat(alertRequest.getKeyword()).isEqualToIgnoringCase(null);
+    assertThat(alertRequest.getAddress()).isEqualToIgnoringCase(null);
+  }
+
 
   private ExternalAlertRequest parseText(String text) {
     TetraPagerAlertParser tetraPagerAlertParser = new TetraPagerAlertParser();

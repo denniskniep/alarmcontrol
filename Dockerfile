@@ -1,4 +1,20 @@
-FROM maven:3.6.1-jdk-11 AS build
+FROM node:10.16.0-alpine AS frontend-build
+
+WORKDIR /app
+
+# prevents call to lscpu and stop freezing build
+ENV PARCEL_WORKERS=4
+
+# Cache npm dependencies as docker layer
+COPY ./frontend/package.json /app/
+COPY ./frontend/package-lock.json /app/
+RUN npm ci
+
+COPY ./frontend /app
+RUN npm run build
+
+#--------------------------------------------------------
+FROM maven:3.6.1-jdk-11 AS backend-build
 
 WORKDIR /app
 
@@ -6,8 +22,11 @@ WORKDIR /app
 COPY ./pom.xml /app
 RUN mvn --batch-mode dependency:go-offline
 
-COPY ./ /app
-RUN mvn --batch-mode clean install
+COPY ./src /app/src
+COPY --from=frontend-build /app/dist /app/src/main/resources/static
+
+# Frontend already build by docker container
+RUN mvn --batch-mode clean install -P '!build-frontend'
 
 #--------------------------------------------------------
 FROM openjdk:11-jre-slim
@@ -22,7 +41,7 @@ RUN groupadd -g 1000 appuser && \
 COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
-COPY --from=build /app/target/alarmcontrol-server.jar /app/alarmcontrol-server.jar
+COPY --from=backend-build /app/target/alarmcontrol-server.jar /app/alarmcontrol-server.jar
 
 WORKDIR /app
 

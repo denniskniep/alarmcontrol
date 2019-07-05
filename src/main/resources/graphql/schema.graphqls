@@ -26,7 +26,7 @@ type Mutation {
   addEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
   deleteEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
 
-  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, dateTime: DateTime, address: String): AlertCall
+  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, dateTime: DateTime, address: String, description: String): AlertCall
   addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, dateTime: DateTime) : EmployeeFeedback
 }
 
