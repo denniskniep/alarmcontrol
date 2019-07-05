@@ -100,79 +100,97 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>alarmcontrol-server</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
+  <profiles>
+    <profile>
+      <id>build-backend</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <finalName>alarmcontrol-server</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
-      <!-- Build fronted -->
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.7.6</version>
-        <configuration>
-          <workingDirectory>frontend</workingDirectory>
-          <installDirectory>target</installDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>install node and npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
+    <profile>
+      <id>build-frontend</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Build fronted -->
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.7.6</version>
             <configuration>
-              <nodeVersion>v10.16.0</nodeVersion>
-              <npmVersion>6.9.0</npmVersion>
+              <workingDirectory>frontend</workingDirectory>
+              <installDirectory>target</installDirectory>
             </configuration>
-          </execution>
-          <execution>
-            <id>npm install</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>ci</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>npm run build</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>run build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>v10.16.0</nodeVersion>
+                  <npmVersion>6.9.0</npmVersion>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>ci</arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm run build</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
-      <!-- Copy fronted -->
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.1</version>
-        <executions>
-          <execution>
-            <id>copy-react-build-into-static</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/frontend/dist</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+          <!-- Copy fronted -->
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>copy-react-build-into-static</id>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/frontend/dist</directory>
+                      <filtering>false</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
-    </plugins>
-  </build>
 </project>
