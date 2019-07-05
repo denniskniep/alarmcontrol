@@ -5,6 +5,7 @@ import com.alarmcontrol.server.maps.CachingRestService.Request;
 import com.alarmcontrol.server.maps.CachingRestService.Response;
 import com.alarmcontrol.server.maps.Coordinate;
 import com.alarmcontrol.server.maps.RoutingResult;
+import com.alarmcontrol.server.maps.RoutingService;
 import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class GraphhopperRoutingService {
+public class GraphhopperRoutingService implements RoutingService {
   private Logger logger = LoggerFactory.getLogger(GraphhopperRoutingService.class);
   private GraphhopperRoutingProperties graphhopperRoutingProperties;
   private CachingRestService restService;

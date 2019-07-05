@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphQLClient {
 
-  public static final String ORG_ADDRESS_LAT = "51.406339";
-  public static final String ORG_ADDRESS_LNG = "9.359186";
-
   private ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired
@@ -65,8 +62,8 @@ public class GraphQLClient {
             + "}",
         Vars.create()
             .put("name", name)
-            .put("addressLat", ORG_ADDRESS_LAT)
-            .put("addressLng", ORG_ADDRESS_LNG)
+            .put("addressLat", TestOrganisation.ORG_ADDRESS_LAT)
+            .put("addressLng", TestOrganisation.ORG_ADDRESS_LNG)
     );
 
     Long orgId = Long.valueOf(response.get("$.data.newOrganisation.id"));

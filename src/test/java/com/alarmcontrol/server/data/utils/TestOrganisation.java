@@ -2,6 +2,9 @@ package com.alarmcontrol.server.data.utils;
 
 public class TestOrganisation {
 
+  public static final String ORG_ADDRESS_LAT = "51.406339";
+  public static final String ORG_ADDRESS_LNG = "9.359186";
+
   private GraphQLClient graphQLClient;
   private Long organisationId;
 

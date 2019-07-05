@@ -28,7 +28,7 @@ public class MapboxGeocodingService implements GeocodingService {
   private CachingRestService restService;
   private MapboxGeocodingProperties geocodingProperties;
 
-  public MapboxGeocodingService( CachingRestService restService,
+  public MapboxGeocodingService(CachingRestService restService,
       MapboxGeocodingProperties geocodingProperties) {
     this.restService = restService;
     this.geocodingProperties = geocodingProperties;

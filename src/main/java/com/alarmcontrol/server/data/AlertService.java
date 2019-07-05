@@ -12,13 +12,12 @@ import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.maps.Coordinate;
 import com.alarmcontrol.server.maps.GeocodingResult;
+import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
-import com.alarmcontrol.server.maps.graphhopper.routing.GraphhopperRoutingService;
-import com.alarmcontrol.server.maps.mapbox.geocoding.MapboxGeocodingService;
+import com.alarmcontrol.server.maps.RoutingService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,8 +32,8 @@ public class AlertService {
   private Logger logger = LoggerFactory.getLogger(AlertService.class);
 
   private AlertRepository alertRepository;
-  private MapboxGeocodingService geocodingService;
-  private GraphhopperRoutingService routingService;
+  private GeocodingService geocodingService;
+  private RoutingService routingService;
   private OrganisationRepository organisationRepository;
   private AlertAddedPublisher alertAddedPublisher;
   private AlertChangedPublisher alertChangedPublisher;
@@ -42,8 +41,8 @@ public class AlertService {
   private AlertCallRepository alertCallRepository;
 
   public AlertService(AlertRepository alertRepository,
-      MapboxGeocodingService geocodingService,
-      GraphhopperRoutingService routingService,
+      GeocodingService geocodingService,
+      RoutingService routingService,
       OrganisationRepository organisationRepository,
       AlertAddedPublisher alertAddedPublisher,
       AlertChangedPublisher alertChangedPublisher,
@@ -69,6 +68,14 @@ public class AlertService {
       String address,
       String description,
       String raw) {
+
+    if(StringUtils.isBlank(alertReferenceId)){
+      throw new IllegalArgumentException("alertReferenceId can not be blank");
+    }
+
+    if(StringUtils.isBlank(alertCallReferenceId)){
+      throw new IllegalArgumentException("alertCallReferenceId can not be blank");
+    }
 
     if (dateTime == null) {
       dateTime = new Date();
@@ -111,22 +118,17 @@ public class AlertService {
       return null;
     }
 
-    List<Alert> existingAlerts = alertRepository
+    Optional<Alert> foundAlert = alertRepository
         .findByOrganisationIdAndReferenceId(organisationId, referenceId);
 
     Alert alert;
     boolean alertCreated = false;
 
-    if (existingAlerts.size() == 0) {
+    if (foundAlert.isEmpty()) {
       alert = createAlert(organisationId, referenceId, keyword, dateTime, address, description);
       alertCreated = true;
     } else {
-      alert = existingAlerts.get(0);
-
-      if(existingAlerts.size() > 1){
-        logger.warn("There were {} existing alerts found for the organisationId:'{}' and referenceId:'{}'. "
-            + "Using the first alert with id:'{}' ", existingAlerts.size(), organisationId, referenceId, alert.getId());
-      }
+      alert = foundAlert.get();
     }
 
     AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, dateTime, raw);
