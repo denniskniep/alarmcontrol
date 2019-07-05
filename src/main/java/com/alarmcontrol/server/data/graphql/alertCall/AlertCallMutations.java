@@ -23,7 +23,8 @@ public class AlertCallMutations implements GraphQLMutationResolver {
       String alertCallReferenceId,
       String keyword,
       Date dateTime,
-      String address) {
+      String address,
+      String description) {
 
     if (StringUtils.isBlank(alertNumber)) {
       throw new ClientValidationException("alertNumber should not be blank");
@@ -42,6 +43,14 @@ public class AlertCallMutations implements GraphQLMutationResolver {
     }
 
     return alertService
-        .create(organisationId, alertNumber, alertReferenceId, alertCallReferenceId, keyword, dateTime, address);
+        .create(organisationId,
+            alertNumber,
+            alertReferenceId,
+            alertCallReferenceId,
+            keyword,
+            dateTime,
+            address,
+            description,
+            null);
   }
 }

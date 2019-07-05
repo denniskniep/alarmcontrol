@@ -59,27 +59,6 @@ public class AlertService {
     this.alertCallRepository = alertCallRepository;
   }
 
-  @Transactional(isolation = Isolation.READ_COMMITTED)
-  public AlertCall create(
-      Long organisationId,
-      String alertNumber,
-      String alertReferenceId,
-      String alertCallReferenceId,
-      String keyword,
-      Date dateTime,
-      String address) {
-    return create(organisationId,
-        alertNumber,
-        alertReferenceId,
-        alertCallReferenceId,
-        keyword,
-        dateTime,
-        address,
-        null,
-        null);
-  }
-
-  @Transactional(isolation = Isolation.READ_COMMITTED)
   public AlertCall create(
       Long organisationId,
       String alertNumber,
@@ -95,19 +74,28 @@ public class AlertService {
       dateTime = new Date();
     }
 
-    Optional<AlertNumber> foundAlertNumber = alertNumberRepository
-        .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
-    if (foundAlertNumber.isEmpty()) {
-      logger.warn("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+    AlertCallCreated createdAlertCall = createWithinTransaction(organisationId, alertNumber, alertReferenceId,
+        alertCallReferenceId, keyword, dateTime, address,
+        description, raw);
+
+    if(createdAlertCall == null){
       return null;
     }
 
-    return create(foundAlertNumber.get(), alertReferenceId, alertCallReferenceId, keyword, dateTime, address,
-        description, raw);
+    // Its important that this code is outside of the db-transaction. Because of notification
+    // is triggered through websocket, but isolation level protects new alert to be read until commit.
+    if (createdAlertCall.isAlertCreated()) {
+      alertAddedPublisher.emitAlertAdded(createdAlertCall.getAlert().getId(), organisationId);
+    } else {
+      alertChangedPublisher.emitAlertChanged(createdAlertCall.getAlert().getId());
+    }
+    return createdAlertCall.getAlertCall();
   }
 
-  private AlertCall create(
-      AlertNumber alertNumber,
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  protected AlertCallCreated createWithinTransaction(
+      Long organisationId,
+      String alertNumber,
       String referenceId,
       String referenceCallId,
       String keyword,
@@ -116,7 +104,12 @@ public class AlertService {
       String description,
       String raw) {
 
-    Long organisationId = alertNumber.getOrganisationId();
+    Optional<AlertNumber> foundAlertNumber = alertNumberRepository
+        .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
+    if (foundAlertNumber.isEmpty()) {
+      logger.info("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+      return null;
+    }
 
     List<Alert> existingAlerts = alertRepository
         .findByOrganisationIdAndReferenceId(organisationId, referenceId);
@@ -129,16 +122,15 @@ public class AlertService {
       alertCreated = true;
     } else {
       alert = existingAlerts.get(0);
+
+      if(existingAlerts.size() > 1){
+        logger.warn("There were {} existing alerts found for the organisationId:'{}' and referenceId:'{}'. "
+            + "Using the first alert with id:'{}' ", existingAlerts.size(), organisationId, referenceId, alert.getId());
+      }
     }
 
-    AlertCall alertCall = createAlertCall(alertNumber, alert, referenceCallId, dateTime, raw);
-
-    if (alertCreated) {
-      alertAddedPublisher.emitAlertAdded(alert.getId(), organisationId);
-    } else {
-      alertChangedPublisher.emitAlertChanged(alert.getId());
-    }
-    return alertCall;
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, dateTime, raw);
+    return new AlertCallCreated(alertCall, alert, alertCreated);
   }
 
   private Alert createAlert(Long organisationId,
@@ -232,5 +224,29 @@ public class AlertService {
         dateTime);
     alertCallRepository.save(alertCall);
     return alertCall;
+  }
+
+  private static class AlertCallCreated {
+    private AlertCall alertCall;
+    private Alert alert;
+    private boolean alertCreated;
+
+    public AlertCallCreated(AlertCall alertCall, Alert alert, boolean alertCreated) {
+      this.alertCall = alertCall;
+      this.alert = alert;
+      this.alertCreated = alertCreated;
+    }
+
+    public AlertCall getAlertCall() {
+      return alertCall;
+    }
+
+    public Alert getAlert() {
+      return alert;
+    }
+
+    public boolean isAlertCreated() {
+      return alertCreated;
+    }
   }
 }
