@@ -30,7 +30,7 @@ RUN mvn --batch-mode clean install -P '!build-frontend'
 
 # copy all testfiles into a folder
 RUN mkdir -p /build/artifacts/testresults && \
-    find /app/ -name "TEST-*.xml" -exec cp {} /build/artifacts/testresults
+    find /app/ -name "TEST-*.xml" -exec cp {} /build/artifacts/testresults \;
 
 #--------------------------------------------------------
 FROM openjdk:11-jre-slim
