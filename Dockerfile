@@ -28,6 +28,10 @@ COPY --from=frontend-build /app/dist /app/src/main/resources/static
 # Frontend already build by docker container
 RUN mvn --batch-mode clean install -P '!build-frontend'
 
+# copy all testfiles into a folder
+RUN mkdir -p /build/artifacts/testresults && \
+    find /app/ -name "TEST-*.xml" -exec cp {} /build/artifacts/testresults \;
+
 #--------------------------------------------------------
 FROM openjdk:11-jre-slim
 
@@ -42,6 +46,10 @@ COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
 COPY --from=backend-build /app/target/alarmcontrol-server.jar /app/alarmcontrol-server.jar
+
+# Copy buildresults into single folder
+COPY --from=backend-build /build/artifacts/testresults /build/artifacts/testresults
+COPY --from=backend-build /app/target/alarmcontrol-server.jar /build/artifacts/alarmcontrol-server.jar
 
 WORKDIR /app
 
