@@ -26,6 +26,10 @@ docker-compose up --build
 ## Development
 See [docs/development.md](docs/development.md)
 
+## Release
+See [docs/release.md](docs/release.md)
+
+
 ## ToDos
 
 ### Security
