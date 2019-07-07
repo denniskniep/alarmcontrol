@@ -1,6 +1,15 @@
 # Alarmcontrol
+[![AzureDevOps build](https://dev.azure.com/kniepdennis/Alarmcontrol/_apis/build/status/Alarmcontrol-CI?branchName=master)](https://dev.azure.com/kniepdennis/Alarmcontrol/_build?definitionId=3)
+[![GitHub release](https://img.shields.io/github/release/denniskniep/alarmcontrol.svg)](https://github.com/denniskniep/alarmcontrol/releases)
 
-## Getting Started
+## Quick Start
+
+### From DockerHub
+[DockerHub](https://hub.docker.com/r/denniskniep/alarmcontrol)
+
+### From SourceCode
+Clone Repository with GIT
+
 Use docker-compose for testing (not for production)
 
 ```
@@ -12,6 +21,7 @@ GRAPHHOPPER_APIKEY=xxx \
 MAPBOX_ACCESS_TOKEN=xxx \
 docker-compose up --build
 ```
+
 
 ## Development
 See [docs/development.md](docs/development.md)
