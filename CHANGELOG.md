@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Separate `docker-compose.yaml` file with image from [DockerHub Repository](https://hub.docker.com/r/denniskniep/alarmcontrol)
 
+### Changed
+- Bugfix: Minutes in Dates are displayed correctly 
+
 ## [1.0.1] - 2019-07-07
 ### Added
 - CI/CD with AzureDevOps
