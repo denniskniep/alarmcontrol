@@ -8,6 +8,7 @@ import PrettyPrinter from "./utils/prettyPrinter";
 import QueryDefaultHandler from "./utils/queryDefaultHandler";
 import Form from "react-bootstrap/Form";
 import store from "./utils/store";
+import AlertAddedSubscription from "./alertview/alertAddedSubscription";
 
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
@@ -57,7 +58,9 @@ class Menu extends Component {
         o => o.id == this.state.organisationId).length == 0) {
       return null;
     }
-    return this.state.organisationId == 0 ? null : this.state.organisationId * 1;
+    return this.state.organisationId == 0 ?
+        null :
+        this.state.organisationId * 1;
   }
 
   render() {
@@ -71,7 +74,7 @@ class Menu extends Component {
                 loading,
                 error,
                 data,
-                data.organisations);
+                data && data.organisations);
 
             if (result) {
               return result;
@@ -92,87 +95,91 @@ class Menu extends Component {
                         loading,
                         error,
                         data,
-                        data.alertsByOrganisationId);
+                        data && data.alertsByOrganisationId);
 
                     if (result) {
                       return result;
                     }
 
                     return (
-
-                        <Navbar sticky="top" collapseOnSelect expand="lg"
-                                bg="dark"
-                                variant="dark">
-                          <Navbar.Brand>AlarmControl</Navbar.Brand>
-                          <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
-                          <Navbar.Collapse id="responsive-navbar-nav">
-                            <Nav className="mr-auto">
-                              <NavLink className={"nav-link"} exact
-                                       to="/app/">Home</NavLink>
-
-
-                              <React.Fragment>
-                                <NavDropdown title="Last Alerts">
-                                  {
-                                    data.alertsByOrganisationId.map(
-                                        (alert, index) => {
-                                          return <NavDropdown.Item
-                                              key={alert.id}
-                                              href={"/app/alertview/"
-                                              + alert.id}>
-                                            {
-                                              alert.keyword +
-                                              (alert.addressInfo1 ? " - "
-                                                  + alert.addressInfo1
-                                                  : "") +
-                                              " (" +
-                                              new PrettyPrinter().prettifyDateTimeLong(
-                                                  alert.dateTime) +
-                                              ")"
-                                            }
-                                          </NavDropdown.Item>
-                                        })
-                                  }
-                                </NavDropdown>
-                              </React.Fragment>
+                        <React.Fragment>
+                          <AlertAddedSubscription
+                              onSubscriptionData={o => refetch()}/>
+                          <Navbar sticky="top" collapseOnSelect expand="lg"
+                                  bg="dark"
+                                  variant="dark">
+                            <Navbar.Brand>AlarmControl</Navbar.Brand>
+                            <Navbar.Toggle
+                                aria-controls="responsive-navbar-nav"/>
+                            <Navbar.Collapse id="responsive-navbar-nav">
+                              <Nav className="mr-auto">
+                                <NavLink className={"nav-link"} exact
+                                         to="/app/">Home</NavLink>
 
 
-                            </Nav>
-                            <Nav>
-                              <NavDropdown title="Manage">
-                                <NavDropdown.Item
-                                    href="/app/manage/organisation">Organisations</NavDropdown.Item>
-                              </NavDropdown>
-
-                              <Form inline>
-                                <Form.Group controlId="formGridState">
-                                  <Form.Label
-                                      className={"navLabel"}>Organisation:</Form.Label>
-                                  <Form.Control as="select"
-                                                value={this.state.organisationId}
-                                                onChange={
-                                                  c => this.handleOrganisationChanged(
-                                                      c, refetch)}>
-                                    <option value={0}>All</option>
+                                <React.Fragment>
+                                  <NavDropdown title="Last Alerts">
                                     {
-                                      organisations.map(
-                                          (organisation, index) => {
-                                            return (
-                                                <option
-                                                    key={organisation.id}
-                                                    value={organisation.id}
-                                                >
-                                                  {organisation.name}
-                                                </option>)
+                                      data.alertsByOrganisationId.map(
+                                          (alert, index) => {
+                                            return <NavDropdown.Item
+                                                key={alert.id}
+                                                href={"/app/alertview/"
+                                                + alert.id}>
+                                              {
+                                                alert.keyword +
+                                                (alert.addressInfo1 ? " - "
+                                                    + alert.addressInfo1
+                                                    : "") +
+                                                " (" +
+                                                new PrettyPrinter().prettifyDateTimeLong(
+                                                    alert.dateTime) +
+                                                ")"
+                                              }
+                                            </NavDropdown.Item>
                                           })
                                     }
-                                  </Form.Control>
-                                </Form.Group>
-                              </Form>
+                                  </NavDropdown>
+                                </React.Fragment>
 
-                            </Nav>
-                          </Navbar.Collapse>
-                        </Navbar>
+
+                              </Nav>
+                              <Nav>
+                                <NavDropdown title="Manage">
+                                  <NavDropdown.Item
+                                      href="/app/manage/organisation">Organisations</NavDropdown.Item>
+                                </NavDropdown>
+
+                                <Form inline>
+                                  <Form.Group controlId="formGridState">
+                                    <Form.Label
+                                        className={"navLabel"}>Organisation:</Form.Label>
+                                    <Form.Control as="select"
+                                                  value={this.state.organisationId}
+                                                  onChange={
+                                                    c => this.handleOrganisationChanged(
+                                                        c, refetch)}>
+                                      <option value={0}>All</option>
+                                      {
+                                        organisations.map(
+                                            (organisation, index) => {
+                                              return (
+                                                  <option
+                                                      key={organisation.id}
+                                                      value={organisation.id}
+                                                  >
+                                                    {organisation.name}
+                                                  </option>)
+                                            })
+                                      }
+                                    </Form.Control>
+                                  </Form.Group>
+                                </Form>
+
+                              </Nav>
+                            </Navbar.Collapse>
+                          </Navbar>
+                        </React.Fragment>
                     )
                   }}
                 </Query>

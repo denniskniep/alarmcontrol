@@ -13,7 +13,7 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import {InMemoryCache} from "apollo-cache-inmemory";
-import Home from "./home";
+import Home from "./home/home";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AlertViewSwitcher from "./alertview/alertViewSwitcher";

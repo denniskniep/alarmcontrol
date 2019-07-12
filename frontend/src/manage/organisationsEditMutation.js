@@ -36,7 +36,7 @@ class OrganisationsView extends Component {
             let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
                 error,
                 data,
-                data.organisations);
+                data && data.organisations);
 
             if(result){
               return result;

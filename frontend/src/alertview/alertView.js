@@ -2,7 +2,6 @@ import {Query, Subscription} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertViewLayout from "./alertViewLayout";
-import AlertViewSwitcher from "./alertViewSwitcher";
 import QueryDefaultHandler from "../utils/queryDefaultHandler";
 
 const ALERT_BY_ID = gql`
@@ -65,7 +64,7 @@ class AlertView extends Component {
               let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
                   error,
                   data,
-                  data.alertById);
+                  data && data.alertById);
 
               if (result) {
                 return result;

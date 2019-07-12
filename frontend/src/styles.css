@@ -49,11 +49,41 @@ html,body,#app{
   margin-right: 10px;
 }
 
+.td-dot{
+  width: 10px;
+}
+
+.dot-td-container{
+  margin-top: 5px;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid gray;
+}
+
+.dot-not-available{
+  background-color: rgb(255, 16, 0);
+}
+
+.dot-available{
+  background-color: rgb(0, 255, 0);
+}
+
+
 .available{
   background-color: #b1dfbb42;
 }
 
-.laterAvailable{
+.not-available{
+  background-color: rgba(255, 16, 0, 0.18);
+}
+
+.later-available{
   background-color: #8ec0ff42;
 }
 

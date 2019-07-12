@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Separate `docker-compose.yaml` file with image from [DockerHub Repository](https://hub.docker.com/r/denniskniep/alarmcontrol)
+- Refresh Menu "Last Alerts" if Alarm received
+- Display and manage alert independent employee status
 
 ### Changed
 - Bugfix: Minutes in Dates are displayed correctly 

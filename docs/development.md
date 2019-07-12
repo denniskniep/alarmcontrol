@@ -7,11 +7,15 @@
 * Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
 (register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
 
-Start react client inside the folder `frontend` with `npm run start`
+* Install node_modules inside the folder `frontend` with `npm run start`
+
+* Start react client inside the folder `frontend` with `npm run start`
 
 
 ## Database
 * **H2Console**: http://localhost:8080/h2-console
+
+ChangeCconnection String to `jdbc:h2:./test`
 
 Liquibase Database definition:
 src/main/resources/db/changelog/db.changelog-master.yaml
@@ -210,7 +214,7 @@ Implicitly creates an Alert
 mutation { 
   newAlertCall(
     organisationId: 1
-    alertNumber: "S4"
+    alertNumber: "123456-S04"
     alertReferenceId: "B123456"
     alertCallReferenceId: "123"
     keyword: "H1"
@@ -245,6 +249,18 @@ mutation {
     employeeReferenceId: "4567"
     feedback: CANCEL) {
     feedback
+  }
+}
+```
+
+##### Add Employee Status
+```
+mutation { 
+  addEmployeeStatus(
+    organisationId: 1
+    employeeReferenceId: "2345"
+    status: AVAILABLE) {
+    status
   }
 }
 ```
