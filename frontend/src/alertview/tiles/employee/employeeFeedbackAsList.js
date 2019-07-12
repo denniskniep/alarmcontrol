@@ -7,7 +7,7 @@ class EmployeeFeedbackAsList extends Component {
   mapClassForFeedback(feedback) {
     switch (feedback) {
       case EmployeeFeedbackStates.getLater():
-        return "laterAvailable"
+        return "later-available"
       case EmployeeFeedbackStates.getCommit():
         return "available"
       default:
