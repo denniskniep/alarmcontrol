@@ -8,9 +8,9 @@ import AlertViewBox from "../alertview/alertViewBox";
 import {CurrentOrganisationContext} from "../currentOrganisationContext";
 import EmployeeStatusAddedSubscription from "./employeeStatusAddedSubscription";
 
-const ORGANISATION_BY_ID = gql`
-  query organisationById($organisationId: ID!) {
-    organisationById(organisationId: $organisationId) {
+const ORGANISATIONS_BY_ID = gql`
+  query organisationsById($organisationId: ID) {
+    organisationsById(organisationId: $organisationId) {
       id
       employees {
         id
@@ -38,6 +38,10 @@ class EmployeeStatusAsList extends Component {
     }
   }
 
+  getValidOrganisationId(organisationId) {
+    return organisationId == 0 ? null : organisationId * 1;
+  }
+
   render() {
     return (
         <React.Fragment>
@@ -47,21 +51,24 @@ class EmployeeStatusAsList extends Component {
                   <AlertViewBox>
                     <Container fluid="true"
                                className={"d-flex flex-column h-100"}>
-                      <Query query={ORGANISATION_BY_ID}
+                      <Query query={ORGANISATIONS_BY_ID}
                              fetchPolicy="no-cache"
-                             variables={{organisationId: organisationContext.organisationId}}>
+                             variables={{
+                               organisationId: this.getValidOrganisationId(
+                                   organisationContext.organisationId)
+                             }}>
                         {({loading, error, data, refetch}) => {
                           let result = new QueryDefaultHandler().handleGraphQlQuery(
                               loading,
                               error,
                               data,
-                              data && data.organisationById);
+                              data && data.organisationsById);
 
                           if (result) {
                             return result;
                           }
 
-                          let organisation = data.organisationById;
+                          let organisations = data.organisationsById;
                           return (
 
                               <Row>
@@ -70,20 +77,27 @@ class EmployeeStatusAsList extends Component {
                                 <Col className={"noPadding"}>
                                   <Table responsive>
                                     <tbody>
-                                    {organisation.employees.map(
-                                        (e, index) => {
-                                          return (
-                                              <tr key={e.id}>
-                                                <td className={"dot-td"}>
+                                    {organisations.map(
+                                        (o, index) => {
+                                          {
+                                            return (
+                                                o.employees.map(
+                                                    (e, index) => {
+                                                      return (
+                                                          <tr key={e.id}>
+                                                            <td className={"dot-td"}>
                                               <span
                                                   className={"dot dot-td-container "
                                                   + this.mapClassForFeedback(
                                                       e.status
                                                       && e.status.status)}></span>
-                                                </td>
-                                                <td>{e.firstname} {e.lastname}</td>
-                                              </tr>
-                                          )
+                                                            </td>
+                                                            <td>{e.firstname} {e.lastname}</td>
+                                                          </tr>
+                                                      )
+                                                    })
+                                            );
+                                          }
                                         })}
                                     </tbody>
                                   </Table>

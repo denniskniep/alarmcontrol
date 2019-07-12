@@ -11,8 +11,8 @@ import AlertAddedSubscription from "./alertview/alertAddedSubscription";
 import {CurrentOrganisationContext} from "./currentOrganisationContext";
 
 const ALERTS_BY_ORGANISATION = gql`
-  query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
-    alertsByOrganisationId(organisationId: $id, page: $page, size: $size) {
+  query alertsByOrganisationId($organisationId: ID, $page: Int!, $size: Int!) {
+    alertsByOrganisationId(organisationId: $organisationId, page: $page, size: $size) {
       id,
       keyword,
       dateTime,
@@ -76,7 +76,7 @@ class Menu extends Component {
                         <Query query={ALERTS_BY_ORGANISATION}
                                fetchPolicy="no-cache"
                                variables={{
-                                 id: this.getValidOrganisationId(organisationContext.organisationId ,organisations),
+                                 organisationId: this.getValidOrganisationId(organisationContext.organisationId, organisations),
                                  page: 0,
                                  size: 10
                                }}>

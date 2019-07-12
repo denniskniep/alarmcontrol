@@ -3,6 +3,7 @@ type Query {
   alertsByOrganisationId(organisationId: ID!): [Alert]
   alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): [Alert]
   organisations : [Organisation]
+  organisationsById(organisationId: ID): [Organisation]
   organisationById(organisationId: ID!): Organisation
 }
 
