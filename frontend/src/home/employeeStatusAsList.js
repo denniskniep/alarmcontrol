@@ -6,6 +6,7 @@ import QueryDefaultHandler from "../utils/queryDefaultHandler";
 import EmployeeStates from "./employeeStates";
 import AlertViewBox from "../alertview/alertViewBox";
 import {CurrentOrganisationContext} from "../currentOrganisationContext";
+import EmployeeStatusAddedSubscription from "./employeeStatusAddedSubscription";
 
 const ORGANISATION_BY_ID = gql`
   query organisationById($organisationId: ID!) {
@@ -62,24 +63,28 @@ class EmployeeStatusAsList extends Component {
 
                           let organisation = data.organisationById;
                           return (
+
                               <Row>
+                                <EmployeeStatusAddedSubscription
+                                    onSubscriptionData={(o) => refetch()}/>
                                 <Col className={"noPadding"}>
                                   <Table responsive>
                                     <tbody>
-                                    {organisation.employees.map((e, index) => {
-                                      return (
-                                          <tr key={e.id}>
-                                            <td className={"dot-td"}>
+                                    {organisation.employees.map(
+                                        (e, index) => {
+                                          return (
+                                              <tr key={e.id}>
+                                                <td className={"dot-td"}>
                                               <span
                                                   className={"dot dot-td-container "
                                                   + this.mapClassForFeedback(
                                                       e.status
                                                       && e.status.status)}></span>
-                                            </td>
-                                            <td>{e.firstname} {e.lastname}</td>
-                                          </tr>
-                                      )
-                                    })}
+                                                </td>
+                                                <td>{e.firstname} {e.lastname}</td>
+                                              </tr>
+                                          )
+                                        })}
                                     </tbody>
                                   </Table>
                                 </Col>
@@ -87,6 +92,7 @@ class EmployeeStatusAsList extends Component {
                         }}
                       </Query>
                     </Container>
+
                   </AlertViewBox>
               );
             }}

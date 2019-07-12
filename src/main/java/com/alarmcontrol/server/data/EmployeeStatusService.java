@@ -1,9 +1,8 @@
 package com.alarmcontrol.server.data;
 
-import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
+import com.alarmcontrol.server.data.graphql.employeeStatus.publisher.EmployeeStatusAddedPublisher;
 import com.alarmcontrol.server.data.models.Employee;
 import com.alarmcontrol.server.data.models.EmployeeStatus;
-import com.alarmcontrol.server.data.models.Feedback;
 import com.alarmcontrol.server.data.models.Status;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeStatusRepository;
@@ -17,11 +16,14 @@ public class EmployeeStatusService {
 
   private EmployeeRepository employeeRepository;
   private EmployeeStatusRepository employeeStatusRepository;
+  private EmployeeStatusAddedPublisher employeeStatusAddedPublisher;
 
   public EmployeeStatusService(EmployeeRepository employeeRepository,
-      EmployeeStatusRepository employeeStatusRepository) {
+      EmployeeStatusRepository employeeStatusRepository,
+      EmployeeStatusAddedPublisher employeeStatusAddedPublisher) {
     this.employeeRepository = employeeRepository;
     this.employeeStatusRepository = employeeStatusRepository;
+    this.employeeStatusAddedPublisher = employeeStatusAddedPublisher;
   }
 
   public EmployeeStatus addEmployeeStatus(Long organisationId,
@@ -43,7 +45,9 @@ public class EmployeeStatusService {
     }
 
     EmployeeStatus employeeStatus = new EmployeeStatus(foundEmployee.get().getId(), status, dateTime, "");
-    return employeeStatusRepository.save(employeeStatus);
+    employeeStatusRepository.save(employeeStatus);
+    employeeStatusAddedPublisher.emitEmployeeStatusAdded(employeeStatus.getEmployeeId());
+    return employeeStatus;
   }
 
   public EmployeeStatus getEmployeeStatus(Long employeeId){

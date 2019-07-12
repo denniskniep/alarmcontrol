@@ -36,6 +36,7 @@ type Subscription {
     alertAdded: AlertAdded
     alertChanged: AlertChanged
     employeeFeedbackAdded : EmployeeFeedbackAdded
+    employeeStatusAdded : EmployeeStatusAdded
 }
 
 type Alert {
@@ -84,6 +85,10 @@ type AlertChanged {
 type EmployeeFeedbackAdded {
   alertId: ID
   alertCallId: ID
+  employeeId: ID
+}
+
+type EmployeeStatusAdded {
   employeeId: ID
 }
 
