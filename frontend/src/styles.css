@@ -50,7 +50,7 @@ html,body,#app{
 }
 
 .td-dot{
-  width: 10px;
+  width: 10px !important;
 }
 
 .dot-td-container{
@@ -73,7 +73,6 @@ html,body,#app{
 .dot-available{
   background-color: rgb(0, 255, 0);
 }
-
 
 .available{
   background-color: #b1dfbb42;

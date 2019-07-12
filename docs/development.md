@@ -209,7 +209,7 @@ mutation {
 ```
 
 ##### Add an AlertCall 
-Implicitly creates an Alert 
+Creates an AlertCall and implicitly creates an Alert if alertReferenceId not exists
 ```
 mutation { 
   newAlertCall(
@@ -219,6 +219,7 @@ mutation {
     alertCallReferenceId: "123"
     keyword: "H1"
     address:"Hinter den Gärten 8, 34379 Calden"
+    # dateTime: "2019-05-03T12:23:32.456Z"
   ){
     id
     alert {

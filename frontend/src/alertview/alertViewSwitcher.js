@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom'
-import store from "../utils/store";
 import {toast} from "react-toastify";
 import AlertAddedSubscription from "./alertAddedSubscription";
+import {CurrentOrganisationContext} from "../currentOrganisationContext";
 
 class AlertViewSwitcher extends Component {
 
-  handleSubscriptionData(options, history) {
+  handleSubscriptionData(options, history, currentOrganisationId) {
     if (options && options.subscriptionData && options.subscriptionData.data
         && options.subscriptionData.data.alertAdded) {
       let alertAdded = options.subscriptionData.data.alertAdded;
@@ -19,7 +19,6 @@ class AlertViewSwitcher extends Component {
         draggable: true
       });
 
-      let currentOrganisationId = store.getCurrentOrganisationId();
       if (currentOrganisationId == 0 ||
           currentOrganisationId == alertAdded.organisationId) {
         history.push("/app/alertview/" + alertAdded.id)
@@ -30,9 +29,15 @@ class AlertViewSwitcher extends Component {
   render() {
     return (
         <Route render={({history}) => (
-            <AlertAddedSubscription
-                onSubscriptionData={o =>
-                    this.handleSubscriptionData(o, history)}/>
+            <CurrentOrganisationContext.Consumer>
+              {organisationContext => {
+                return (
+                    <AlertAddedSubscription
+                        onSubscriptionData={o =>
+                            this.handleSubscriptionData(o, history, organisationContext.organisationId)}/>
+                );
+              }}
+            </CurrentOrganisationContext.Consumer>
         )}/>
     );
   }

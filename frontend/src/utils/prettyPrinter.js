@@ -7,7 +7,7 @@ class PrettyPrinter {
   }
 
   prettifyDateLong(dateTime){
-    return moment.utc(alert.dateTime).local().format("DD.MM.YYYY")
+    return moment.utc(dateTime).local().format("DD.MM.YYYY")
   }
 
 }
