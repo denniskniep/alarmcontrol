@@ -82,8 +82,7 @@ class RuleServiceTest {
                 "  ]\n" +
                 "}";
         ruleService.saveAaoRules(testOrganisation.getId(), json);
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        LocalTime alertTime = AlertContext.toLocalTime(parser.parse(to));
+        LocalTime alertTime = LocalTime.parse("12:00");
         alertTime.minusMinutes(30);
         var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId()));
 

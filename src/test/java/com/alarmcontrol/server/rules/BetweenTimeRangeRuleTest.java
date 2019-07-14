@@ -16,41 +16,36 @@ class BetweenTimeRangeRuleTest {
 
     @Test
     void match_DateInRange() throws ParseException {
-        var result = checkDateInRange("2019-03-01 11:00:00");
+        var result = checkDateInRange("11:00:00");
 
         assertThat(result).isEqualTo(true);
     }
 
     @Test
     void match_DateNotInRange() throws ParseException {
-        var result = checkDateInRange("2019-03-01 13:00:00");
+        var result = checkDateInRange("13:00:00");
 
         assertThat(result).isEqualTo(false);
     }
 
     @Test
     void match_DateEqualsFromDate_ReturnsTrue() throws ParseException {
-        var result = checkDateInRange(from);
+        var result = checkDateInRange("10:00");
 
         assertThat(result).isEqualTo(true);
     }
 
     @Test
     void match_DateEqualToDate_ReturnsTrue() throws ParseException {
-        var result = checkDateInRange(to);
+        var result = checkDateInRange("12:00");
 
         assertThat(result).isEqualTo(true);
     }
 
     private boolean checkDateInRange(String alertDate) throws ParseException {
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date fromDate = parser.parse(from);
-        Date toDate = parser.parse(to);
-        LocalTime fromTime = AlertContext.toLocalTime(fromDate);
-        LocalTime toTime = AlertContext.toLocalTime(toDate);
-        var rule = new BetweenTimeRangeRule(fromTime, toTime);
-        var dateToCheck = parser.parse(alertDate);
-        var timeToCheck = AlertContext.toLocalTime(dateToCheck);
+        var rule = new BetweenTimeRangeRule(LocalTime.parse("10:00"), LocalTime.parse("12:00"));
+        var timeToCheck = LocalTime.parse(alertDate);
         return rule.match(new AlertContext("H1", timeToCheck, 4711L));
     }
 }
