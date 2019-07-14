@@ -7,7 +7,7 @@
 * Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
 (register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
 
-* Install node_modules inside the folder `frontend` with `npm run start`
+* Install node_modules inside the folder `frontend` with `npm install`
 
 * Start react client inside the folder `frontend` with `npm run start`
 
@@ -329,7 +329,7 @@ curl  -X POST localhost:8080/api/alert \
           }'
 ```
 
-An an EmployeeFeedback
+Add an EmployeeFeedback
 ```
 curl  -X POST localhost:8080/api/employeeFeedback \
       -H 'Content-Type: application/json' \
@@ -338,5 +338,16 @@ curl  -X POST localhost:8080/api/employeeFeedback \
             "issi":"1234", 
             "id":"321", 
             "ur":"32768" 
+          }'
+```
+
+Add an EmployeeStatus
+```
+curl  -X POST localhost:8080/api/employeeStatus \
+      -H 'Content-Type: application/json' \
+      -d '{ 
+            "organisationId":"1", 
+            "issi":"1234",
+            "status":"15" 
           }'
 ```

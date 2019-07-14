@@ -67,11 +67,11 @@ html,body,#app{
 }
 
 .dot-not-available{
-  background-color: rgb(255, 16, 0);
+  background-color: #dc3545;
 }
 
 .dot-available{
-  background-color: rgb(0, 255, 0);
+  background-color: #28a745;
 }
 
 .available{
@@ -84,6 +84,16 @@ html,body,#app{
 
 .later-available{
   background-color: #8ec0ff42;
+}
+
+.employee-status-name {
+  margin-bottom: 0px;
+}
+
+.employee-status-date {
+  font-size: 10px;
+  color: gray;
+  margin-bottom: 0px;
 }
 
 .leaflet-routing-container-hide{
