@@ -2,10 +2,7 @@ package com.alarmcontrol.server.data;
 
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
-import com.alarmcontrol.server.data.models.Alert;
-import com.alarmcontrol.server.data.models.AlertCall;
-import com.alarmcontrol.server.data.models.AlertNumber;
-import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.models.*;
 import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
@@ -15,10 +12,18 @@ import com.alarmcontrol.server.maps.GeocodingResult;
 import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
+
+import com.alarmcontrol.server.rules.AlertContext;
+import com.alarmcontrol.server.rules.MatchResult;
+import com.alarmcontrol.server.rules.RuleService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +36,7 @@ public class AlertService {
 
   private Logger logger = LoggerFactory.getLogger(AlertService.class);
 
+  private RuleService ruleService;
   private AlertRepository alertRepository;
   private GeocodingService geocodingService;
   private RoutingService routingService;
@@ -40,14 +46,15 @@ public class AlertService {
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
 
-  public AlertService(AlertRepository alertRepository,
-      GeocodingService geocodingService,
-      RoutingService routingService,
-      OrganisationRepository organisationRepository,
-      AlertAddedPublisher alertAddedPublisher,
-      AlertChangedPublisher alertChangedPublisher,
-      AlertNumberRepository alertNumberRepository,
-      AlertCallRepository alertCallRepository) {
+  public AlertService(RuleService ruleService, AlertRepository alertRepository,
+                      GeocodingService geocodingService,
+                      RoutingService routingService,
+                      OrganisationRepository organisationRepository,
+                      AlertAddedPublisher alertAddedPublisher,
+                      AlertChangedPublisher alertChangedPublisher,
+                      AlertNumberRepository alertNumberRepository,
+                      AlertCallRepository alertCallRepository) {
+    this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
@@ -178,6 +185,13 @@ public class AlertService {
     } else {
       logger.warn("Skipping geocoding and routing due to address is blank!");
     }
+    MatchResult aaoMatchResult = new MatchResult();
+    try {
+        var localTime = toLocalTime(dateTime);
+        aaoMatchResult = ruleService.evaluateAao(new AlertContext(keyword,localTime, organisationId));
+    } catch(Exception e){
+        logger.error("Error during aao evaluation", e);
+    }
 
     Alert alert = new Alert(organisationId,
         referenceId,
@@ -193,9 +207,15 @@ public class AlertService {
         addressJson,
         routeJson,
         routeDistance,
-        routeDuration);
+        routeDuration,
+        new StringList(aaoMatchResult.getResults()));
     alertRepository.save(alert);
     return alert;
+  }
+
+  private static LocalTime toLocalTime(Date date){
+    LocalTime time = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalTime();
+    return time;
   }
 
   private Coordinate getOrgCoordinate(Long organisationId) {

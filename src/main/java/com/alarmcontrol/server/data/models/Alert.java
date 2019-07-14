@@ -1,13 +1,11 @@
 package com.alarmcontrol.server.data.models;
 
+import javassist.compiler.ast.StringL;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 public class Alert {
@@ -49,23 +47,26 @@ public class Alert {
 
   private Integer duration;
 
+  @Convert(converter = JpaConverterListToJson.class)
+  private StringList aao;
+
   protected Alert() {}
 
   public Alert(Long organisationId,
-      String referenceId,
-      boolean active,
-      String keyword,
-      Date dateTime,
-      String description,
-      String address,
-      String addressInfo1,
-      String addressInfo2,
-      String addressLat,
-      String addressLng,
-      String addressGeocoded,
-      String route,
-      Double distance,
-      Integer duration) {
+               String referenceId,
+               boolean active,
+               String keyword,
+               Date dateTime,
+               String description,
+               String address,
+               String addressInfo1,
+               String addressInfo2,
+               String addressLat,
+               String addressLng,
+               String addressGeocoded,
+               String route,
+               Double distance,
+               Integer duration, StringList aao) {
     this.organisationId = organisationId;
     this.referenceId = referenceId;
     this.active = active;
@@ -81,6 +82,7 @@ public class Alert {
     this.route = route;
     this.distance = distance;
     this.duration = duration;
+    this.aao = aao;
   }
 
   public Long getId() {
@@ -146,4 +148,10 @@ public class Alert {
   public Integer getDuration() {
     return duration;
   }
+
+  public StringList getAao() {
+    return aao;
+  }
+
 }
+

@@ -11,6 +11,8 @@ type Mutation {
   editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!): Organisation
   deleteOrganisation(id: ID!) : ID
 
+  newAao(organisationId: ID!, aaoRules: String!) : Boolean
+
   newSkill(organisationId: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
   editSkill(id: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
   deleteSkill(id: ID!): ID
@@ -36,6 +38,18 @@ type Subscription {
     employeeFeedbackAdded : EmployeeFeedbackAdded
 }
 
+type BetweenTimeRangeRuleData {
+    from: LocalTime
+    to: LocalTime
+}
+
+union RuleData = BetweenTimeRangeRuleData
+
+type RuleContainerData {
+    results: [String]
+    rules: [RuleData]
+}
+
 type Alert {
   id: ID
   organisation: Organisation
@@ -50,6 +64,7 @@ type Alert {
   addressLng : String,
   route: String,
   distance: Float,
+  aao: [String],
   duration: Int,
   employeeFeedback: [EmployeeFeedback]
   alertCalls: [AlertCall]
@@ -93,6 +108,7 @@ type Organisation {
   employees: [Employee]
   skills: [Skill]
   alertNumbers: [AlertNumber]
+  aaoRules: [RuleContainerData]
 }
 
 type EmployeeFeedback {
@@ -124,3 +140,4 @@ type Skill {
 }
 
 scalar DateTime
+scalar LocalTime

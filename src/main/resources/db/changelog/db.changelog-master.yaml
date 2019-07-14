@@ -354,3 +354,43 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: alert_call_employee
             baseColumnNames: alert_call_id
+  - changeSet:
+      id: 2
+      author: dweber
+      changes:
+        - createTable:
+            tableName: organisation_configuration
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organisation_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: key
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: clob
+        - addForeignKeyConstraint:
+            constraintName: fk_organisation-id-organisation_configuration-organisation_id
+            referencedTableName: organisation
+            referencedColumnNames: id
+            baseTableName: organisation_configuration
+            baseColumnNames: organisation_id
+        - addColumn:
+            tableName: alert
+            columns:
+              - column:
+                    name: aao
+                    type: nvarchar(1000)
+
