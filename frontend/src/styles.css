@@ -54,7 +54,7 @@ html,body,#app{
 }
 
 .dot-td-container{
-  margin-top: 5px;
+  margin-top: 2px;
 }
 
 .dot {
@@ -64,6 +64,15 @@ html,body,#app{
   border-radius: 50%;
   display: inline-block;
   border: 1px solid gray;
+}
+
+.dot-sm {
+  height: 8px;
+  width: 8px;
+}
+
+.dot-space {
+  margin-right: 5px;
 }
 
 .dot-not-available{

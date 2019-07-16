@@ -1,20 +1,9 @@
 import {Col, Row, Table} from "react-bootstrap";
 import React, {Component} from 'react';
-import EmployeeStates from "./employeeStates";
 import PrettyPrinter from "../utils/prettyPrinter";
+import EmployeeStatusDot from "./employeeStatusDot";
 
 class EmployeeStatusAsList extends Component {
-
-  mapClassForFeedback(feedback) {
-    switch (feedback) {
-      case EmployeeStates.getNotAvailable():
-        return "dot-not-available"
-      case EmployeeStates.getAvailable():
-        return "dot-available"
-      default:
-        return null;
-    }
-  }
 
   render() {
     return (
@@ -29,11 +18,9 @@ class EmployeeStatusAsList extends Component {
                         return (
                             <tr key={e.id}>
                               <td className={"dot-td"}>
-                                              <span
-                                                  className={"dot dot-td-container "
-                                                  + this.mapClassForFeedback(
-                                                      e.status
-                                                      && e.status.status)}></span>
+                                <p className={"dot-td-container"}>
+                                  <EmployeeStatusDot employee={e} />
+                                </p>
                               </td>
                               <td>
                                 <p className={"employee-status-name"}>
