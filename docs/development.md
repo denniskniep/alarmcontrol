@@ -312,7 +312,7 @@ curl  -X POST localhost:8080/api/alert \
             "organisationId":"1", 
             "gssi":"123456", 
             "id":"321", 
-            "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN" 
+            "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN"
           }'
 ```
 
@@ -324,7 +324,7 @@ curl  -X POST localhost:8080/api/alert \
             "organisationId":"1", 
             "gssi":"123456", 
             "id":"321", 
-            "text":"&54S54*STELLEN#SIE#EINSATZBEREITSCHAFT#HER#B123456778*H1*FÜRSTENWALD#HINTER#DEN#GÄRTEN#8#CALDEN"
+            "text":"&54S54*STELLEN#SIE#EINSATZBEREITSCHAFT#HER#B123456778*H1*FÜRSTENWALD#HINTER#DEN#GÄRTEN#8#CALDEN",
             "whitespaceReplacementChar" : "#" 
           }'
 ```
