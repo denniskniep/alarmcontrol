@@ -23,9 +23,12 @@ class AlertViewHeader extends Component {
   }
 
   prettifyDistanceAndDuration(alert) {
-    let distanceInKm = Number(alert.distance / 1000).toFixed(1);
-    let durationInMin = Number(alert.duration / 1000 / 60).toFixed(0);
-    return distanceInKm + " km (" + durationInMin + " min)"
+    if(alert.distance && alert.duration) {
+      let distanceInKm = Number(alert.distance / 1000).toFixed(1);
+      let durationInMin = Number(alert.duration / 1000 / 60).toFixed(0);
+      return distanceInKm + " km (" + durationInMin + " min)"
+    }
+    return "";
   }
 
   prettifyDate(alert) {
@@ -49,28 +52,42 @@ class AlertViewHeader extends Component {
     return new PrettyPrinter().prettifyDateLong(alert.dateTime);
   }
 
+  printAddress1Header(alert){
+    if(alert.addressInfo1){
+      return (<h1>{alert.addressInfo1}</h1>);
+    }
+    return alert.addressRaw;
+  }
+
+  printAddress2Header(alert){
+    if(alert.addressInfo2){
+      return alert.addressInfo2;
+    }
+    return "";
+  }
+
   render() {
     return (
         <AlertViewBox>
           <Container fluid="true">
-            <Row>
+            <Row className={"align-items-center"}>
               <Col xs={3}>
                 <h1>{this.props.alert.keyword}</h1>
               </Col>
               <Col xs={6}>
-                <h1>{this.props.alert.addressInfo1}</h1>
+                <span>{this.printAddress1Header(this.props.alert)}</span>
               </Col>
               <Col xs={3}>
                 <h1>{this.prettifyDuration(this.props.alert,
                     this.state.currentUTC)}</h1>
               </Col>
             </Row>
-            <Row>
+            <Row className={"align-items-center"}>
               <Col xs={3}>
                 <span>{this.props.alert.description}</span>
               </Col>
               <Col xs={6}>
-                <span>{this.props.alert.addressInfo2}</span>
+                <span>{this.printAddress2Header(this.props.alert)}</span>
               </Col>
               <Col xs={3}>
 

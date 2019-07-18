@@ -18,6 +18,7 @@ const ALERT_BY_ID = gql`
         id
         name
       }
+      addressRaw
       addressInfo1
       addressInfo2
       addressLat,

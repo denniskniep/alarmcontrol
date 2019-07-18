@@ -5,15 +5,38 @@ import com.jayway.jsonpath.JsonPath;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 public class MapboxParser {
 
   private Logger logger = LoggerFactory.getLogger(MapboxParser.class);
 
   public GeocodingResult parse(String json){
+    JSONArray features = JsonPath.read(json, "$.features");
+    if(features.size() == 0){
+      logger.info("Geocoding result is empty!");
+      return new GeocodingResult(json, null, null, null, null);
+    }
+
+    JSONArray placetypes = tryReadJsonPath(json, "$.features[0].place_type");
+    logger.info("Geocoding result contains placetypes '{}'", placetypes);
+
+    String placetype = null;
+    if(placetypes != null && placetypes.size() > 0){
+      placetype = placetypes.get(0).toString();
+      logger.info("Used geocoding result placetype is '{}'", placetype);
+    }
+
+    if(StringUtils.isBlank(placetype) ||
+        StringUtils.equalsIgnoreCase(placetype, "place") ||
+        StringUtils.equalsIgnoreCase(placetype, "locality")){
+      logger.info("Geocoding result is of placetype '{}'. Do not return this, because it is too inaccurate!", placetype);
+      return new GeocodingResult(json, null, null, null, null);
+    }
+
     String lon = JsonPath.<Double>read(json, "$.features[0].center[0]").toString();
     String lat = JsonPath.<Double>read(json, "$.features[0].center[1]").toString();
 
@@ -24,6 +47,9 @@ public class MapboxParser {
 
     String accuracy =  tryReadJsonPath(json, "$.features[0].properties.accuracy");
     logger.info("Geocoding result had a accuracy of '{}'", accuracy);
+
+    Double relevance =  tryReadJsonPath(json, "$.features[0].relevance");
+    logger.info("Geocoding result had a relevance of '{}'", relevance);
 
     String cityDistrict = "";
     String city = "";
