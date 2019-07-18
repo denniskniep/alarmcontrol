@@ -10,10 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refresh Menu "Last Alerts" if Alarm received
 - Display and manage alert independent employee status
 
+## Changed
+- Display raw address if there could be no address geocoded
+
 ### Fixed
 - Minutes in Dates are displayed correctly 
 - Display date after 24 Hours in Alarmcounter
 - Make house number in Mapboxgeocoding result optional
+- Do not use geocoding result if it is too inaccurate
 
 ## [1.0.1](https://github.com/denniskniep/alarmcontrol/compare/v1.0.0-24...v1.0.1-30) - 2019-07-07
 ### Added
