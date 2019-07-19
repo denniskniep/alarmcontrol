@@ -94,7 +94,7 @@ class Menu extends Component {
                             return (
                                 <React.Fragment>
                                   <AlertAddedSubscription
-                                      onSubscriptionData={o => refetch()}/>
+                                      onSubscriptionData={refetch()}/>
                                   <Navbar sticky="top" collapseOnSelect
                                           expand="lg"
                                           bg="dark"
@@ -112,7 +112,7 @@ class Menu extends Component {
                                           <NavDropdown title="Last Alerts">
                                             {
                                               data.alertsByOrganisationId.map(
-                                                  (alert, index) => {
+                                                  (alert) => {
                                                     return <NavDropdown.Item
                                                         key={alert.id}
                                                         href={"/app/alertview/"
@@ -155,7 +155,7 @@ class Menu extends Component {
                                               <option value={0}>All</option>
                                               {
                                                 organisations.map(
-                                                    (organisation, index) => {
+                                                    (organisation) => {
                                                       return (
                                                           <option
                                                               key={organisation.id}
