@@ -51,5 +51,5 @@ class EmployeeFeedbackAsList extends Component {
 export default EmployeeFeedbackAsList
 
 EmployeeFeedbackAsList.propTypes = {
-  employeeFeedback: PropTypes.object
+  employeeFeedback: PropTypes.array
 };

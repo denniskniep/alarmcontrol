@@ -3,6 +3,7 @@ import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
 import AlertViewBox from "../alertViewBox";
 import PrettyPrinter from "../../utils/prettyPrinter";
+import PropTypes from "prop-types";
 
 class AlertViewHeader extends Component {
 
@@ -72,26 +73,25 @@ class AlertViewHeader extends Component {
           <Container fluid="true">
             <Row className={"align-items-center"}>
               <Col xs={3}>
-                <h1>{this.props.alert.keyword}</h1>
+                <h1 data-testid="keyword">{this.props.alert.keyword}</h1>
               </Col>
               <Col xs={6}>
-                <span>{this.printAddress1Header(this.props.alert)}</span>
+                <span data-testid="address1Header">{this.printAddress1Header(this.props.alert)}</span>
               </Col>
               <Col xs={3}>
-                <h1>{this.prettifyDuration(this.props.alert,
+                <h1 data-testid="elapsedTime">{this.prettifyDuration(this.props.alert,
                     this.state.currentUTC)}</h1>
               </Col>
             </Row>
             <Row className={"align-items-center"}>
               <Col xs={3}>
-                <span>{this.props.alert.description}</span>
+                <span data-testid="description">{this.props.alert.description}</span>
               </Col>
               <Col xs={6}>
-                <span>{this.printAddress2Header(this.props.alert)}</span>
+                <span data-testid="address2Header">{this.printAddress2Header(this.props.alert)}</span>
               </Col>
               <Col xs={3}>
-
-                <span>{this.prettifyDate(this.props.alert)}</span>
+                <span data-testid="date">{this.prettifyDate(this.props.alert)}</span>
               </Col>
             </Row>
             <Row>
@@ -101,11 +101,11 @@ class AlertViewHeader extends Component {
              </span>
               </Col>
               <Col xs={6}>
-                <span>{this.prettifyDistanceAndDuration(
+                <span data-testid="routeInfo">{this.prettifyDistanceAndDuration(
                     this.props.alert)}</span>
               </Col>
               <Col xs={3}>
-                <span>
+                <span data-testid="alertCalls">
                   {
                     this.props.alert.alertCalls.map((ac, index) => {
                       return (
@@ -136,3 +136,7 @@ class AlertViewHeader extends Component {
 }
 
 export default AlertViewHeader
+
+AlertViewHeader.propTypes = {
+  alert: PropTypes.object
+};
