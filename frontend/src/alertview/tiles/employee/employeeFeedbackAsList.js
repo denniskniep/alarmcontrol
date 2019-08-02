@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {Badge, Col, Row, Table} from "react-bootstrap";
 import EmployeeFeedbackStates from "./employeeFeedbackStates";
 
@@ -48,3 +49,7 @@ class EmployeeFeedbackAsList extends Component {
 }
 
 export default EmployeeFeedbackAsList
+
+EmployeeFeedbackAsList.propTypes = {
+  employeeFeedback: PropTypes.array
+};

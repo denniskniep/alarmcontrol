@@ -10,6 +10,9 @@ class PrettyPrinter {
     return moment.utc(dateTime).local().format("DD.MM.YYYY")
   }
 
+  prettifyDateTimeShort(dateTime){
+    return moment.utc(dateTime).local().format("DD.MM.YYYY HH:mm")
+  }
 }
 
 export default PrettyPrinter;

@@ -48,6 +48,7 @@ type Alert {
   active: Boolean
   dateTime: DateTime
   description: String
+  addressRaw : String,
   addressInfo1 : String,
   addressInfo2 : String,
   addressLat : String,

@@ -57,8 +57,11 @@ java -jar alarmcontrol-server.jar
 ## Development
 See [docs/development.md](docs/development.md)
 
-## Release
+## Creating a Release
 See [docs/release.md](docs/release.md)
+
+## Changelog
+See [CHANGELOG.md](CHANGELOG.md)
 
 ## Known Problems
 ### Geocoding house numbers with Nominatim

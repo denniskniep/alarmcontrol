@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Badge, Col, Row} from "react-bootstrap";
 import EmployeeFeedbackStates from "./employeeFeedbackStates";
+import EmployeeStatusDot from "../../../home/employeeStatusDot";
 
 class EmployeeFeedbackAsBadges extends Component {
 
@@ -24,7 +25,13 @@ class EmployeeFeedbackAsBadges extends Component {
 
                   <Badge key={ef.employee.id} className={"badgeSpace badgeEmployee"}
                          variant={this.mapColorForFeedback(ef.feedback)}>
+                    {
+                      ef.employee && ef.employee.status && ef.feedback == EmployeeFeedbackStates.getNoResponse() &&
+                      <EmployeeStatusDot className={"dot-sm dot-space"} employee={ef.employee} />
+                    }
+                    <span>
                     {ef.employee.firstname} {ef.employee.lastname}
+                    </span>
                   </Badge>
 
               )

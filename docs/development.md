@@ -1,21 +1,23 @@
 # Development
 
 * Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
+
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
 (register for a free account [here](https://graphhopper.com/dashboard/#/register) and generate your apikey) 
 
 * Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
 (register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
 
-* Install node_modules inside the folder `frontend` with `npm run start`
+* Start the Spring Application `src/main/java/com/alarmcontrol/server/ServerApplication.java` ( i.e. in your IDE)
+
+* Install node_modules inside the folder `frontend` with `npm install`
 
 * Start react client inside the folder `frontend` with `npm run start`
-
 
 ## Database
 * **H2Console**: http://localhost:8080/h2-console
 
-ChangeCconnection String to `jdbc:h2:./test`
+ChangeConnection String to `jdbc:h2:./test`
 
 Liquibase Database definition:
 src/main/resources/db/changelog/db.changelog-master.yaml
@@ -39,6 +41,12 @@ https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
 
 * **Editor**: http://localhost:8080/graphiql
 * **Schema**: http://localhost:8080/graphql/schema.json
+
+#### Add Testdata
+This script is intentionally for the e2e tests but could also be used to initially setup a db for development purposes
+```
+URL="http://localhost:8080/graphql" e2eTests/tests/initialSetup.sh
+```
 
 #### Add Testdata via GraphQL-Editor
 Go to `http://localhost:8080/graphiql` and execute the following Mutations: 
@@ -302,7 +310,7 @@ The client is running by default at http://localhost:1234
 
 ## API
 Use the api if you want your device to add alerts to the system.
-
+Entrypoint for Webrequests: `src/main/java/com/alarmcontrol/server/api/ExternalRequestsController.java`
 
 Add an Alert
 ```
@@ -312,7 +320,7 @@ curl  -X POST localhost:8080/api/alert \
             "organisationId":"1", 
             "gssi":"123456", 
             "id":"321", 
-            "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN" 
+            "text":"&54S54*STELLEN SIE EINSATZBEREITSCHAFT HER B123456778*H1*FÜRSTENWALD HINTER DEN GÄRTEN 8 CALDEN"
           }'
 ```
 
@@ -324,12 +332,12 @@ curl  -X POST localhost:8080/api/alert \
             "organisationId":"1", 
             "gssi":"123456", 
             "id":"321", 
-            "text":"&54S54*STELLEN#SIE#EINSATZBEREITSCHAFT#HER#B123456778*H1*FÜRSTENWALD#HINTER#DEN#GÄRTEN#8#CALDEN"
+            "text":"&54S54*STELLEN#SIE#EINSATZBEREITSCHAFT#HER#B123456778*H1*FÜRSTENWALD#HINTER#DEN#GÄRTEN#8#CALDEN",
             "whitespaceReplacementChar" : "#" 
           }'
 ```
 
-An an EmployeeFeedback
+Add an EmployeeFeedback
 ```
 curl  -X POST localhost:8080/api/employeeFeedback \
       -H 'Content-Type: application/json' \
@@ -339,4 +347,40 @@ curl  -X POST localhost:8080/api/employeeFeedback \
             "id":"321", 
             "ur":"32768" 
           }'
+```
+
+Add an EmployeeStatus
+```
+curl  -X POST localhost:8080/api/employeeStatus \
+      -H 'Content-Type: application/json' \
+      -d '{ 
+            "organisationId":"1", 
+            "issi":"1234",
+            "status":"15" 
+          }'
+```
+
+## Tests
+
+### Backend
+Execute backend tests with mvn
+```
+mvn test
+```
+
+### Frontend
+Execute frontend tests with jest
+```
+npm --prefix frontend/ run test
+```
+
+### End to End Tests (E2E)
+The End to End Tests are located at `<RepositoryRoot>/e2eTests`
+
+Execute End to End Tests with the following script
+
+```
+GRAPHHOPPER_APIKEY="xxx" \
+MAPBOX_ACCESS_TOKEN="xxx" \
+e2eTests/executeE2ETests.sh
 ```

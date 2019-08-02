@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
-import EmployeeStatusAsList from "./employeeStatusAsList";
+import EmployeeStatus from "./employeeStatus";
 
 class Home extends Component {
 
@@ -11,7 +11,7 @@ class Home extends Component {
                    className={"h-full d-flex flex-column alertView"}>
           <Row className={"flex-fill d-flex justify-content-star"}>
             <Col xs={3}>
-              <EmployeeStatusAsList alert={this.props.alert}/>
+              <EmployeeStatus alert={this.props.alert}/>
             </Col>
             <Col>
 

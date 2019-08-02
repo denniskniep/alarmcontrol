@@ -7,6 +7,8 @@ import EmployeeFeedbackAsBadges from "./employee/employeeFeedbackAsBadges";
 import EmployeeFeedbackStates from "./employee/employeeFeedbackStates";
 import EmployeeFeedbackAsList from "./employee/employeeFeedbackAsList";
 import EmployeeFeedbackAggregated from "./employee/employeeFeedbackAggregated";
+import EmployeeStatusAddedSubscription
+  from "../../home/employeeStatusAddedSubscription";
 
 const ALERT_WITH_EMPLOYEE_BY_ID = gql`
   query alertById($id: ID!) {
@@ -22,9 +24,13 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
       employeeFeedback{
         feedback
         employee{
-          id,
-          firstname,
-          lastname,
+          id
+          firstname
+          lastname
+          status {
+            status
+            dateTime
+          }
           skills{
             id
             shortName
@@ -92,6 +98,8 @@ class AlertViewEmployeeFeedback extends Component {
 
                       return (
                           <AlertViewBox>
+                            <EmployeeStatusAddedSubscription
+                                onSubscriptionData={(o) => refetch()}/>
                             <Container fluid="true"
                                        className={"d-flex flex-column h-100"}>
 
