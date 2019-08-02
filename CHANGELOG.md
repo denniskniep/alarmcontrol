@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display date after 24 Hours in Alarmcounter
 - Make house number in Mapboxgeocoding result optional
 - Do not use geocoding result if it is too inaccurate
+- Fix conversion of double value that has no floating point
 
 ## [1.0.1](https://github.com/denniskniep/alarmcontrol/compare/v1.0.0-24...v1.0.1-30) - 2019-07-07
 ### Added

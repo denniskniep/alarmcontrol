@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  testrunner:
+    build:
+      context: ./puppeteer/
+      dockerfile: Dockerfile
+    volumes:
+      -  ${TEST_PATH}:/tests
+      -  ${TEST_OUTPUT_PATH}:/testoutput
+      - ../scripts/wait-for.sh:/wait-for.sh:ro
+    command: ["/wait-for.sh", "alarmcontrol:8080", "--timeout=300", "--", "/tests/runTests.sh"]
+    networks: ['alarmcontrol-net']
+
+networks:
+  alarmcontrol-net: {}

@@ -37,8 +37,8 @@ public class MapboxParser {
       return new GeocodingResult(json, null, null, null, null);
     }
 
-    String lon = JsonPath.<Double>read(json, "$.features[0].center[0]").toString();
-    String lat = JsonPath.<Double>read(json, "$.features[0].center[1]").toString();
+    String lon = tryReadDoubleJsonPath(json, "$.features[0].center[0]").toString();
+    String lat = tryReadDoubleJsonPath(json, "$.features[0].center[1]").toString();
 
     String houseNumber = tryReadJsonPath(json, "$.features[0].address");
     String road = tryReadJsonPath(json, "$.features[0].text");
@@ -48,7 +48,7 @@ public class MapboxParser {
     String accuracy =  tryReadJsonPath(json, "$.features[0].properties.accuracy");
     logger.info("Geocoding result had a accuracy of '{}'", accuracy);
 
-    Double relevance =  tryReadJsonPath(json, "$.features[0].relevance");
+    Double relevance =  tryReadDoubleJsonPath(json, "$.features[0].relevance");
     logger.info("Geocoding result had a relevance of '{}'", relevance);
 
     String cityDistrict = "";
@@ -63,10 +63,6 @@ public class MapboxParser {
     }
 
     String addressInfo1 = join(" ", road, houseNumber);
-    if (StringUtils.isEmpty(addressInfo1)) {
-      addressInfo1 = join(";", lon, lat);
-    }
-
     String addressInfo2 = join("-", city, cityDistrict);
 
     return new GeocodingResult(json, lat, lon, addressInfo1, addressInfo2);
@@ -77,9 +73,28 @@ public class MapboxParser {
     return String.join(delimiter, filteredElements);
   }
 
+
+  private Double tryReadDoubleJsonPath(String json, String path){
+      Object value = tryReadJsonPath(json, path);
+
+      // When an value is with an floating point then it is a double
+      // But if the value has NO floating point it is an integer and there
+      // will be a ClassCastException if we simply do <Double>tryReadJsonPath(json, path);
+      if (value instanceof Double) {
+        return (Double) value;
+      } else if (value instanceof Integer) {
+        return Double.valueOf((Integer) value);
+      } else {
+        return null;
+      }
+  }
+
   private<T> T tryReadJsonPath(String json, String path){
     try{
-      return JsonPath.read(json, path);
+      logger.debug("Read '{}'", path);
+      T value = JsonPath.read(json, path);
+      logger.debug("Value of '{}' is '{}'", path, value);
+      return value;
     }catch (Exception e){
       logger.info("Can't read jsonPath '{}'  from geocoded json result.", path);
       return null;

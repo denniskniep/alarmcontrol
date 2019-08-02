@@ -85,6 +85,19 @@ public class MapboxParserTest {
   }
 
   @Test
+  public void parse_relevanceIsInteger() throws IOException {
+    String json = loadJson("./relevanceIsInteger.json");
+    GeocodingResult result = parse(json);
+
+    assertGeocodingResult(
+        result,
+        "51.38396",
+        "9.36701",
+        "Hinter Den Gärten 8",
+        "Calden-Fürstenwald");
+  }
+
+  @Test
   public void parse_streetInMainTown() throws IOException {
     String json = loadJson("./streetInMainTown.json");
     GeocodingResult result = parse(json);
