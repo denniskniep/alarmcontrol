@@ -17,6 +17,16 @@ printf "TestOutputFolder: %s\n" "${TEST_OUTPUT_PATH}"
 # Change permission that user inside container can store the output
 sudo chmod o+rw "${TEST_OUTPUT_PATH}"
 
+printf "Building Application...\n"
+sudo \
+COMPOSE_PROJECT_NAME="e2e-Tests" \
+DATABASE_NAME="test" \
+DATABASE_USER="test" \
+DATABASE_PASSWORD="test" \
+GRAPHHOPPER_APIKEY="${GRAPHHOPPER_APIKEY:-xxx}" \
+MAPBOX_ACCESS_TOKEN="${MAPBOX_ACCESS_TOKEN:-xxx}" \
+docker-compose -f "${SCRIPT_PATH}/../docker-compose-dev.yaml" build --no-cache
+
 printf "Starting Application...\n"
 sudo \
 COMPOSE_PROJECT_NAME="e2e-Tests" \
@@ -25,7 +35,7 @@ DATABASE_USER="test" \
 DATABASE_PASSWORD="test" \
 GRAPHHOPPER_APIKEY="${GRAPHHOPPER_APIKEY:-xxx}" \
 MAPBOX_ACCESS_TOKEN="${MAPBOX_ACCESS_TOKEN:-xxx}" \
-docker-compose -f "${SCRIPT_PATH}/../docker-compose-dev.yaml" up --build -d
+docker-compose -f "${SCRIPT_PATH}/../docker-compose-dev.yaml" up --force-recreate -d
 
 printf "Starting End2End-Tests...\n"
 
