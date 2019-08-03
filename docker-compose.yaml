@@ -2,9 +2,7 @@ version: '3.7'
 services:
 
   alarmcontrol:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: denniskniep/alarmcontrol:1.1.0
     container_name: alarmcontrol
     ports:
       - 8080:8080

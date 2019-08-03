@@ -1,6 +1,6 @@
 import React from 'react';
 
-class QueryDefaultHandler{
+class QueryDefaultHandler {
 
   handleGraphQlQuery(loading, error, data, object) {
     if (loading) {

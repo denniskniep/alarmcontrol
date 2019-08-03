@@ -49,12 +49,60 @@ html,body,#app{
   margin-right: 10px;
 }
 
+.dot-td{
+  width: 10px !important;
+}
+
+.dot-td-container{
+  margin-top: 2px;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid gray;
+}
+
+.dot-sm {
+  height: 8px;
+  width: 8px;
+}
+
+.dot-space {
+  margin-right: 5px;
+}
+
+.dot-not-available{
+  background-color: #dc3545;
+}
+
+.dot-available{
+  background-color: #28a745;
+}
+
 .available{
   background-color: #b1dfbb42;
 }
 
-.laterAvailable{
+.not-available{
+  background-color: rgba(255, 16, 0, 0.18);
+}
+
+.later-available{
   background-color: #8ec0ff42;
+}
+
+.employee-status-name {
+  margin-bottom: 0px;
+}
+
+.employee-status-date {
+  font-size: 10px;
+  color: gray;
+  margin-bottom: 0px;
 }
 
 .leaflet-routing-container-hide{
