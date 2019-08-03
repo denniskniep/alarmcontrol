@@ -5,12 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+## Changed
+## Fixed
+
+## [1.1.0] - 2019-08-03
 ### Added
 - Separate `docker-compose.yaml` file with image from [DockerHub Repository](https://hub.docker.com/r/denniskniep/alarmcontrol)
 - Refresh Menu "Last Alerts" if Alarm received
 - Display and manage alert independent employee status
 
-## Changed
+### Changed
 - Display raw address if there could be no address geocoded
 
 ### Fixed
