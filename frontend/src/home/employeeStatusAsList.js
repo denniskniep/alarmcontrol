@@ -1,43 +1,49 @@
-import {Col, Row, Table} from "react-bootstrap";
+import {Badge, Col, Row, Table} from "react-bootstrap";
 import React, {Component} from 'react';
-import PrettyPrinter from "../utils/prettyPrinter";
 import EmployeeStatusDot from "./employeeStatusDot";
+import EmployeeStates from "./employeeStates";
 
 class EmployeeStatusAsList extends Component {
 
+  mapStatusToIntForOrder(employee) {
+    if (!employee.status) {
+      return 2;
+    }
+
+    if (employee.status.status == EmployeeStates.getNotAvailable()) {
+      return 1;
+    }
+
+    if (employee.status.status == EmployeeStates.getAvailable()) {
+      return 0;
+    }
+  }
+
   render() {
+    let employees = this.props.employees.sort(
+        (a, b) => this.mapStatusToIntForOrder(a) - this.mapStatusToIntForOrder(
+            b));
+
     return (
         <React.Fragment>
-          <Row>
-            <Col className={"noPadding"}>
-              <Table responsive>
-                <tbody>
-                {
-                  this.props.employees.map(
-                      (e, index) => {
-                        return (
-                            <tr key={e.id}>
-                              <td className={"dot-td"}>
-                                <p className={"dot-td-container"}>
-                                  <EmployeeStatusDot employee={e} />
-                                </p>
-                              </td>
-                              <td>
-                                <p className={"employee-status-name"}>
-                                  {e.firstname} {e.lastname}
-                                </p>
-                                <p className={"employee-status-date"}>
-                                  {e.status
-                                  && new PrettyPrinter().prettifyDateTimeShort(
-                                      e.status.dateTime)}
-                                </p>
-                              </td>
-                            </tr>
-                        )
-                      })
-                }
-                </tbody>
-              </Table>
+          <Row className={" h-100"}>
+            <Col className={" h-100"}>
+              {
+                employees.map((e, index) => {
+                  return (
+                    <Badge key={e.id} className={"badgeSpace badgeEmployee"}
+                           variant={"light"}>
+                      {
+                        e.status &&
+                        <EmployeeStatusDot className={"dot-sm dot-space"}
+                                           employee={e}/>
+                      }
+                      <span>
+                        {e.firstname} {e.lastname}
+                      </span>
+                    </Badge>)
+                })
+              }
             </Col>
           </Row>
         </React.Fragment>);

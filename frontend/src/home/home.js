@@ -9,8 +9,8 @@ class Home extends Component {
     return (
         <Container fluid="true"
                    className={"h-full d-flex flex-column alertView"}>
-          <Row className={"flex-fill d-flex justify-content-star"}>
-            <Col xs={3}>
+          <Row className={"flex-fill d-flex justify-content-star h-100"}>
+            <Col className={"h-100"} xs={3}>
               <EmployeeStatus alert={this.props.alert}/>
             </Col>
             <Col>
