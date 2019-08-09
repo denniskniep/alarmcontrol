@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   alarmcontrol:
-    image: denniskniep/alarmcontrol:1.1.0
+    image: denniskniep/alarmcontrol:1.1.1
     container_name: alarmcontrol
     ports:
       - 8080:8080
