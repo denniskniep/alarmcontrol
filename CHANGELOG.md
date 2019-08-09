@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 ## Fixed
 - Optimize common employee status view for more employees
+- Fix menu entry if no keyword and address is present
 
 
 ## [1.1.0] - 2019-08-03

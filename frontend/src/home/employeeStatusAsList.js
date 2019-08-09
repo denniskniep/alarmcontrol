@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import PrettyPrinter from "../utils/prettyPrinter";
 import EmployeeStatusDot from "./employeeStatusDot";
 import EmployeeStates from "./employeeStates";
+import Card from "react-bootstrap/Card";
 
 class EmployeeStatusAsList extends Component {
 
@@ -14,24 +15,34 @@ class EmployeeStatusAsList extends Component {
   }
 
   renderEmployee(e){
+
+    let color = null;
+    let status = e.status && e.status.status
+
+    switch (status) {
+      case EmployeeStates.getNotAvailable():
+        color= "#dc35458f";
+        break;
+      case EmployeeStates.getAvailable():
+        color= "#28a74559";
+        break;
+    }
+
     return (
-        <tr key={e.id}>
-          <td className={"dot-td employee-status-td"}>
-            <p className={"dot-td-container"}>
-              <EmployeeStatusDot employee={e} />
-            </p>
-          </td>
-          <td className={"employee-status-td"}>
-            <p className={"employee-status-name"}>
-              {this.firstCharWithDot(e.firstname)} {e.lastname}
-            </p>
-            <p className={"employee-status-date"}>
-              {e.status
-              && new PrettyPrinter().prettifyDateTimeShort(
-                  e.status.dateTime)}
-            </p>
-          </td>
-        </tr>
+        <Card style={{ width: '160px', height: '80px', backgroundColor: color }}>
+          <Card.Body>
+            <Card.Text>
+              <p className={"employee-status-name"}>
+                {this.firstCharWithDot(e.firstname)} {e.lastname}
+              </p>
+              <p className={"employee-status-date"}>
+                {e.status
+                && new PrettyPrinter().prettifyDateTimeShort(
+                    e.status.dateTime)}
+              </p>
+            </Card.Text>
+          </Card.Body>
+        </Card>
     )
   }
 
@@ -54,26 +65,13 @@ class EmployeeStatusAsList extends Component {
 
     return (
         <React.Fragment>
-          <Row>
-            <Col className={"noPadding"}>
-              <Table responsive>
-                <tbody>
+          <Row className={"noPadding h-100"}>
+            <Col className={"noPadding h-100"}>
+              <div className="d-flex flex-wrap flex-column h-100">
                 {
-                  employees.map((e, index) =>
-                      index % 2 == 0 && this.renderEmployee(e))
+                  employees.map((e, index) => this.renderEmployee(e))
                 }
-                </tbody>
-              </Table>
-            </Col>
-            <Col className={"noPadding"}>
-              <Table responsive>
-                <tbody>
-                {
-                  employees.map((e, index) =>
-                      index % 2 == 1  && this.renderEmployee(e))
-                }
-                </tbody>
-              </Table>
+              </div>
             </Col>
           </Row>
         </React.Fragment>);

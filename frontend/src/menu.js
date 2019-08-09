@@ -49,11 +49,22 @@ class Menu extends Component {
     return organisationId == 0 ? null : organisationId * 1;
   }
 
+  getMenuTitle(alert) {
+    let keyword = alert.keyword ? alert.keyword : "";
+    let address = alert.addressInfo1 ? " - " + alert.addressInfo1 : "";
+    let date = new PrettyPrinter().prettifyDateTimeLong(alert.dateTime);
+    if (!alert.keyword && !alert.addressInfo1) {
+      return date;
+    }
+
+    return keyword + address + " (" +  date + ")";
+  }
+
   render() {
     return (
 
         <CurrentOrganisationContext.Consumer>
-          { organisationContext => {
+          {organisationContext => {
             return (
 
                 <Query query={ORGANISATIONS}
@@ -76,7 +87,9 @@ class Menu extends Component {
                         <Query query={ALERTS_BY_ORGANISATION}
                                fetchPolicy="no-cache"
                                variables={{
-                                 organisationId: this.getValidOrganisationId(organisationContext.organisationId, organisations),
+                                 organisationId: this.getValidOrganisationId(
+                                     organisationContext.organisationId,
+                                     organisations),
                                  page: 0,
                                  size: 10
                                }}>
@@ -117,17 +130,7 @@ class Menu extends Component {
                                                         key={alert.id}
                                                         href={"/app/alertview/"
                                                         + alert.id}>
-                                                      {
-                                                        alert.keyword +
-                                                        (alert.addressInfo1
-                                                            ? " - "
-                                                            + alert.addressInfo1
-                                                            : "") +
-                                                        " (" +
-                                                        new PrettyPrinter().prettifyDateTimeLong(
-                                                            alert.dateTime) +
-                                                        ")"
-                                                      }
+                                                      {this.getMenuTitle(alert)}
                                                     </NavDropdown.Item>
                                                   })
                                             }
