@@ -1,5 +1,8 @@
 # Development
 
+## Start Application
+The following steps are necessary to start the application for development:
+
 * Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
 
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
@@ -13,6 +16,30 @@
 * Install node_modules inside the folder `frontend` with `npm install`
 
 * Start react client inside the folder `frontend` with `npm run start`
+
+## Start Application Environment
+The following steps are not necessary for development, but could be handy:
+
+### Graylog
+Start Graylogserver
+
+```
+sudo docker-compose -f docker-compose.logging.yaml up
+```
+
+The Ui is available at http://localhost:9000
+
+#### Import Content-Pack
+If you initially started the Graylogserver import the content pack:
+* Login to Graylog 
+* System > Content Packs > Upload
+(Use this File: `misc/graylog/content-packs/content-pack-alarmcontrol.json`)
+
+* System > Content Packs > Alarmcontrol_Dev > Install
+
+
+
+
 
 ## Database
 * **H2Console**: http://localhost:8080/h2-console
@@ -42,13 +69,15 @@ https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
 * **Editor**: http://localhost:8080/graphiql
 * **Schema**: http://localhost:8080/graphql/schema.json
 
-#### Add Testdata
+## Testdata
+
+### Add via Script
 This script is intentionally for the e2e tests but could also be used to initially setup a db for development purposes
 ```
 URL="http://localhost:8080/graphql" e2eTests/tests/initialSetup.sh
 ```
 
-#### Add Testdata via GraphQL-Editor
+### Add via GraphQL-Editor
 Go to `http://localhost:8080/graphiql` and execute the following Mutations: 
 
 ##### Add an Organisation
