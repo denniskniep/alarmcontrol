@@ -54,6 +54,31 @@ Execute it
 java -jar alarmcontrol-server.jar 
 ```
 
+## Start with Environment
+
+Download docker-compose files
+```
+curl https://raw.githubusercontent.com/denniskniep/alarmcontrol/master/docker-compose.yaml -o docker-compose.yaml
+```
+
+```
+curl https://raw.githubusercontent.com/denniskniep/alarmcontrol/master/docker-compose.logging.yaml -o docker-compose.logging.yaml
+```
+
+Execute docker-compose
+```
+sudo \
+DATABASE_NAME=alarmcontrol \
+DATABASE_USER=alarmcontrol \
+DATABASE_PASSWORD=xxx \
+GRAPHHOPPER_APIKEY=xxx \
+MAPBOX_ACCESS_TOKEN=xxx \
+docker-compose \
+-f docker-compose.yaml \
+-f docker-compose.logging.yaml \
+up
+```
+
 ## Development
 See [docs/development.md](docs/development.md)
 
@@ -76,3 +101,8 @@ Use MapBox for geocoding
 
 There is already an issue created in Apollo Repository
 https://github.com/apollographql/react-apollo/issues/2681
+
+
+### Graylog without content pack autoload
+You have to apply the content pack manually 
+see https://github.com/Graylog2/graylog2-server/pull/6096

@@ -1,7 +1,9 @@
 type Query {
   alertById(id: ID!): Alert
-  alertsByOrganisationId(organisationId: ID!): [Alert]
-  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): [Alert]
+
+  # If there is no organisationId specified all alerts will be returned
+  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): PaginatedAlerts
+
   organisations : [Organisation]
   organisationsById(organisationId: ID): [Organisation]
   organisationById(organisationId: ID!): Organisation
@@ -31,6 +33,8 @@ type Mutation {
   addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, dateTime: DateTime) : EmployeeFeedback
 
   addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, dateTime: DateTime) : EmployeeStatus
+
+  deleteAlert(id: ID!) : ID
 }
 
 type Subscription {
@@ -38,6 +42,11 @@ type Subscription {
     alertChanged: AlertChanged
     employeeFeedbackAdded : EmployeeFeedbackAdded
     employeeStatusAdded : EmployeeStatusAdded
+}
+
+type PaginatedAlerts {
+  totalCount: Int
+  items: [Alert]
 }
 
 type Alert {

@@ -16,7 +16,7 @@ class EmployeesEdit extends Component {
           <Row>
             <Col>
               <EditableTable data={this.props.employees}
-
+                             canView={false}
                              columns={[
                                {
                                  key: "id",

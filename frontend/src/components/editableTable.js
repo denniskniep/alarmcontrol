@@ -97,18 +97,36 @@ class EditableTable extends Component {
                     <td>
                       <ButtonToolbar>
                         <ButtonGroup className="mr-2">
-                          <Button className={"btn-icon"}
-                                  variant="outline-secondary"
-                                  onClick={e => this.startEditMode(dataIndex,
-                                      obj)}>
-                            <FontAwesomeIcon icon={["far", "edit"]}/>
-                          </Button>
-                          <Button className={"btn-icon"}
-                                  variant="outline-secondary"
-                                  onClick={e => this.props.onRowDeleted
-                                      && this.props.onRowDeleted(obj)}>
-                            <FontAwesomeIcon icon={["far", "trash-alt"]}/>
-                          </Button>
+                          {
+                            (!this.props.hasOwnProperty("canView")
+                                || (this.props.canView)) &&
+                            <Button className={"btn-icon"}
+                                    variant="outline-secondary"
+                                    onClick={e => this.props.onRowViewed
+                                        && this.props.onRowViewed(obj)}>
+                              <FontAwesomeIcon icon={["far", "eye"]}/>
+                            </Button>
+                          }
+                          {
+                            (!this.props.hasOwnProperty("canEdit")
+                                || (this.props.canEdit)) &&
+                            <Button className={"btn-icon"}
+                                    variant="outline-secondary"
+                                    onClick={e => this.startEditMode(dataIndex,
+                                        obj)}>
+                              <FontAwesomeIcon icon={["far", "edit"]}/>
+                            </Button>
+                          }
+                          {
+                            (!this.props.hasOwnProperty("canDelete")
+                                || (this.props.canDelete)) &&
+                            <Button className={"btn-icon"}
+                                    variant="outline-secondary"
+                                    onClick={e => this.props.onRowDeleted
+                                        && this.props.onRowDeleted(obj)}>
+                              <FontAwesomeIcon icon={["far", "trash-alt"]}/>
+                            </Button>
+                          }
                         </ButtonGroup>
                       </ButtonToolbar>
                     </td>
@@ -117,16 +135,18 @@ class EditableTable extends Component {
                 </React.Fragment>
             )
           })}
-
-          <EditableRow key={this.state.newObjKey}
-                       obj={this.state.newObj}
-                       columns={this.props.columns}
-                       onSave={obj => {
-                         this.resetNewObjRow();
-                         this.props.onNewRow && this.props.onNewRow(obj)
-                       }}
-                       onCancel={() => this.resetNewObjRow()}/>
-
+          {
+            (!this.props.hasOwnProperty("canCreate")
+                || (this.props.canCreate)) &&
+            <EditableRow key={this.state.newObjKey}
+                         obj={this.state.newObj}
+                         columns={this.props.columns}
+                         onSave={obj => {
+                           this.resetNewObjRow();
+                           this.props.onNewRow && this.props.onNewRow(obj)
+                         }}
+                         onCancel={() => this.resetNewObjRow()}/>
+          }
           </tbody>
         </Table>)
   }

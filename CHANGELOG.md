@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- View and delete Alerts in ManageUi 
+- Write logfile as JSON
+- Option to start preconfigured Logback
+
 ### Changed
 ### Fixed
 

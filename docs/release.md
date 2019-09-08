@@ -9,6 +9,7 @@
 
 ## Modifications
 * Adjust Version in [../pom.xml](../pom.xml)
+* Adjust Version in [../frontend/package.json](../frontend/package.json)
 * Write the [../CHANGELOG.md](../CHANGELOG.md) for the new version. Actually it should be simply copied from the unreleased section to the new version.
 * Adjust Version in [../docker-compose.yaml](../docker-compose.yaml)
 
