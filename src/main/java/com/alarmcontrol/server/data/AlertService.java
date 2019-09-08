@@ -4,8 +4,10 @@ import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertCall;
+import com.alarmcontrol.server.data.models.AlertCallEmployee;
 import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
 import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
@@ -18,6 +20,7 @@ import com.alarmcontrol.server.maps.RoutingService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,6 +42,7 @@ public class AlertService {
   private AlertChangedPublisher alertChangedPublisher;
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
+  private AlertCallEmployeeRepository alertCallEmployeeRepository;
 
   public AlertService(AlertRepository alertRepository,
       GeocodingService geocodingService,
@@ -47,7 +51,8 @@ public class AlertService {
       AlertAddedPublisher alertAddedPublisher,
       AlertChangedPublisher alertChangedPublisher,
       AlertNumberRepository alertNumberRepository,
-      AlertCallRepository alertCallRepository) {
+      AlertCallRepository alertCallRepository,
+      AlertCallEmployeeRepository alertCallEmployeeRepository) {
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
@@ -56,6 +61,7 @@ public class AlertService {
     this.alertChangedPublisher = alertChangedPublisher;
     this.alertNumberRepository = alertNumberRepository;
     this.alertCallRepository = alertCallRepository;
+    this.alertCallEmployeeRepository = alertCallEmployeeRepository;
   }
 
   public AlertCall create(
@@ -226,6 +232,21 @@ public class AlertService {
         dateTime);
     alertCallRepository.save(alertCall);
     return alertCall;
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public void delete(Long id){
+    Optional<Alert> foundAlert = alertRepository.findById(id);
+    if (!foundAlert.isPresent()) {
+      throw new IllegalArgumentException("No Alert found for id:" + id);
+    }
+
+    Alert alert = foundAlert.get();
+    List<AlertCall> alertCalls = alertCallRepository.findByAlertId(alert.getId());
+    List<AlertCallEmployee> alertCallEmployees = alertCallEmployeeRepository.findByAlertId(alert.getId());
+    alertCallEmployeeRepository.deleteAll(alertCallEmployees);
+    alertCallRepository.deleteAll(alertCalls);
+    alertRepository.delete(alert);
   }
 
   private static class AlertCallCreated {

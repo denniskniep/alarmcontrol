@@ -4,7 +4,7 @@ import {NavLink} from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import {gql} from "apollo-boost";
 import {Query} from "react-apollo";
-import PrettyPrinter from "./utils/prettyPrinter";
+import Alert from "./utils/alert";
 import QueryDefaultHandler from "./utils/queryDefaultHandler";
 import Form from "react-bootstrap/Form";
 import AlertAddedSubscription from "./alertview/alertAddedSubscription";
@@ -13,10 +13,12 @@ import {CurrentOrganisationContext} from "./currentOrganisationContext";
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($organisationId: ID, $page: Int!, $size: Int!) {
     alertsByOrganisationId(organisationId: $organisationId, page: $page, size: $size) {
-      id,
-      keyword,
-      dateTime,
-      addressInfo1
+      items {
+        id,
+        keyword,
+        dateTime,
+        addressInfo1
+      }
     }
   }
 `;
@@ -50,18 +52,7 @@ class Menu extends Component {
   }
 
   getMenuTitle(alert) {
-    let keyword = alert.keyword ? alert.keyword : "";
-    let address = alert.addressInfo1 ? alert.addressInfo1 : "";
-    let date = new PrettyPrinter().prettifyDateTimeLong(alert.dateTime);
-    if (!alert.keyword && !alert.addressInfo1) {
-      return date;
-    }
-
-    if(keyword && address){
-      address = " - " + address;
-    }
-
-    return keyword + address + " (" +  date + ")";
+   return Alert.asTitle(alert);
   }
 
   render() {
@@ -128,7 +119,7 @@ class Menu extends Component {
                                         <React.Fragment>
                                           <NavDropdown title="Last Alerts">
                                             {
-                                              data.alertsByOrganisationId.map(
+                                              data.alertsByOrganisationId.items.map(
                                                   (alert) => {
                                                     return <NavDropdown.Item
                                                         key={alert.id}
@@ -146,7 +137,8 @@ class Menu extends Component {
                                       <Nav>
                                         <NavDropdown title="Manage">
                                           <NavDropdown.Item
-                                              href="/app/manage/organisation">Organisations</NavDropdown.Item>
+                                              href="/app/manage/organisation">Organisations</NavDropdown.Item>                                          <NavDropdown.Item
+                                              href="/app/manage/alerts">Alerts</NavDropdown.Item>
                                         </NavDropdown>
 
                                         <Form inline>

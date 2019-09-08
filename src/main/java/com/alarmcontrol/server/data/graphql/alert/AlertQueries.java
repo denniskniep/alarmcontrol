@@ -4,6 +4,8 @@ import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,21 +28,23 @@ public class AlertQueries implements GraphQLQueryResolver {
     return null;
   }
 
-  public Iterable<Alert> alertsByOrganisationId(Long organisationId) {
-    return alertRepository.findByOrganisationId(organisationId);
-  }
-
-  public Iterable<Alert> alertsByOrganisationId(Long organisationId, int page, int size) {
+  public PaginatedAlerts alertsByOrganisationId(Long organisationId, int page, int size) {
     Pageable sortedByDateDesc = PageRequest.of(page, size,
         Sort.by("dateTime")
             .descending().and(
             Sort.by("id")
                 .descending()));
 
-    if(organisationId == null){
-      return alertRepository.findAll(sortedByDateDesc);
+    if (organisationId == null) {
+      Page<Alert> all = alertRepository.findAll(sortedByDateDesc);
+      return new PaginatedAlerts(
+          all.getTotalElements(),
+          all.get().collect(Collectors.toList()));
     }
 
-    return alertRepository.findByOrganisationId(organisationId, sortedByDateDesc);
+    Page<Alert> byOrganisationId = alertRepository.findByOrganisationId(organisationId, sortedByDateDesc);
+    return new PaginatedAlerts(
+        byOrganisationId.getTotalElements(),
+        byOrganisationId.get().collect(Collectors.toList()));
   }
 }
