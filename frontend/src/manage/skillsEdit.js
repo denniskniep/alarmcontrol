@@ -16,7 +16,7 @@ class SkillsEdit extends Component {
           <Row>
             <Col>
               <EditableTable data={this.props.skills}
-
+                             canView={false}
                              columns={[
                                {
                                  key: "id",

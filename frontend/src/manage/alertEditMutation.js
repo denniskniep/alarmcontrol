@@ -5,6 +5,7 @@ import ErrorHandler from "../utils/errorHandler";
 import QueryDefaultHandler from "../utils/queryDefaultHandler";
 import AlertEdit from "./alertEdit";
 import Alert from "../utils/alert";
+import {Route} from 'react-router-dom'
 
 const ALERTS_BY_ORGANISATION_ID = gql`
   query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
@@ -15,6 +16,10 @@ const ALERTS_BY_ORGANISATION_ID = gql`
         keyword
         addressInfo1
         dateTime
+        organisation {
+          id
+          name
+        }
       }
     }
   }
@@ -32,7 +37,7 @@ class AlertEditMutation extends Component {
     super(props);
 
     this.state = {
-      pageSize: 10,
+      pageSize: 25,
       currentPage: 0
     }
   }
@@ -44,68 +49,77 @@ class AlertEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={ALERTS_BY_ORGANISATION_ID}
-               variables={{
-                 id: this.props.id,
-                 page: this.state.currentPage,
-                 size: this.state.pageSize
-               }}>
-          {({loading, error, data, refetch}) => {
+        <Route render={({history}) => (
+            <Query fetchPolicy="no-cache" query={ALERTS_BY_ORGANISATION_ID}
+                   variables={{
+                     id: this.props.id,
+                     page: this.state.currentPage,
+                     size: this.state.pageSize
+                   }}>
+              {({loading, error, data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.alertsByOrganisationId);
+                let result = new QueryDefaultHandler().handleGraphQlQuery(
+                    loading,
+                    error,
+                    data,
+                    data && data.alertsByOrganisationId);
 
-            if (result) {
-              return result;
-            }
+                if (result) {
+                  return result;
+                }
 
-            let alerts = data.alertsByOrganisationId.items.map(a => {
-              a.title = Alert.asTitle(a);
-              return a;
-            });
+                let alerts = data.alertsByOrganisationId.items.map(a => {
+                  a.title = Alert.asTitle(a);
+                  a.organisationName = a.organisation.name;
+                  return a;
+                });
 
-            let totalCount = data.alertsByOrganisationId.totalCount;
+                let totalCount = data.alertsByOrganisationId.totalCount;
 
-            let totalPages = this.calculateTotalPages(totalCount,
-                this.state.pageSize);
-            return (
+                let totalPages = this.calculateTotalPages(totalCount,
+                    this.state.pageSize);
+                return (
 
-                <Mutation mutation={DELETE_ALERT}
+                    <Mutation mutation={DELETE_ALERT}
 
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(
-                                  error)}
+                              onError={(error) =>
+                                  new ErrorHandler().handleGraphQlMutationError(
+                                      error)}
 
-                          onCompleted={() => refetch()}>
-                  {deleteAlert => (
+                              onCompleted={() => refetch()}>
+                      {deleteAlert => (
 
-                      <AlertEdit
-                          alerts={alerts}
-                          totalPages={totalPages}
-                          currentPage={this.state.currentPage}
+                          <AlertEdit
+                              alerts={alerts}
+                              totalPages={totalPages}
+                              currentPage={this.state.currentPage}
 
-                          onPageRequested={pageRequest => {
-                              this.setState((state, props) => {
-                                return {currentPage: pageRequest.currentPage}
-                              });
-                            }
-                          }
-
-                          onAlertDeleted={deletedAlert => {
-                            deleteAlert({
-                              variables: {
-                                id: deletedAlert.id
+                              onPageRequested={pageRequest => {
+                                this.setState((state, props) => {
+                                  return {currentPage: pageRequest.currentPage}
+                                });
                               }
-                            });
-                          }}
-                      />
-                  )}
-                </Mutation>
-            );
-          }}
-        </Query>);
+                              }
+
+                              onAlertDeleted={deletedAlert => {
+                                deleteAlert({
+                                  variables: {
+                                    id: deletedAlert.id
+                                  }
+                                });
+                              }}
+
+                              onAlertViewed={alert => {
+                                history.push("/app/alertview/" + alert.id)
+                              }}
+                          />
+                      )}
+                    </Mutation>
+                );
+              }}
+            </Query>
+        )}/>
+    );
   }
 }
 

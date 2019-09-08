@@ -16,6 +16,7 @@ class AlertEdit extends Component {
               <PagedEditableTable canCreate={false}
                                   canDelete={true}
                                   canEdit={false}
+                                  canView={true}
                                   data={this.props.alerts}
                                   totalPages={this.props.totalPages}
                                   currentPage={this.props.currentPage}
@@ -30,12 +31,21 @@ class AlertEdit extends Component {
                                       key: "title",
                                       name: "Titel",
                                       readOnly: true
+                                    },
+                                    {
+                                      key: "organisationName",
+                                      name: "Organisation",
+                                      readOnly: true
                                     }
                                   ]}
 
                                   onRowDeleted={(deletedRow) =>
                                       this.props.onAlertDeleted
                                       && this.props.onAlertDeleted(deletedRow)}
+
+                                  onRowViewed={(row) =>
+                                      this.props.onAlertViewed
+                                      && this.props.onAlertViewed(row)}
 
                                   onPageRequested={(pageRequest) =>
                                       this.props.onPageRequested

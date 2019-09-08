@@ -24,6 +24,7 @@ class PagedEditableTable extends Component {
                          canEdit={this.props.canEdit}
                          canDelete={this.props.canDelete}
                          canCreate={this.props.canCreate}
+                         canView={this.props.canView}
 
                          onNewRow={newRow => {
                            this.props.onNewRow
@@ -37,6 +38,14 @@ class PagedEditableTable extends Component {
                          onRowDeleted={(deletedRow) =>
                              this.props.onRowDeleted
                              && this.props.onRowDeleted(deletedRow)}
+
+                         onRowViewed={(row) =>
+                             this.props.onRowViewed
+                             && this.props.onRowViewed(row)}
+
+                         onStartEditMode={(row) =>
+                             this.props.onStartEditMode
+                             && this.props.onStartEditMode(row)}
 
           />
           <Pagination onClick={p => this.pageChanged(p)}>

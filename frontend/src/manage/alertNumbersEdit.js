@@ -14,7 +14,7 @@ class AlertNumbersEdit extends Component {
           <Row>
             <Col>
               <EditableTable data={this.props.alertNumbers}
-
+                             canView={false}
                              columns={[
                                {
                                  key: "id",

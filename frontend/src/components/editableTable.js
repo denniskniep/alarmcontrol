@@ -98,6 +98,16 @@ class EditableTable extends Component {
                       <ButtonToolbar>
                         <ButtonGroup className="mr-2">
                           {
+                            (!this.props.hasOwnProperty("canView")
+                                || (this.props.canView)) &&
+                            <Button className={"btn-icon"}
+                                    variant="outline-secondary"
+                                    onClick={e => this.props.onRowViewed
+                                        && this.props.onRowViewed(obj)}>
+                              <FontAwesomeIcon icon={["far", "eye"]}/>
+                            </Button>
+                          }
+                          {
                             (!this.props.hasOwnProperty("canEdit")
                                 || (this.props.canEdit)) &&
                             <Button className={"btn-icon"}
