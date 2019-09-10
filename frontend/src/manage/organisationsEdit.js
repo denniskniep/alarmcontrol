@@ -8,6 +8,8 @@ class OrganisationsEdit extends Component {
         <Route render={({history}) => (
             <EditableTable data={this.props.organisations}
 
+                           canView={false}
+
                            columns={[
                              {
                                key: "id",

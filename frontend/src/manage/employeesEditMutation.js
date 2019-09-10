@@ -152,7 +152,7 @@ class EmployeesEditMutation extends Component {
             let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
                 error,
                 data,
-                data.organisationById);
+                data && data.organisationById);
 
             if(result){
               return result;

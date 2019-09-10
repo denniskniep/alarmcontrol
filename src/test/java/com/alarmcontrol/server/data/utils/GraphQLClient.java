@@ -3,6 +3,8 @@ package com.alarmcontrol.server.data.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.graphql.spring.boot.test.GraphQLResponse;
+import com.jayway.jsonpath.PathNotFoundException;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,7 +28,18 @@ public class GraphQLClient {
 
   public GraphQLResponse perform(String graphql, ObjectNode variables) {
     String payload = createGraphQlQuery(graphql, variables);
-    return this.post(payload);
+    GraphQLResponse response = this.post(payload);
+
+    try{
+      JSONArray errors = response.context().read("errors");
+      if(!errors.isEmpty() ){
+        throw new RuntimeException("GraphQl Response contains errors\n"+ errors);
+      }
+    }catch (PathNotFoundException e){
+      //No errors found
+    }
+
+    return response;
   }
 
   private String createGraphQlQuery(String graphql, ObjectNode variables) {

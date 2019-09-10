@@ -1,8 +1,11 @@
 type Query {
   alertById(id: ID!): Alert
-  alertsByOrganisationId(organisationId: ID!): [Alert]
-  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): [Alert]
+
+  # If there is no organisationId specified all alerts will be returned
+  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): PaginatedAlerts
+
   organisations : [Organisation]
+  organisationsById(organisationId: ID): [Organisation]
   organisationById(organisationId: ID!): Organisation
 }
 
@@ -28,12 +31,22 @@ type Mutation {
 
   newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, dateTime: DateTime, address: String, description: String): AlertCall
   addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, dateTime: DateTime) : EmployeeFeedback
+
+  addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, dateTime: DateTime) : EmployeeStatus
+
+  deleteAlert(id: ID!) : ID
 }
 
 type Subscription {
     alertAdded: AlertAdded
     alertChanged: AlertChanged
     employeeFeedbackAdded : EmployeeFeedbackAdded
+    employeeStatusAdded : EmployeeStatusAdded
+}
+
+type PaginatedAlerts {
+  totalCount: Int
+  items: [Alert]
 }
 
 type Alert {
@@ -44,6 +57,7 @@ type Alert {
   active: Boolean
   dateTime: DateTime
   description: String
+  addressRaw : String,
   addressInfo1 : String,
   addressInfo2 : String,
   addressLat : String,
@@ -85,6 +99,10 @@ type EmployeeFeedbackAdded {
   employeeId: ID
 }
 
+type EmployeeStatusAdded {
+  employeeId: ID
+}
+
 type Organisation {
   id: ID
   name: String
@@ -101,11 +119,22 @@ type EmployeeFeedback {
   dateTime: DateTime
 }
 
+type EmployeeStatus {
+  employee: Employee
+  status: Status
+  dateTime: DateTime
+}
+
 enum Feedback {
   NO_RESPONSE,
   COMMIT,
   LATER,
   CANCEL
+}
+
+enum Status {
+  NOT_AVAILABLE,
+  AVAILABLE
 }
 
 type Employee {
@@ -114,6 +143,7 @@ type Employee {
   lastname: String
   referenceId: String
   skills : [Skill]
+  status : EmployeeStatus
 }
 
 type Skill {

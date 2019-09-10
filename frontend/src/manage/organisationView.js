@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import OrganisationEditMutation from "./organisationEditMutation";
 import EmployeesEditMutation from "./employeesEditMutation";
 import SkillsEditMutation from "./skillsEditMutation";
@@ -34,6 +34,8 @@ class OrganisationView extends Component {
         </Col>
       </Row>
 
+
+
       <Row>
         <Col md="10">
           <h4>AlertNumbers</h4>
@@ -64,8 +66,24 @@ class OrganisationView extends Component {
         <EmployeesEditMutation id={this.props.match.params.id} refetch={this.state.refetchEmployees} />
       </Row>
 
+      <Row>
+        <Col md="10">
+          <h4>Alerts</h4>
+        </Col>
+      </Row>
 
+      <Row>
+        <Col md="10">
+          <Button variant="primary" href={"./"+ this.props.match.params.id +"/alerts"} >
+            View
+          </Button>
+        </Col>
+      </Row>
 
+      <Row className={"row-mid"}>
+        <Col md="10">
+        </Col>
+      </Row>
     </Container>);
   }
 }

@@ -14,11 +14,13 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import {InMemoryCache} from "apollo-cache-inmemory";
-import Home from "./home";
+import Home from "./home/home";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AlertViewSwitcher from "./alertview/alertViewSwitcher";
 import configuration from "./config/configuration";
+import CurrentOrganisationContainer from "./currentOrganisationContainer";
+import AlertsByOrganisationView from "./manage/alertsByOrganisationView";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -66,6 +68,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
+        <CurrentOrganisationContainer>
           <Menu/>
           <ToastContainer
               position="top-right"
@@ -83,6 +86,9 @@ function App() {
           <Route exact path="/app/alertview/:id" component={AlertView} />
           <Route exact path="/app/manage/organisation" component={OrganisationsView} />
           <Route exact path="/app/manage/organisation/:id" component={OrganisationView} />
+          <Route exact path="/app/manage/organisation/:id/alerts" component={AlertsByOrganisationView} />
+          <Route exact path="/app/manage/alerts" component={AlertsByOrganisationView} />
+        </CurrentOrganisationContainer>
       </Router>
     </ApolloProvider>
   );
