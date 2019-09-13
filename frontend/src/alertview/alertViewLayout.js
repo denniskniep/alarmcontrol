@@ -4,6 +4,7 @@ import AlertViewEmployeeFeedback from "./tiles/alertViewEmployeeFeedback";
 import AlertViewHeader from "./tiles/alertViewHeader";
 import AlertViewMapRoute from "./tiles/alertViewMapRoute";
 import AlertViewMapTarget from "./tiles/alertViewMapTarget";
+import AaoAsList from "./tiles/aao/aaoAsList";
 
 class AlertViewLayout extends Component {
   render() {
@@ -13,6 +14,9 @@ class AlertViewLayout extends Component {
           <Row className={"flex-fill d-flex justify-content-star"}>
             <Col xs={3}>
               <AlertViewEmployeeFeedback alert={this.props.alert}/>
+            </Col>
+            <Col xs={2}>
+              <AaoAsList alert={this.props.alert}/>
             </Col>
             <Col>
               <Container fluid="true" className={"d-flex flex-column h-100 "}>
