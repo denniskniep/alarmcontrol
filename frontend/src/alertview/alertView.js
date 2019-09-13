@@ -32,7 +32,8 @@ const ALERT_BY_ID = gql`
           description
           shortDescription
         }
-      }
+      },
+      aao
     }
   }
 `;
@@ -72,7 +73,6 @@ class AlertView extends Component {
               }
 
               let alertData = data;
-
               return (
                   <React.Fragment>
                     <Subscription fetchPolicy="no-cache"
