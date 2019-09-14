@@ -1,9 +1,8 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertNumbersEdit from "./alertNumbersEdit";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -49,42 +48,26 @@ class AlertNumbersEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={ALERT_NUMBERS_BY_ORGANISATION_ID}
-               variables={{id: this.props.id}}>
-          {({loading, error, data, refetch}) => {
+        <QueryHandler fetchPolicy="no-cache"
+                      query={ALERT_NUMBERS_BY_ORGANISATION_ID}
+                      variables={{id: this.props.id}}>
+          {({data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisationById);
-
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
-                <Mutation mutation={NEW_ALERT_NUMBER}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() =>refetch()}>
+                <MutationHandler  mutation={NEW_ALERT_NUMBER}
+                                  onCompleted={() =>refetch()}>
                   { createNewAlertNumber => (
 
-                      <Mutation mutation={EDIT_ALERT_NUMBER}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => refetch()}>
+                      <MutationHandler mutation={EDIT_ALERT_NUMBER}
+                                       onCompleted={() => refetch()}>
                         { editAlertNumber => (
 
-                            <Mutation mutation={DELETE_ALERT_NUMBER}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => refetch()}>
+                            <MutationHandler mutation={DELETE_ALERT_NUMBER}
+                                             onCompleted={() => refetch()}>
                               { deleteAlertNumber => (
 
                                   <AlertNumbersEdit
@@ -121,14 +104,14 @@ class AlertNumbersEditMutation extends Component {
                                       }}
                                   />
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 

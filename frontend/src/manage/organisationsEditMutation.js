@@ -1,9 +1,8 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationsEdit from "./organisationsEdit";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ORGANISATIONS = gql`
   query organisations {
@@ -28,35 +27,23 @@ const DELETE_ORGANISATION = gql`
   }
 `;
 
-class OrganisationsView extends Component {
+class OrganisationsEditMutation extends Component {
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={ORGANISATIONS}>
-          {({loading, error, data, refetch}) => {
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisations);
+        <QueryHandler fetchPolicy="no-cache" query={ORGANISATIONS}>
+          {({data, refetch}) => {
 
-            if(result){
-              return result;
+            if (data && !data.organisations) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
-                <Mutation mutation={NEW_ORGANISATION}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => refetch()}>
+                <MutationHandler mutation={NEW_ORGANISATION}
+                                 onCompleted={() => refetch()}>
                   {createNewOrganisation => (
 
-                      <Mutation mutation={DELETE_ORGANISATION}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => refetch()}>
+                      <MutationHandler mutation={DELETE_ORGANISATION}
+                                       onCompleted={() => refetch()}>
                         {deleteOrganisation => (
 
                             <OrganisationsEdit
@@ -82,14 +69,14 @@ class OrganisationsView extends Component {
 
                             />
                         )}
-                      </Mutation>
+                      </MutationHandler>
 
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 
-export default OrganisationsView;
+export default OrganisationsEditMutation;
