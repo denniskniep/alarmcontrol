@@ -35,7 +35,7 @@ public class AlertNotifier {
   public final static String ALERT_UPDATE = "alert-update";
   private Logger logger = LoggerFactory.getLogger(AlertNotifier.class);
 
-  @Value("${alertnotifier.alertupdate.notificationDelaysInSeconds}")
+  @Value("${notifier.alertnotifier.alertupdate.notificationDelaysInSeconds}")
   private Integer[] notificationDelaysInSeconds;
 
   private NotificationService notificationService;
@@ -164,7 +164,7 @@ public class AlertNotifier {
       }
     }
 
-    String subject = "Feedback for Alarm:" + alert.getKeyword() + " (" + alert.getReferenceId() + ")";
+    String subject = "Alarmupdate:" + alert.getKeyword() + " (" + alert.getReferenceId() + "); KOMMEN:" + employeeIdsThatCommitted.size() ;
     String body = "KOMMEN:" + employeeIdsThatCommitted.size() + "\n"
         + "ABGELEHNT:" + employeeIdsThatCancel.size()
         + skillBodyPart.toString();

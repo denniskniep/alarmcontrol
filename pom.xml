@@ -37,6 +37,12 @@
       <artifactId>spring-boot-actuator</artifactId>
     </dependency>
 
+    <!-- send email -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>io.reactivex.rxjava2</groupId>
       <artifactId>rxjava</artifactId>

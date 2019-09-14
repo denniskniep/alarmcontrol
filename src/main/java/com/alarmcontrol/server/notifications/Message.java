@@ -33,4 +33,14 @@ public class Message {
   public String getBody() {
     return body;
   }
+
+  @Override
+  public String toString() {
+    return "Message{" +
+        "organisationId=" + organisationId +
+        ", type='" + type + '\'' +
+        ", subject='" + subject + '\'' +
+        ", body='" + body + '\'' +
+        '}';
+  }
 }
