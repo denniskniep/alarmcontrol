@@ -1,9 +1,9 @@
-import {Mutation, Query} from "react-apollo";
+import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertNumbersEdit from "./alertNumbersEdit";
 import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
 
 const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -49,17 +49,13 @@ class AlertNumbersEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={ALERT_NUMBERS_BY_ORGANISATION_ID}
-               variables={{id: this.props.id}}>
-          {({loading, error, data, refetch}) => {
+        <QueryHandler fetchPolicy="no-cache"
+                      query={ALERT_NUMBERS_BY_ORGANISATION_ID}
+                      variables={{id: this.props.id}}>
+          {({data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisationById);
-
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
@@ -128,7 +124,7 @@ class AlertNumbersEditMutation extends Component {
                 </Mutation>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 

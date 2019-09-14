@@ -3,12 +3,11 @@ import {Nav, Navbar} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import {gql} from "apollo-boost";
-import {Query} from "react-apollo";
-import Alert from "./utils/alert";
-import QueryDefaultHandler from "./utils/queryDefaultHandler";
+import {asTitle} from "./utils/alert";
 import Form from "react-bootstrap/Form";
 import AlertAddedSubscription from "./alertview/alertAddedSubscription";
 import {CurrentOrganisationContext} from "./currentOrganisationContext";
+import QueryHandler from "./utils/queryHandler";
 
 const ALERTS_BY_ORGANISATION = gql`
   query alertsByOrganisationId($organisationId: ID, $page: Int!, $size: Int!) {
@@ -52,7 +51,7 @@ class Menu extends Component {
   }
 
   getMenuTitle(alert) {
-   return Alert.asTitle(alert);
+   return asTitle(alert);
   }
 
   render() {
@@ -61,25 +60,18 @@ class Menu extends Component {
         <CurrentOrganisationContext.Consumer>
           {organisationContext => {
             return (
+                <QueryHandler query={ORGANISATIONS}
+                              fetchPolicy="no-cache">
+                  {({data}) => {
 
-                <Query query={ORGANISATIONS}
-                       fetchPolicy="no-cache">
-                  {({loading, error, data}) => {
-
-                    let result = new QueryDefaultHandler().handleGraphQlQuery(
-                        loading,
-                        error,
-                        data,
-                        data && data.organisations);
-
-                    if (result) {
-                      return result;
+                    if (data && !data.organisations) {
+                      return <React.Fragment></React.Fragment>;
                     }
 
                     let organisations = data.organisations;
 
                     return (
-                        <Query query={ALERTS_BY_ORGANISATION}
+                        <QueryHandler query={ALERTS_BY_ORGANISATION}
                                fetchPolicy="no-cache"
                                variables={{
                                  organisationId: this.getValidOrganisationId(
@@ -88,15 +80,10 @@ class Menu extends Component {
                                  page: 0,
                                  size: 10
                                }}>
-                          {({loading, error, data, refetch}) => {
-                            let result = new QueryDefaultHandler().handleGraphQlQuery(
-                                loading,
-                                error,
-                                data,
-                                data && data.alertsByOrganisationId);
+                          {({data, refetch}) => {
 
-                            if (result) {
-                              return result;
+                            if (data && !data.alertsByOrganisationId) {
+                              return <React.Fragment></React.Fragment>;
                             }
 
                             return (
@@ -115,7 +102,6 @@ class Menu extends Component {
                                         <NavLink className={"nav-link"} exact
                                                  to="/app/">Home</NavLink>
 
-
                                         <React.Fragment>
                                           <NavDropdown title="Last Alerts">
                                             {
@@ -132,12 +118,12 @@ class Menu extends Component {
                                           </NavDropdown>
                                         </React.Fragment>
 
-
                                       </Nav>
                                       <Nav>
                                         <NavDropdown title="Manage">
                                           <NavDropdown.Item
-                                              href="/app/manage/organisation">Organisations</NavDropdown.Item>                                          <NavDropdown.Item
+                                              href="/app/manage/organisation">Organisations</NavDropdown.Item>
+                                          <NavDropdown.Item
                                               href="/app/manage/alerts">Alerts</NavDropdown.Item>
                                         </NavDropdown>
 
@@ -167,18 +153,16 @@ class Menu extends Component {
                                             </Form.Control>
                                           </Form.Group>
                                         </Form>
-
                                       </Nav>
                                     </Navbar.Collapse>
                                   </Navbar>
                                 </React.Fragment>
                             )
                           }}
-                        </Query>
+                        </QueryHandler>
                     )
                   }}
-                </Query>
-
+                </QueryHandler>
             );
           }}
         </CurrentOrganisationContext.Consumer>

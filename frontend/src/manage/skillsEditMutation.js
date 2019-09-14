@@ -1,9 +1,9 @@
-import {Mutation, Query} from "react-apollo";
+import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import SkillsEdit from "./skillsEdit";
 import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
 
 const SKILLS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -49,16 +49,13 @@ class SkillsEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={SKILLS_BY_ORGANISATION_ID}
-               variables={{id: this.props.id}}>
-          {({loading, error, data, refetch}) => {
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisationById);
+        <QueryHandler fetchPolicy="no-cache"
+                      query={SKILLS_BY_ORGANISATION_ID}
+                      variables={{id: this.props.id}}>
+          {({data, refetch}) => {
 
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
@@ -140,7 +137,7 @@ class SkillsEditMutation extends Component {
                 </Mutation>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 

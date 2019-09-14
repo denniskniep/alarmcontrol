@@ -1,9 +1,9 @@
-import {Mutation, Query} from "react-apollo";
+import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import EmployeesEdit from "./employeesEdit";
 import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
 
 const EMPLOYEES_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -142,20 +142,16 @@ class EmployeesEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={EMPLOYEES_BY_ORGANISATION_ID}
-               variables={{
-                 id: this.props.id,
-                 shouldRefetch: this.props.refetch
-               }}>
-          {({loading, error, data, refetch}) => {
+        <QueryHandler  fetchPolicy="no-cache"
+                       query={EMPLOYEES_BY_ORGANISATION_ID}
+                       variables={{
+                         id: this.props.id,
+                         shouldRefetch: this.props.refetch
+                       }}>
+          {({data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisationById);
-
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
@@ -240,7 +236,7 @@ class EmployeesEditMutation extends Component {
                 </Mutation>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 

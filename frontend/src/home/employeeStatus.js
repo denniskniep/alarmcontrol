@@ -1,13 +1,12 @@
 import {gql} from "apollo-boost";
-import {Col, Container, Row, Table} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import React, {Component} from 'react';
-import {Query} from "react-apollo";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
 import AlertViewBox from "../alertview/alertViewBox";
 import {CurrentOrganisationContext} from "../currentOrganisationContext";
 import EmployeeStatusAddedSubscription from "./employeeStatusAddedSubscription";
 import EmployeeStatusAsList from "./employeeStatusAsList";
 import EmployeeStatusAggregated from "./employeeStatusAggregated";
+import QueryHandler from "../utils/queryHandler";
 
 const ORGANISATIONS_BY_ID = gql`
   query organisationsById($organisationId: ID) {
@@ -45,21 +44,15 @@ class EmployeeStatus extends Component {
                   <AlertViewBox>
                     <Container fluid="true"
                                className={"d-flex flex-column h-100"}>
-                      <Query query={ORGANISATIONS_BY_ID}
-                             fetchPolicy="no-cache"
-                             variables={{
-                               organisationId: this.getValidOrganisationId(
-                                   organisationContext.organisationId)
-                             }}>
-                        {({loading, error, data, refetch}) => {
-                          let result = new QueryDefaultHandler().handleGraphQlQuery(
-                              loading,
-                              error,
-                              data,
-                              data && data.organisationsById);
-
-                          if (result) {
-                            return result;
+                      <QueryHandler  query={ORGANISATIONS_BY_ID}
+                                     fetchPolicy="no-cache"
+                                     variables={{
+                                       organisationId: this.getValidOrganisationId(
+                                           organisationContext.organisationId)
+                                     }}>
+                        {({data, refetch}) => {
+                          if (data && !data.organisationsById) {
+                            return <React.Fragment></React.Fragment>;
                           }
 
                           let organisations = data.organisationsById;
@@ -73,9 +66,8 @@ class EmployeeStatus extends Component {
                               </React.Fragment>
                              )
                         }}
-                      </Query>
+                      </QueryHandler>
                     </Container>
-
                   </AlertViewBox>
               );
             }}
