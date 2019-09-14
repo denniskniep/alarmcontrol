@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import OrganisationsEditMutation from "./organisationsEditMutation";
 
 class OrganisationsView extends Component {

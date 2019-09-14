@@ -1,0 +1,60 @@
+{
+  "type": "FeatureCollection",
+  "query": [
+    "fürstenwald",
+    "hinter",
+    "den",
+    "gärten",
+    "calden"
+  ],
+  "features": [
+    {
+      "id": "address.1234567",
+      "type": "Feature",
+      "place_type": [
+        "address"
+      ],
+      "relevance": 0.8233333333333333,
+      "properties": {
+        "accuracy": "street"
+      },
+      "text": "Hinter Den Gärten",
+      "place_name": "Hinter Den Gärten, 34379 Calden, Germany",
+      "center": [
+        9.366534,
+        51.384615
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.366534,
+          51.384615
+        ]
+      },
+      "context": [
+        {
+          "id": "locality.1234567",
+          "text": "Fürstenwald"
+        },
+        {
+          "id": "postcode.1234567",
+          "text": "34379"
+        },
+        {
+          "id": "place.1234567",
+          "text": "Calden"
+        },
+        {
+          "id": "region.1234567",
+          "short_code": "DE-HE",
+          "text": "Hessen"
+        },
+        {
+          "id": "country.1234567",
+          "short_code": "de",
+          "text": "Germany"
+        }
+      ]
+    }
+  ]
+}

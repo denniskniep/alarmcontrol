@@ -25,8 +25,7 @@ RUN mvn --batch-mode dependency:go-offline
 COPY ./src /app/src
 COPY --from=frontend-build /app/dist /app/src/main/resources/static
 
-# Frontend already build by docker container
-RUN mvn --batch-mode clean install -P '!build-frontend'
+RUN mvn --batch-mode clean install
 
 # copy all testfiles into a folder
 RUN mkdir -p /build/artifacts/testresults && \

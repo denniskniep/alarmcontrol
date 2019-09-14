@@ -356,6 +356,47 @@ databaseChangeLog:
             baseColumnNames: alert_call_id
   - changeSet:
       id: 2
+      author: dkniep
+      changes:
+        - createTable:
+            tableName: employee_status
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: employee_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: raw
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_time
+                  type: datetime
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: fk_employee-id-employee_status-employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+            baseTableName: employee_status
+            baseColumnNames: employee_id
+  - changeSet:
+      id: 3
       author: dweber
       changes:
         - createTable:
@@ -391,6 +432,5 @@ databaseChangeLog:
             tableName: alert
             columns:
               - column:
-                    name: aao
-                    type: nvarchar(1000)
-
+                  name: aao
+                  type: nvarchar(1000)

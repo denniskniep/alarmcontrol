@@ -2,7 +2,13 @@ package com.alarmcontrol.server.data;
 
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
-import com.alarmcontrol.server.data.models.*;
+import com.alarmcontrol.server.data.models.Alert;
+import com.alarmcontrol.server.data.models.AlertCall;
+import com.alarmcontrol.server.data.models.AlertCallEmployee;
+import com.alarmcontrol.server.data.models.AlertNumber;
+import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
+import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
 import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
@@ -16,9 +22,11 @@ import com.alarmcontrol.server.maps.RoutingService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import com.alarmcontrol.server.rules.RuleService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.alarmcontrol.server.rules.AlertContext;
@@ -45,15 +53,18 @@ public class AlertService {
   private AlertChangedPublisher alertChangedPublisher;
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
+  private AlertCallEmployeeRepository alertCallEmployeeRepository;
 
-  public AlertService(RuleService ruleService, AlertRepository alertRepository,
-                      GeocodingService geocodingService,
-                      RoutingService routingService,
-                      OrganisationRepository organisationRepository,
-                      AlertAddedPublisher alertAddedPublisher,
-                      AlertChangedPublisher alertChangedPublisher,
-                      AlertNumberRepository alertNumberRepository,
-                      AlertCallRepository alertCallRepository) {
+  public AlertService(RuleService ruleService,
+      AlertRepository alertRepository,
+      GeocodingService geocodingService,
+      RoutingService routingService,
+      OrganisationRepository organisationRepository,
+      AlertAddedPublisher alertAddedPublisher,
+      AlertChangedPublisher alertChangedPublisher,
+      AlertNumberRepository alertNumberRepository,
+      AlertCallRepository alertCallRepository,
+      AlertCallEmployeeRepository alertCallEmployeeRepository) {
     this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
@@ -63,6 +74,7 @@ public class AlertService {
     this.alertChangedPublisher = alertChangedPublisher;
     this.alertNumberRepository = alertNumberRepository;
     this.alertCallRepository = alertCallRepository;
+    this.alertCallEmployeeRepository = alertCallEmployeeRepository;
   }
 
   public AlertCall create(
@@ -246,6 +258,21 @@ public class AlertService {
         dateTime);
     alertCallRepository.save(alertCall);
     return alertCall;
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public void delete(Long id){
+    Optional<Alert> foundAlert = alertRepository.findById(id);
+    if (!foundAlert.isPresent()) {
+      throw new IllegalArgumentException("No Alert found for id:" + id);
+    }
+
+    Alert alert = foundAlert.get();
+    List<AlertCall> alertCalls = alertCallRepository.findByAlertId(alert.getId());
+    List<AlertCallEmployee> alertCallEmployees = alertCallEmployeeRepository.findByAlertId(alert.getId());
+    alertCallEmployeeRepository.deleteAll(alertCallEmployees);
+    alertCallRepository.deleteAll(alertCalls);
+    alertRepository.delete(alert);
   }
 
   private static class AlertCallCreated {

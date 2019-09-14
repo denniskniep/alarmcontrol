@@ -1,9 +1,8 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import SkillsEdit from "./skillsEdit";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const SKILLS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -49,54 +48,38 @@ class SkillsEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={SKILLS_BY_ORGANISATION_ID}
-               variables={{id: this.props.id}}>
-          {({loading, error, data, refetch}) => {
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data.organisationById);
+        <QueryHandler fetchPolicy="no-cache"
+                      query={SKILLS_BY_ORGANISATION_ID}
+                      variables={{id: this.props.id}}>
+          {({data, refetch}) => {
 
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
-                <Mutation mutation={NEW_SKILL}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => {
-                            this.props.onSkillsChanged
-                            && this.props.onSkillsChanged();
-                            refetch();
-                          }}>
+                <MutationHandler  mutation={NEW_SKILL}
+                                  onCompleted={() => {
+                                    this.props.onSkillsChanged
+                                    && this.props.onSkillsChanged();
+                                    refetch();
+                                  }}>
                   {createNewSkill => (
 
-                      <Mutation mutation={EDIT_SKILL}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => {
-                                  this.props.onSkillsChanged
-                                  && this.props.onSkillsChanged();
-                                  refetch();
-                                }}>
+                      <MutationHandler  mutation={EDIT_SKILL}
+                                        onCompleted={() => {
+                                          this.props.onSkillsChanged
+                                          && this.props.onSkillsChanged();
+                                          refetch();
+                                        }}>
                         {editSkill => (
 
-                            <Mutation mutation={DELETE_SKILL}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => {
-                                        this.props.onSkillsChanged
-                                        && this.props.onSkillsChanged();
-                                        refetch();
-
-                                      }}>
+                            <MutationHandler  mutation={DELETE_SKILL}
+                                              onCompleted={() => {
+                                                this.props.onSkillsChanged
+                                                && this.props.onSkillsChanged();
+                                                refetch();
+                                              }}>
                               {deleteSkill => (
 
                                   <SkillsEdit
@@ -133,14 +116,14 @@ class SkillsEditMutation extends Component {
                                       }}
                                   />
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 

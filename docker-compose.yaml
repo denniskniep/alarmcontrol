@@ -2,14 +2,13 @@ version: '3.7'
 services:
 
   alarmcontrol:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: denniskniep/alarmcontrol:1.1.1
     container_name: alarmcontrol
     ports:
       - 8080:8080
     volumes:
       - ./scripts/wait-for.sh:/app/wait-for.sh:ro
+      - ./logs:/app/logs
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${DATABASE_NAME}"
       SPRING_DATASOURCE_USERNAME: "${DATABASE_USER}"

@@ -1,6 +1,6 @@
 {
   "name": "alarmcontrol-client",
-  "version": "0.1.0",
+  "version": "1.1.1",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.17",
@@ -26,6 +26,7 @@
     "moment": "^2.24.0",
     "polyline": "^0.2.0",
     "postcss-browser-comments": "^2.0.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-apollo": "^2.5.5",
     "react-bootstrap": "^1.0.0-beta.8",
@@ -40,14 +41,30 @@
   },
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html",
+    "test": "jest --watch",
+    "lint": "eslint ./src ./tests"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
+    "jest": "^24.8.0",
+    "babel-jest": "^24.8.0",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.5",
+    "eslint": "^6.0.1",
+    "eslint-plugin-jest": "^22.11.1",
+    "eslint-plugin-react": "^7.14.2",
     "graphql": "^14.2.1",
     "parcel-bundler": "^1.12.3"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/tests/"
+    ]
   }
 }

@@ -1,5 +1,7 @@
 package com.alarmcontrol.server.data.utils;
 
+import com.graphql.spring.boot.test.GraphQLResponse;
+
 public class TestOrganisation {
 
   public static final String ORG_ADDRESS_LAT = "51.406339";
@@ -30,5 +32,22 @@ public class TestOrganisation {
             .put("description", "DOES_NOT_MATTER")
             .put("shortDescription", shortDescription)
     );
+  }
+
+  public Long addEmployee(String firstname, String lastname, String referenceId){
+    GraphQLResponse response = graphQLClient.perform("" +
+        "mutation newEmployee($organisationId: ID!, $firstname: String!, $lastname: String!, $referenceId: String!) { " +
+        "    newEmployee(organisationId: $organisationId, firstname: $firstname, lastname: $lastname, referenceId: $referenceId) {"+
+        "      id"+
+        "    }"+
+        "}",
+        Vars.create()
+            .put("organisationId", organisationId)
+            .put("firstname", firstname)
+            .put("lastname", lastname)
+            .put("referenceId", referenceId)
+    );
+
+    return Long.valueOf(response.get("data.newEmployee.id"));
   }
 }

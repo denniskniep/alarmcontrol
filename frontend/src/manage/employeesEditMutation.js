@@ -1,9 +1,8 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import EmployeesEdit from "./employeesEdit";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const EMPLOYEES_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -142,62 +141,37 @@ class EmployeesEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={EMPLOYEES_BY_ORGANISATION_ID}
-               variables={{
-                 id: this.props.id,
-                 shouldRefetch: this.props.refetch
-               }}>
-          {({loading, error, data, refetch}) => {
+        <QueryHandler  fetchPolicy="no-cache"
+                       query={EMPLOYEES_BY_ORGANISATION_ID}
+                       variables={{
+                         id: this.props.id,
+                         shouldRefetch: this.props.refetch
+                       }}>
+          {({data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data.organisationById);
-
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
-                <Mutation mutation={NEW_EMPLOYEE}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => refetch()}>
+                <MutationHandler mutation={NEW_EMPLOYEE}
+                                 onCompleted={() => refetch()}>
                   {createNewEmployee => (
 
-                      <Mutation mutation={EDIT_EMPLOYEE}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => refetch()}>
+                      <MutationHandler mutation={EDIT_EMPLOYEE}
+                                       onCompleted={() => refetch()}>
                         {editEmployee => (
 
-                            <Mutation mutation={DELETE_EMPLOYEE}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => refetch()}>
+                            <MutationHandler mutation={DELETE_EMPLOYEE}
+                                             onCompleted={() => refetch()}>
                               {deleteEmployee => (
 
-                                  <Mutation mutation={ADD_EMPLOYEE_SKILL}
-
-                                            onError={(error) =>
-                                                new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                            onCompleted={() => refetch()}>
+                                  <MutationHandler mutation={ADD_EMPLOYEE_SKILL}
+                                                   onCompleted={() => refetch()}>
                                     {addEmployeeSkill => (
 
-                                        <Mutation
-                                            mutation={DELETE_EMPLOYEE_SKILL}
-
-                                            onError={(error) =>
-                                                new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                            onCompleted={() => refetch()}>
+                                        <MutationHandler mutation={DELETE_EMPLOYEE_SKILL}
+                                                         onCompleted={() => refetch()}>
                                           {deleteEmployeeSkill => (
 
                                               <EmployeesEdit
@@ -229,18 +203,18 @@ class EmployeesEditMutation extends Component {
                                                   }
                                               />
                                           )}
-                                        </Mutation>
+                                        </MutationHandler>
                                     )}
-                                  </Mutation>
+                                  </MutationHandler>
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 
