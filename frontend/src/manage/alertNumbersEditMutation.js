@@ -1,9 +1,8 @@
-import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertNumbersEdit from "./alertNumbersEdit";
-import ErrorHandler from "../utils/errorHandler";
 import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ALERT_NUMBERS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -59,28 +58,16 @@ class AlertNumbersEditMutation extends Component {
             }
 
             return (
-                <Mutation mutation={NEW_ALERT_NUMBER}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() =>refetch()}>
+                <MutationHandler  mutation={NEW_ALERT_NUMBER}
+                                  onCompleted={() =>refetch()}>
                   { createNewAlertNumber => (
 
-                      <Mutation mutation={EDIT_ALERT_NUMBER}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => refetch()}>
+                      <MutationHandler mutation={EDIT_ALERT_NUMBER}
+                                       onCompleted={() => refetch()}>
                         { editAlertNumber => (
 
-                            <Mutation mutation={DELETE_ALERT_NUMBER}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => refetch()}>
+                            <MutationHandler mutation={DELETE_ALERT_NUMBER}
+                                             onCompleted={() => refetch()}>
                               { deleteAlertNumber => (
 
                                   <AlertNumbersEdit
@@ -117,11 +104,11 @@ class AlertNumbersEditMutation extends Component {
                                       }}
                                   />
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
         </QueryHandler>);

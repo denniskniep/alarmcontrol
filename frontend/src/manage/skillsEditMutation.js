@@ -1,9 +1,8 @@
-import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import SkillsEdit from "./skillsEdit";
-import ErrorHandler from "../utils/errorHandler";
 import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const SKILLS_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -59,41 +58,28 @@ class SkillsEditMutation extends Component {
             }
 
             return (
-                <Mutation mutation={NEW_SKILL}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => {
-                            this.props.onSkillsChanged
-                            && this.props.onSkillsChanged();
-                            refetch();
-                          }}>
+                <MutationHandler  mutation={NEW_SKILL}
+                                  onCompleted={() => {
+                                    this.props.onSkillsChanged
+                                    && this.props.onSkillsChanged();
+                                    refetch();
+                                  }}>
                   {createNewSkill => (
 
-                      <Mutation mutation={EDIT_SKILL}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => {
-                                  this.props.onSkillsChanged
-                                  && this.props.onSkillsChanged();
-                                  refetch();
-                                }}>
+                      <MutationHandler  mutation={EDIT_SKILL}
+                                        onCompleted={() => {
+                                          this.props.onSkillsChanged
+                                          && this.props.onSkillsChanged();
+                                          refetch();
+                                        }}>
                         {editSkill => (
 
-                            <Mutation mutation={DELETE_SKILL}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => {
-                                        this.props.onSkillsChanged
-                                        && this.props.onSkillsChanged();
-                                        refetch();
-
-                                      }}>
+                            <MutationHandler  mutation={DELETE_SKILL}
+                                              onCompleted={() => {
+                                                this.props.onSkillsChanged
+                                                && this.props.onSkillsChanged();
+                                                refetch();
+                                              }}>
                               {deleteSkill => (
 
                                   <SkillsEdit
@@ -130,11 +116,11 @@ class SkillsEditMutation extends Component {
                                       }}
                                   />
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
         </QueryHandler>);

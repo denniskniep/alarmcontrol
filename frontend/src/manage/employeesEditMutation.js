@@ -1,9 +1,8 @@
-import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import EmployeesEdit from "./employeesEdit";
-import ErrorHandler from "../utils/errorHandler";
 import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const EMPLOYEES_BY_ORGANISATION_ID = gql`
   query organisationById($id: ID!) {
@@ -155,45 +154,24 @@ class EmployeesEditMutation extends Component {
             }
 
             return (
-                <Mutation mutation={NEW_EMPLOYEE}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => refetch()}>
+                <MutationHandler mutation={NEW_EMPLOYEE}
+                                 onCompleted={() => refetch()}>
                   {createNewEmployee => (
 
-                      <Mutation mutation={EDIT_EMPLOYEE}
-
-                                onError={(error) =>
-                                    new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                onCompleted={() => refetch()}>
+                      <MutationHandler mutation={EDIT_EMPLOYEE}
+                                       onCompleted={() => refetch()}>
                         {editEmployee => (
 
-                            <Mutation mutation={DELETE_EMPLOYEE}
-
-                                      onError={(error) =>
-                                          new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                      onCompleted={() => refetch()}>
+                            <MutationHandler mutation={DELETE_EMPLOYEE}
+                                             onCompleted={() => refetch()}>
                               {deleteEmployee => (
 
-                                  <Mutation mutation={ADD_EMPLOYEE_SKILL}
-
-                                            onError={(error) =>
-                                                new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                            onCompleted={() => refetch()}>
+                                  <MutationHandler mutation={ADD_EMPLOYEE_SKILL}
+                                                   onCompleted={() => refetch()}>
                                     {addEmployeeSkill => (
 
-                                        <Mutation
-                                            mutation={DELETE_EMPLOYEE_SKILL}
-
-                                            onError={(error) =>
-                                                new ErrorHandler().handleGraphQlMutationError(error)}
-
-                                            onCompleted={() => refetch()}>
+                                        <MutationHandler mutation={DELETE_EMPLOYEE_SKILL}
+                                                         onCompleted={() => refetch()}>
                                           {deleteEmployeeSkill => (
 
                                               <EmployeesEdit
@@ -225,15 +203,15 @@ class EmployeesEditMutation extends Component {
                                                   }
                                               />
                                           )}
-                                        </Mutation>
+                                        </MutationHandler>
                                     )}
-                                  </Mutation>
+                                  </MutationHandler>
                               )}
-                            </Mutation>
+                            </MutationHandler>
                         )}
-                      </Mutation>
+                      </MutationHandler>
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
         </QueryHandler>);

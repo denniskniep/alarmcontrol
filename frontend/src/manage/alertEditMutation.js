@@ -1,11 +1,10 @@
-import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
-import ErrorHandler from "../utils/errorHandler";
 import AlertEdit from "./alertEdit";
 import {asTitle as asAlertTitle} from "../utils/alert";
-import {Route} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ALERTS_BY_ORGANISATION_ID = gql`
   query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
@@ -49,7 +48,6 @@ class AlertEditMutation extends Component {
 
   render() {
     return (
-        <Route render={({history}) => (
             <QueryHandler  fetchPolicy="no-cache"
                            query={ALERTS_BY_ORGANISATION_ID}
                            variables={{
@@ -75,13 +73,8 @@ class AlertEditMutation extends Component {
                     this.state.pageSize);
                 return (
 
-                    <Mutation mutation={DELETE_ALERT}
-
-                              onError={(error) =>
-                                  new ErrorHandler().handleGraphQlMutationError(
-                                      error)}
-
-                              onCompleted={() => refetch()}>
+                    <MutationHandler mutation={DELETE_ALERT}
+                                      onCompleted={() => refetch()}>
                       {deleteAlert => (
 
                           <AlertEdit
@@ -105,17 +98,16 @@ class AlertEditMutation extends Component {
                               }}
 
                               onAlertViewed={alert => {
-                                history.push("/app/alertview/" + alert.id)
+                                this.props.history.push("/app/alertview/" + alert.id)
                               }}
                           />
                       )}
-                    </Mutation>
+                    </MutationHandler>
                 );
               }}
             </QueryHandler>
-        )}/>
     );
   }
 }
 
-export default AlertEditMutation;
+export default withRouter(AlertEditMutation);

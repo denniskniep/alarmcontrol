@@ -1,9 +1,8 @@
-import {Mutation} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationEdit from "./organisationEdit";
-import ErrorHandler from "../utils/errorHandler";
 import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ORGANISATION_BY_ID = gql`
   query organisationById($id: ID!) {
@@ -41,12 +40,8 @@ class OrganisationEditMutation extends Component {
             }
 
             return (
-                <Mutation mutation={UPDATE_ORGANISATION}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => refetch()}>
+                <MutationHandler mutation={UPDATE_ORGANISATION}
+                                 onCompleted={() => refetch()}>
                   {updateOrganisation => (
 
                       <OrganisationEdit organisation={data.organisationById}
@@ -62,7 +57,7 @@ class OrganisationEditMutation extends Component {
                                             )}/>
 
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
         </QueryHandler>);
