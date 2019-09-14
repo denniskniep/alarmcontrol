@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
 import AlertViewBox from "../alertViewBox";
-import PrettyPrinter from "../../utils/prettyPrinter";
+import {prettifyDateLong,prettifyDateTimeLong} from "../../utils/prettyPrinter";
 import PropTypes from "prop-types";
 
 class AlertViewHeader extends Component {
@@ -33,7 +33,7 @@ class AlertViewHeader extends Component {
   }
 
   prettifyDate(alert) {
-    return new PrettyPrinter().prettifyDateTimeLong(alert.dateTime);
+    return prettifyDateTimeLong(alert.dateTime);
   }
 
   prettifyDuration(alert, currentUTC) {
@@ -50,7 +50,7 @@ class AlertViewHeader extends Component {
           '0')}:${seconds.padStart(2, '0')}`;
     }
 
-    return new PrettyPrinter().prettifyDateLong(alert.dateTime);
+    return prettifyDateLong(alert.dateTime);
   }
 
   printAddress1Header(alert){

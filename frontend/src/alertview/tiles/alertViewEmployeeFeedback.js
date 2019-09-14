@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import AlertViewBox from "../alertViewBox";
 import {gql} from "apollo-boost";
-import {Query, Subscription} from "react-apollo";
+import {Subscription} from "react-apollo";
 import EmployeeFeedbackAsBadges from "./employee/employeeFeedbackAsBadges";
 import EmployeeFeedbackStates from "./employee/employeeFeedbackStates";
 import EmployeeFeedbackAsList from "./employee/employeeFeedbackAsList";
 import EmployeeFeedbackAggregated from "./employee/employeeFeedbackAggregated";
-import EmployeeStatusAddedSubscription
-  from "../../home/employeeStatusAddedSubscription";
+import EmployeeStatusAddedSubscription from "../../home/employeeStatusAddedSubscription";
+import QueryHandler from "../../utils/queryHandler";
 
 const ALERT_WITH_EMPLOYEE_BY_ID = gql`
   query alertById($id: ID!) {
@@ -70,14 +70,15 @@ class AlertViewEmployeeFeedback extends Component {
   render() {
     return (
         <React.Fragment>
-          <Query fetchPolicy="no-cache" query={ALERT_WITH_EMPLOYEE_BY_ID}
-                 variables={{id: this.props.alert.id}}>
-            {({loading, error, data, refetch}) => {
-              if (loading || error || !data.alertById) {
-                return <p></p>;
+          <QueryHandler fetchPolicy="no-cache"
+                        query={ALERT_WITH_EMPLOYEE_BY_ID}
+                        variables={{id: this.props.alert.id}}>
+            {({data, refetch}) => {
+              let alertData = data;
+              if (!alertData.alertById) {
+                return (<React.Fragment></React.Fragment>);
               }
 
-              let alertData = data;
               let hasEmployeeThatAreLater = this.filterAndSortByFeedback(
                   alertData.alertById.employeeFeedback, [
                     EmployeeFeedbackStates.getLater()
@@ -184,7 +185,7 @@ class AlertViewEmployeeFeedback extends Component {
                   </Subscription>
               )
             }}
-          </Query>
+          </QueryHandler>
         </React.Fragment>
     )
   }

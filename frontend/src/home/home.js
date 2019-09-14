@@ -4,7 +4,6 @@ import EmployeeStatus from "./employeeStatus";
 
 class Home extends Component {
 
-
   render() {
     return (
         <Container fluid="true"

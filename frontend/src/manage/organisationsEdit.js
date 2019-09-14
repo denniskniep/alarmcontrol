@@ -1,43 +1,42 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import EditableTable from "../components/editableTable";
 
 class OrganisationsEdit extends Component {
   render() {
     return (
-        <Route render={({history}) => (
-            <EditableTable data={this.props.organisations}
+        <EditableTable data={this.props.organisations}
 
-                           canView={false}
+                       canView={false}
 
-                           columns={[
-                             {
-                               key: "id",
-                               name: "#",
-                               readOnly: true
-                             },
-                             {
-                               key: "name",
-                               name: "Name"
-                             }
-                           ]}
+                       columns={[
+                         {
+                           key: "id",
+                           name: "#",
+                           readOnly: true
+                         },
+                         {
+                           key: "name",
+                           name: "Name"
+                         }
+                       ]}
 
-                           onNewRow={newRow => {
-                             this.props.onNewOrganisation
-                             && this.props.onNewOrganisation(newRow);
-                           }}
+                       onNewRow={newRow => {
+                         this.props.onNewOrganisation
+                         && this.props.onNewOrganisation(newRow);
+                       }}
 
-                           onStartEditMode={(row) => {
-                             history.push("/app/manage/organisation/" + row.id)
-                             return true;
-                           }}
+                       onStartEditMode={(row) => {
+                         this.props.history.push("/app/manage/organisation/" + row.id)
+                         return true;
+                       }}
 
-                           onRowDeleted={(deletedRow) =>
-                               this.props.onOrganisationDeleted
-                               && this.props.onOrganisationDeleted(deletedRow)}
+                       onRowDeleted={(deletedRow) =>
+                           this.props.onOrganisationDeleted
+                           && this.props.onOrganisationDeleted(deletedRow)}
 
-            />)}/>);
+        />);
   }
 }
 
-export default OrganisationsEdit;
+export default withRouter(OrganisationsEdit);

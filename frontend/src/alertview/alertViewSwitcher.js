@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import {toast} from "react-toastify";
 import AlertAddedSubscription from "./alertAddedSubscription";
 import {CurrentOrganisationContext} from "../currentOrganisationContext";
@@ -28,19 +28,17 @@ class AlertViewSwitcher extends Component {
 
   render() {
     return (
-        <Route render={({history}) => (
-            <CurrentOrganisationContext.Consumer>
-              {organisationContext => {
-                return (
-                    <AlertAddedSubscription
-                        onSubscriptionData={o =>
-                            this.handleSubscriptionData(o, history, organisationContext.organisationId)}/>
-                );
-              }}
-            </CurrentOrganisationContext.Consumer>
-        )}/>
+        <CurrentOrganisationContext.Consumer>
+          {organisationContext => {
+            return (
+                <AlertAddedSubscription
+                    onSubscriptionData={o =>
+                        this.handleSubscriptionData(o, this.props.history, organisationContext.organisationId)}/>
+            );
+          }}
+        </CurrentOrganisationContext.Consumer>
     );
   }
 }
 
-export default AlertViewSwitcher
+export default withRouter(AlertViewSwitcher)

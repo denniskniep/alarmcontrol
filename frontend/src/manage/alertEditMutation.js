@@ -1,11 +1,10 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
 import AlertEdit from "./alertEdit";
-import Alert from "../utils/alert";
-import {Route} from 'react-router-dom'
+import {asTitle as asAlertTitle} from "../utils/alert";
+import {withRouter} from 'react-router-dom'
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ALERTS_BY_ORGANISATION_ID = gql`
   query alertsByOrganisationId($id: ID, $page: Int!, $size: Int!) {
@@ -49,27 +48,21 @@ class AlertEditMutation extends Component {
 
   render() {
     return (
-        <Route render={({history}) => (
-            <Query fetchPolicy="no-cache" query={ALERTS_BY_ORGANISATION_ID}
-                   variables={{
-                     id: this.props.id,
-                     page: this.state.currentPage,
-                     size: this.state.pageSize
-                   }}>
-              {({loading, error, data, refetch}) => {
+            <QueryHandler  fetchPolicy="no-cache"
+                           query={ALERTS_BY_ORGANISATION_ID}
+                           variables={{
+                             id: this.props.id,
+                             page: this.state.currentPage,
+                             size: this.state.pageSize
+                           }}>
+              {({data, refetch}) => {
 
-                let result = new QueryDefaultHandler().handleGraphQlQuery(
-                    loading,
-                    error,
-                    data,
-                    data && data.alertsByOrganisationId);
-
-                if (result) {
-                  return result;
+                if (data && !data.alertsByOrganisationId) {
+                  return <React.Fragment></React.Fragment>;
                 }
 
                 let alerts = data.alertsByOrganisationId.items.map(a => {
-                  a.title = Alert.asTitle(a);
+                  a.title = asAlertTitle(a);
                   a.organisationName = a.organisation.name;
                   return a;
                 });
@@ -80,13 +73,8 @@ class AlertEditMutation extends Component {
                     this.state.pageSize);
                 return (
 
-                    <Mutation mutation={DELETE_ALERT}
-
-                              onError={(error) =>
-                                  new ErrorHandler().handleGraphQlMutationError(
-                                      error)}
-
-                              onCompleted={() => refetch()}>
+                    <MutationHandler mutation={DELETE_ALERT}
+                                      onCompleted={() => refetch()}>
                       {deleteAlert => (
 
                           <AlertEdit
@@ -110,17 +98,16 @@ class AlertEditMutation extends Component {
                               }}
 
                               onAlertViewed={alert => {
-                                history.push("/app/alertview/" + alert.id)
+                                this.props.history.push("/app/alertview/" + alert.id)
                               }}
                           />
                       )}
-                    </Mutation>
+                    </MutationHandler>
                 );
               }}
-            </Query>
-        )}/>
+            </QueryHandler>
     );
   }
 }
 
-export default AlertEditMutation;
+export default withRouter(AlertEditMutation);

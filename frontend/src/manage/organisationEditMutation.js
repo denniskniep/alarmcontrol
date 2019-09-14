@@ -1,9 +1,8 @@
-import {Mutation, Query} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import OrganisationEdit from "./organisationEdit";
-import ErrorHandler from "../utils/errorHandler";
-import QueryDefaultHandler from "../utils/queryDefaultHandler";
+import QueryHandler from "../utils/queryHandler";
+import MutationHandler from "../utils/mutationHandler";
 
 const ORGANISATION_BY_ID = gql`
   query organisationById($id: ID!) {
@@ -32,26 +31,17 @@ class OrganisationEditMutation extends Component {
 
   render() {
     return (
-        <Query fetchPolicy="no-cache" query={ORGANISATION_BY_ID}
+        <QueryHandler fetchPolicy="no-cache" query={ORGANISATION_BY_ID}
                variables={{id: this.props.id}}>
-          {({loading, error, data, refetch}) => {
+          {({data, refetch}) => {
 
-            let result = new QueryDefaultHandler().handleGraphQlQuery(loading,
-                error,
-                data,
-                data && data.organisationById);
-
-            if(result){
-              return result;
+            if (data && !data.organisationById) {
+              return <React.Fragment></React.Fragment>;
             }
 
             return (
-                <Mutation mutation={UPDATE_ORGANISATION}
-
-                          onError={(error) =>
-                              new ErrorHandler().handleGraphQlMutationError(error)}
-
-                          onCompleted={() => refetch()}>
+                <MutationHandler mutation={UPDATE_ORGANISATION}
+                                 onCompleted={() => refetch()}>
                   {updateOrganisation => (
 
                       <OrganisationEdit organisation={data.organisationById}
@@ -67,10 +57,10 @@ class OrganisationEditMutation extends Component {
                                             )}/>
 
                   )}
-                </Mutation>
+                </MutationHandler>
             );
           }}
-        </Query>);
+        </QueryHandler>);
   }
 }
 
