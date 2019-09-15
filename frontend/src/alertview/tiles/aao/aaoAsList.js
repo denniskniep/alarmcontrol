@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Col, Container, Row, Table} from "react-bootstrap";
+import {Badge, Col, Container, Row, Table} from "react-bootstrap";
 import AlertViewBox from "../../alertViewBox";
+import EmployeeFeedbackStates from "../employee/employeeFeedbackStates";
+import EmployeeStatusDot from "../../../home/employeeStatusDot";
 
 class AaoAsList extends Component {
 
@@ -15,23 +17,16 @@ class AaoAsList extends Component {
                 </Row>
                 <Row>
                     <Col className={"noPadding"}>
-                        <Table responsive>
-                            <tbody>
                             {this.props.alert.aao && this.props.alert.aao.map((ef, index) => {
                                 return (
-                                    <tr key={index}>
-                                        <td width={20}><img height={25} width={25} src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4Ij4KPHJlY3QgeD0iMTM5LjYzMyIgeT0iOTEuNTE5IiBzdHlsZT0iZmlsbDojODA4MDgwOyIgd2lkdGg9IjEwMS4yMzIiIGhlaWdodD0iNjkuMDc2Ii8+CjxnPgoJPHJlY3QgeD0iMTM5LjYzMyIgeT0iOTEuNTE5IiBzdHlsZT0iZmlsbDojNjY2NjY2OyIgd2lkdGg9IjE5LjE3NyIgaGVpZ2h0PSI2OS4wNzYiLz4KCTxyZWN0IHg9IjEzOS42MzMiIHk9IjkxLjUxOSIgc3R5bGU9ImZpbGw6IzY2NjY2NjsiIHdpZHRoPSIxMDEuMjMyIiBoZWlnaHQ9IjI2LjE3NyIvPgo8L2c+CjxwYXRoIHN0eWxlPSJmaWxsOiNGOTU0Mjg7IiBkPSJNMzI2LjY5OCwxNDMuMTE5bC0zMS45NTMsMjU5LjI3OEg4Ljk1OVYxNjkuOTczYzAtMTQuODMsMTIuMDI0LTI2Ljg1NCwyNi44NTQtMjYuODU0ICBDMzUuODEzLDE0My4xMTksMzI2LjY5OCwxNDMuMTE5LDMyNi42OTgsMTQzLjExOXoiLz4KPHBhdGggc3R5bGU9ImZpbGw6I0UwM0YyMDsiIGQ9Ik02NS4wNjgsMTQzLjExOWMtMTQuODMsMC0yNi44NTQsMTIuMDI0LTI2Ljg1NCwyNi44NTR2MjMyLjQyM0g4Ljk1OVYxNjkuOTczICBjMC0xNC44MywxMi4wMjQtMjYuODU0LDI2Ljg1NC0yNi44NTRDMzUuODEzLDE0My4xMTksNjUuMDY4LDE0My4xMTksNjUuMDY4LDE0My4xMTl6Ii8+CjxyZWN0IHg9IjUwLjU0NCIgeT0iMTgwLjUiIHN0eWxlPSJmaWxsOiNFNkU2RTY7IiB3aWR0aD0iMjAxLjkwMyIgaGVpZ2h0PSI4Mi4wMiIvPgo8Zz4KCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGMkYyRjI7IiBwb2ludHM9IjI1Mi43NDEsMTgwLjQ5NyAyNTIuNzQxLDI2Mi41MTcgMTg1LjE3LDI2Mi41MTcgMjQ4LjE1NiwxODAuNDk3ICAiLz4KCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGMkYyRjI7IiBwb2ludHM9IjE4NC42ODUsMTgwLjQ5NyAxODQuNjg1LDI2Mi41MTcgMTE3LjExMywyNjIuNTE3IDE4MC4xLDE4MC40OTcgICIvPgoJPHBvbHlnb24gc3R5bGU9ImZpbGw6I0YyRjJGMjsiIHBvaW50cz0iMTE4LjQxOCwxODAuNDk3IDExOC40MTgsMjYyLjUxNyA1MC44NDcsMjYyLjUxNyAxMTMuODMzLDE4MC40OTcgICIvPgo8L2c+CjxwYXRoIHN0eWxlPSJmaWxsOiMyQkE1Rjc7IiBkPSJNNDQ3LjcyLDExOC41NjloLTI5LjkxMWMtNC4yMTYsMC03LjYzNCwzLjQxNy03LjYzNCw3LjYzNHYyNi40NjNoNDUuMTc4di0yNi40NjMgIEM0NTUuMzU0LDEyMS45ODYsNDUxLjkzNywxMTguNTY5LDQ0Ny43MiwxMTguNTY5eiIvPgo8cGF0aCBzdHlsZT0iZmlsbDojMjY5QkRCOyIgZD0iTTQyMy4yOTUsMTE4LjU2OWgtNS40ODdjLTQuMjE2LDAtNy42MzQsMy40MTctNy42MzQsNy42MzR2MjYuNDYzaDEzLjEyVjExOC41Njl6Ii8+CjxwYXRoIHN0eWxlPSJmaWxsOiNGOTU0Mjg7IiBkPSJNNDc1LjUyMiw0MDIuMzloMjcuNTIzVjE2My45MzdjMC0xMS41MDEtOS4zMjMtMjAuODI0LTIwLjgyNC0yMC44MjRIMzEzLjU2MyAgYy0xMC4zOTUsMC0xOC44MjIsOC40MjYtMTguODIyLDE4LjgyMlY0MDIuMzloNTUuNDE2Ii8+CjxnPgoJPHBhdGggc3R5bGU9ImZpbGw6IzRENEQ0RDsiIGQ9Ik00MDEuOTIzLDQxMS4zNDZIOC45NTVjLTQuOTQ2LDAtOC45NTUtNC4wMS04Ljk1NS04Ljk1NWMwLTQuOTQ2LDQuMDEtOC45NTUsOC45NTUtOC45NTVoMzkyLjk2OCAgIGM0Ljk0NiwwLDguOTU1LDQuMDEsOC45NTUsOC45NTVDNDEwLjg3OSw0MDcuMzM2LDQwNi44NjksNDExLjM0Niw0MDEuOTIzLDQxMS4zNDZ6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojNEQ0RDREOyIgZD0iTTUwMy4wNDUsNDExLjM0Nkg0NjIuODJjLTQuOTQ2LDAtOC45NTUtNC4wMS04Ljk1NS04Ljk1NWMwLTQuOTQ2LDQuMDEtOC45NTUsOC45NTUtOC45NTVoNDAuMjI0ICAgYzQuOTQ2LDAsOC45NTUsNC4wMSw4Ljk1NSw4Ljk1NUM1MTIsNDA3LjMzNiw1MDcuOTksNDExLjM0Niw1MDMuMDQ1LDQxMS4zNDZ6Ii8+CjwvZz4KPGc+Cgk8Y2lyY2xlIHN0eWxlPSJmaWxsOiM2NjY2NjY7IiBjeD0iOTcuMDI5IiBjeT0iNDAyLjM5MSIgcj0iNjIuNjg4Ii8+Cgk8Y2lyY2xlIHN0eWxlPSJmaWxsOiM2NjY2NjY7IiBjeD0iNDEyLjgzMyIgY3k9IjQwMi4zOTEiIHI9IjYyLjY4OCIvPgo8L2c+CjxnPgoJPGNpcmNsZSBzdHlsZT0iZmlsbDojRTZFNkU2OyIgY3g9IjQxMi44MzMiIGN5PSI0MDIuMzkxIiByPSIyNy45OTEiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNFNkU2RTY7IiBkPSJNMTI1LjAyMSw0MDIuMzg5YzAsMTMuMzk3LTkuNDMzLDI0LjYxLTIyLjAzLDI3LjM0NGMtMS45MjIsMC40MTgtMy45MTcsMC42NDUtNS45NywwLjY0NSAgIGMtMTUuNDUxLDAtMjcuOTg5LTEyLjUzOC0yNy45ODktMjcuOTg5YzAtMTUuNDYzLDEyLjUzOC0yNy45ODksMjcuOTg5LTI3Ljk4OWMyLjA1NCwwLDQuMDQ4LDAuMjE1LDUuOTcsMC42NDUgICBDMTE1LjU4OCwzNzcuNzgsMTI1LjAyMSwzODguOTgsMTI1LjAyMSw0MDIuMzg5eiIvPgo8L2c+CjxnPgoJPHBhdGggc3R5bGU9ImZpbGw6I0ZGRkZGRjsiIGQ9Ik0xMjUuMDIxLDQwMi4zODljMCwxMy4zOTctOS40MzMsMjQuNjEtMjIuMDMsMjcuMzQ0Yy0xMi41ODUtMi43MzQtMjIuMDE4LTEzLjk0Ny0yMi4wMTgtMjcuMzQ0ICAgYzAtMTMuNDA5LDkuNDMzLTI0LjYwOSwyMi4wMTgtMjcuMzQ0QzExNS41ODgsMzc3Ljc4LDEyNS4wMjEsMzg4Ljk4LDEyNS4wMjEsNDAyLjM4OXoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNGRkZGRkY7IiBkPSJNNDQwLjgyOCw0MDIuMzg5YzAsMTMuMzk3LTkuNDMzLDI0LjYxLTIyLjAzLDI3LjM0NGMtMTIuNTg1LTIuNzM0LTIyLjAxOC0xMy45NDctMjIuMDE4LTI3LjM0NCAgIGMwLTEzLjQwOSw5LjQzMy0yNC42MDksMjIuMDE4LTI3LjM0NEM0MzEuMzk1LDM3Ny43OCw0NDAuODI4LDM4OC45OCw0NDAuODI4LDQwMi4zODl6Ii8+CjwvZz4KPHJlY3QgeD0iNDA5Ljk4IiB5PSIxODAuNSIgc3R5bGU9ImZpbGw6I0U2RTZFNjsiIHdpZHRoPSI5My4wNjUiIGhlaWdodD0iODIuMDIiLz4KPGc+Cgk8cmVjdCB4PSIzMjMuNDExIiB5PSIxODAuNSIgc3R5bGU9ImZpbGw6I0YyRjJGMjsiIHdpZHRoPSI1NS41MjQiIGhlaWdodD0iODIuMDIiLz4KCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGMkYyRjI7IiBwb2ludHM9IjUwMy4wNDgsMTgwLjQ5NyA1MDMuMDQ4LDI2Mi41MTcgNDM1LjQ3NiwyNjIuNTE3IDQ5OC40NjMsMTgwLjQ5NyAgIi8+CjwvZz4KPHJlY3QgeD0iNDY0LjAxMSIgeT0iMjkyLjM4MyIgc3R5bGU9ImZpbGw6I0Y3QjIzOTsiIHdpZHRoPSIyMi42ODciIGhlaWdodD0iNDQuMTgiLz4KPHBhdGggc3R5bGU9ImZpbGw6IzJCQTVGNzsiIGQ9Ik00ODguNzU4LDU4LjMzNWMtMjYuMDg4LTkuNjY3LTYwLjE1My05LjQwOC0xMDMuMzQxLDEzLjk3MmMwLDAsNDQuNjA0LDIuNDY5LDc2LjA0NywzMC4zODUgIGMxMS4yOTYsMTAuMDI5LDI4LjU5Niw4LjgxOCwzOC4wMTMtMi45OTRsMC41MjEtMC42NTNDNTExLjA1MSw4NS4xNzksNTA1LjM4NCw2NC40OTYsNDg4Ljc1OCw1OC4zMzV6Ii8+Cjxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGOTU0Mjg7IiBwb2ludHM9IjM1My41NzgsNDcuNjQ4IDI1NC4xMzEsNTUuNDQxIDI1NC4xMzEsMTAwLjkwMyAzNTMuNTc4LDEwOC42OTYgIi8+Cjxwb2x5Z29uIHN0eWxlPSJmaWxsOiNFMDNGMjA7IiBwb2ludHM9IjI1NC4xMjUsODguMDk2IDM1My41NzgsOTEuNDk5IDM1My41NzgsMTA4LjY5NCAyNTQuMTI1LDEwMC44OTcgIi8+CjxyZWN0IHg9IjEyMS45OTciIHk9IjQ2LjkyMSIgc3R5bGU9ImZpbGw6I0Y5NTQyODsiIHdpZHRoPSIxMzguMTg4IiBoZWlnaHQ9IjYyLjUwOSIvPgo8cmVjdCB4PSIxMjEuOTk3IiB5PSI0Ni45MjEiIHN0eWxlPSJmaWxsOiNFMDNGMjA7IiB3aWR0aD0iMjMuMjEiIGhlaWdodD0iNjIuNTA5Ii8+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=" />
-                                        </td>
-                                        <td>{ef}</td>
-                                    </tr>
+
+                                    <Badge key={index} className={"badgeSpace"}
+                                           variant="primary">
+                                        <span>{ef}</span>
+                                    </Badge>
                                 )
                             })}
-                            </tbody>
-                        </Table>
                     </Col>
-                </Row>
-                <Row>
-                    <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
                 </Row>
             </Container>
             </AlertViewBox>

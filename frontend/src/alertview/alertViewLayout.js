@@ -15,14 +15,16 @@ class AlertViewLayout extends Component {
             <Col xs={3}>
               <AlertViewEmployeeFeedback alert={this.props.alert}/>
             </Col>
-            <Col xs={2}>
-              <AaoAsList alert={this.props.alert}/>
-            </Col>
             <Col>
               <Container fluid="true" className={"d-flex flex-column h-100 "}>
                 <Row>
                   <Col>
                     <AlertViewHeader alert={this.props.alert}/>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <AaoAsList alert={this.props.alert}/>
                   </Col>
                 </Row>
                 <Row className={"h-100"}>
