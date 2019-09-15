@@ -12,17 +12,15 @@ class AaoAsList extends Component {
                        className={"d-flex flex-column h-100"}>
                 <Row>
                     <Col xs={3}>
-                        <h1>Aao</h1>
+                        <h1>AAO</h1>
                     </Col>
-                </Row>
-                <Row>
                     <Col className={"noPadding"}>
                             {this.props.alert.aao && this.props.alert.aao.map((ef, index) => {
                                 return (
 
                                     <Badge key={index} className={"badgeSpace"}
                                            variant="primary">
-                                        <span>{ef}</span>
+                                        <h4><span>{ef}</span></h4>
                                     </Badge>
                                 )
                             })}
