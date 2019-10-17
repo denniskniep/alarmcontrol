@@ -1,0 +1,27 @@
+type NotificationOrganisationConfig {
+ contacts: [Contact]
+ subscriptions : [NotificationSubscription]
+}
+
+type NotificationSubscription {
+  uniqueId : String
+  subscriberContactUniqueIds : [String]
+  notificationConfig : NotificationConfig
+}
+
+union NotificationConfig = AlertCreatedNotificationConfig
+
+type AlertCreatedNotificationConfig {
+  updateDelaysInSeconds:[Int]
+}
+
+interface Contact {
+  uniqueId : String
+  name : String
+}
+
+type MailContact implements Contact {
+  uniqueId : String
+  name : String
+  mailAddress : String
+}

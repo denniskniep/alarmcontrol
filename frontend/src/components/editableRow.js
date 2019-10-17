@@ -7,6 +7,9 @@ class EditableRow extends Component {
 
   constructor(props) {
     super(props);
+
+    this.addButtonIcon = this.props.addButtonIcon ? this.props.addButtonIcon: ["far", "save"]
+
     let obj = {...this.props.obj};
     for (let column of this.props.columns) {
       if (!obj.hasOwnProperty(column.key)) {
@@ -58,7 +61,7 @@ class EditableRow extends Component {
               <Button className={"btn-icon"} variant="success"
                       onClick={e => this.props.onSave && this.props.onSave(
                           this.state.obj)}>
-                <FontAwesomeIcon icon={["far", "save"]}/>
+                <FontAwesomeIcon icon={this.addButtonIcon}/>
               </Button>
               <Button className={"btn-icon btn-icon-space"} variant="danger"
                       onClick={e => this.props.onCancel

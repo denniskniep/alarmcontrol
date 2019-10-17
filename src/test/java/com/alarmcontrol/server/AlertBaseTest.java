@@ -5,8 +5,8 @@ import com.alarmcontrol.server.data.TestConfiguration;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.utils.GraphQLClient;
 import com.alarmcontrol.server.data.utils.TestOrganisation;
+import com.alarmcontrol.server.notifications.core.NotificationService;
 import java.util.UUID;
-import javax.annotation.PostConstruct;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,10 +32,8 @@ public abstract class AlertBaseTest {
   @Autowired
   protected AlertRepository alertRepository;
 
-  @PostConstruct
-  public void init() {
-    alertService.setNotificationEnabled(false);
-  }
+  @Autowired
+  protected NotificationService notificationService;
 
   protected TestOrganisation setupOrganisation() {
     TestOrganisation org = graphQlClient.createOrganisation("Organisation" + UUID.randomUUID());

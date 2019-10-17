@@ -35,6 +35,13 @@ type Mutation {
   addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, dateTime: DateTime) : EmployeeStatus
 
   deleteAlert(id: ID!) : ID
+
+  addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
+  deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
+
+  addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  editNotificationSubscriptionForAlertCreated(organisationId: ID!, uniqueSubscriptionId: String!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  deleteNotificationSubscription(organisationId: ID!, uniqueSubscriptionId: String!): String
 }
 
 type Subscription {
@@ -111,6 +118,7 @@ type Organisation {
   employees: [Employee]
   skills: [Skill]
   alertNumbers: [AlertNumber]
+  notificationConfig : NotificationOrganisationConfig
 }
 
 type EmployeeFeedback {

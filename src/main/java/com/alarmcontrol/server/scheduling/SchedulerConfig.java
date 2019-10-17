@@ -1,4 +1,4 @@
-package com.alarmcontrol.server;
+package com.alarmcontrol.server.scheduling;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -41,7 +41,8 @@ class EmployeesEdit extends Component {
                                  viewer: TagViewer,
                                  editor: TagEditor,
                                  editorProps : {
-                                   suggestions : this.props.skills
+                                   suggestions : this.props.skills,
+                                   placeholder: "Skill hinzufügen..."
                                  },
                                  defaultValue: []
                                }

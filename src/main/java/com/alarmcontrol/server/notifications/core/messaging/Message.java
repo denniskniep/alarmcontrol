@@ -1,29 +1,16 @@
-package com.alarmcontrol.server.notifications;
+package com.alarmcontrol.server.notifications.core.messaging;
 
 import org.springframework.util.Assert;
 
 public class Message {
-
-  private long organisationId;
-  private String type;
   private String subject;
   private String body;
 
-  public Message(long organisationId, String type, String subject, String body) {
-    this.organisationId = organisationId;
-    this.type = type;
+  public Message(String subject, String body) {
     Assert.notNull(subject, "subject is null");
     Assert.notNull(body, "body is null");
     this.subject = subject;
     this.body = body;
-  }
-
-  public long getOrganisationId() {
-    return organisationId;
-  }
-
-  public String getType() {
-    return type;
   }
 
   public String getSubject() {
@@ -37,8 +24,6 @@ public class Message {
   @Override
   public String toString() {
     return "Message{" +
-        "organisationId=" + organisationId +
-        ", type='" + type + '\'' +
         ", subject='" + subject + '\'' +
         ", body='" + body + '\'' +
         '}';

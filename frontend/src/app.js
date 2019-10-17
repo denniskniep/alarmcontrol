@@ -20,6 +20,7 @@ import AlertViewSwitcher from "./alertview/alertViewSwitcher";
 import configuration from "./config/configuration";
 import CurrentOrganisationContainer from "./currentOrganisationContainer";
 import AlertsByOrganisationView from "./manage/alertsByOrganisationView";
+import NotificationsByOrganisationView from "./manage/notifications/notificationsByOrganisationView";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -74,6 +75,7 @@ function App() {
           <Route exact path="/app/manage/organisation" component={OrganisationsView} />
           <Route exact path="/app/manage/organisation/:id" component={OrganisationView} />
           <Route exact path="/app/manage/organisation/:id/alerts" component={AlertsByOrganisationView} />
+          <Route exact path="/app/manage/organisation/:id/notifications" component={NotificationsByOrganisationView} />
           <Route exact path="/app/manage/alerts" component={AlertsByOrganisationView} />
         </CurrentOrganisationContainer>
       </Router>

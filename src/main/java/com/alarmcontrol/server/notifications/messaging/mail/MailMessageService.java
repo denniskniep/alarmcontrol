@@ -1,8 +1,7 @@
-package com.alarmcontrol.server.notifications;
+package com.alarmcontrol.server.notifications.messaging.mail;
 
+import com.alarmcontrol.server.notifications.core.messaging.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,34 +9,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class MailNotificationService {
-  private Logger logger = LoggerFactory.getLogger(MailNotificationService.class);
-
-  @Value("${notifier.mail.to:}")
-  private String mailaddress;
-
-  @Value("${spring.mail.host}")
+public class MailMessageService {
+  @Value("${spring.mail.host:}")
   private String host;
 
-  @Value("${spring.mail.port}")
+  @Value("${spring.mail.port:}")
   private String port;
 
-  @Value("${spring.mail.properties.mail.smtp.auth}")
+  @Value("${spring.mail.properties.mail.smtp.auth:}")
   private String useAuth;
 
-  @Value("${spring.mail.username}")
+  @Value("${spring.mail.username:}")
   private String username;
 
-  @Value("${spring.mail.password}")
+  @Value("${spring.mail.password:}")
   private String password;
 
   private JavaMailSender javaMailSender;
 
-  public MailNotificationService(JavaMailSender javaMailSender) {
+  public MailMessageService(JavaMailSender javaMailSender) {
     this.javaMailSender = javaMailSender;
   }
 
-  public void send(Message message){
+  public void send(String mailaddress, Message message){
     Assert.notNull(message, "message is null");
 
     if(StringUtils.isBlank(host)){
@@ -46,10 +40,6 @@ public class MailNotificationService {
 
     if(StringUtils.isBlank(port)){
       throw new RuntimeException("Port is not set!");
-    }
-
-    if(StringUtils.isBlank(mailaddress)){
-      throw new RuntimeException("Mailaddress is not set!");
     }
 
     if(getUseAuth()){
@@ -62,8 +52,11 @@ public class MailNotificationService {
       }
     }
 
-    sendEmail(message);
-    logger.info("Sent the following notification Mail to {}: {}", mailaddress, message);
+    if(StringUtils.isBlank(mailaddress)){
+      throw new RuntimeException("Mailaddress is not set!");
+    }
+
+    sendEmail(mailaddress, message);
   }
 
   private Boolean getUseAuth() {
@@ -74,7 +67,7 @@ public class MailNotificationService {
     }
   }
 
-  private void sendEmail(Message message) {
+  private void sendEmail(String mailaddress, Message message) {
     SimpleMailMessage msg = new SimpleMailMessage();
     msg.setTo(mailaddress);
 
