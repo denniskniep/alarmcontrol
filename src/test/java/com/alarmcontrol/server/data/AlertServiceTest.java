@@ -22,9 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class AlertServiceTest extends AlertBaseTest {
 
-  public static final String TARGET_ADDRESS_LAT = "50.54321";
-  public static final String TARGET_ADDRESS_LNG = "10.12345";
-
   @MockBean(name = "geocodingService")
   private GeocodingService geocodingService;
 

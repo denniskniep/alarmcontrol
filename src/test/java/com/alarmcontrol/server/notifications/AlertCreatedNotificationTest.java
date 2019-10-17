@@ -1,14 +1,18 @@
 package com.alarmcontrol.server.notifications;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.alarmcontrol.server.AlertBaseTest;
 import com.alarmcontrol.server.data.OrganisationConfigurationService;
 import com.alarmcontrol.server.data.models.AlertCall;
 import com.alarmcontrol.server.data.models.Feedback;
 import com.alarmcontrol.server.data.utils.TestOrganisation;
+import com.alarmcontrol.server.maps.GeocodingResult;
+import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.notifications.core.messaging.Message;
 import com.alarmcontrol.server.notifications.core.messaging.MessageService;
 import com.alarmcontrol.server.notifications.core.config.NotificationOrganisationConfiguration;
@@ -41,6 +45,8 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
   private DelayTaskScheduler delayTaskScheduler;
   @Autowired
   private OrganisationConfigurationService organisationConfigurationService;
+  @MockBean(name = "geocodingService")
+  private GeocodingService geocodingService;
 
   @Test
   public void whenAlertCreated_shouldScheduleNotifications() {
@@ -68,6 +74,9 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
   public void whenAlertWithoutFeedback_shouldBuildMessages() {
     TestOrganisation organisation = setupOrganisationWithEmployees();
     createAlertNotificationConfig(organisation.getId(), 0);
+
+    geocodeAnyStringWith("Mondstraße 15", "Berlin-Tempelhof");
+
     alertService.create(
         organisation.getId(),
         "1234-S04",
@@ -83,7 +92,7 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
-        + "Mondstraße 15, 12345 Berlin"));
+        + "Berlin-Tempelhof"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:0\n"
         + "ABGELEHNT:0"));
@@ -93,6 +102,8 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
   public void whenAlertWithOneFeedback_shouldBuildMessages() {
     TestOrganisation organisation = setupOrganisationWithEmployees();
     createAlertNotificationConfig(organisation.getId(), 1);
+
+    geocodeAnyStringWith("Mondstraße 15", "Berlin-Tempelhof");
 
     AlertCall alertCall = alertService.create(
         organisation.getId(),
@@ -114,7 +125,7 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
-        + "Mondstraße 15, 12345 Berlin"));
+        + "Berlin-Tempelhof"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:1\n"
         + "ABGELEHNT:0\n"
@@ -129,6 +140,8 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
     TestOrganisation organisation = setupOrganisationWithEmployees();
 
     createAlertNotificationConfig(organisation.getId(), 1);
+
+    geocodeAnyStringWith("Mondstraße 15", "Berlin-Tempelhof");
 
     AlertCall alertCall = alertService.create(
         organisation.getId(),
@@ -153,7 +166,7 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
-        + "Mondstraße 15, 12345 Berlin"));
+        + "Berlin-Tempelhof"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:3\n"
         + "ABGELEHNT:1\n"
@@ -217,6 +230,14 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
   private Condition<String> isEqual(String value) {
     return new Condition<>((v) -> StringUtils.equalsIgnoreCase(v, value),
         "Expected to be equal with " + value + "'");
+  }
+
+  private void geocodeAnyStringWith(String addressInfo1, String addressInfo2) {
+    when(geocodingService.geocode(anyString())).thenReturn(new GeocodingResult("{}",
+        TARGET_ADDRESS_LAT,
+        TARGET_ADDRESS_LNG,
+        addressInfo1,
+        addressInfo2));
   }
 
   @TestConfiguration

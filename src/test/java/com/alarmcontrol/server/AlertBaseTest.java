@@ -18,6 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {TestConfiguration.class})
 public abstract class AlertBaseTest {
 
+  public static final String TARGET_ADDRESS_LAT = "50.54321";
+  public static final String TARGET_ADDRESS_LNG = "10.12345";
+
   public static final String EMPLOYEE_HANS = "123";
   public static final String EMPLOYEE_MARINA = "124";
   public static final String EMPLOYEE_EDUARD = "125";
