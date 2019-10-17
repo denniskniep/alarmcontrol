@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - View and delete Alerts in ManageUi 
 - Write logfile as JSON
 - Option to start preconfigured Logback
+- Send Notifications on Alert Received
+- Send Notifications via E-Mail
 
 ### Changed
 ### Fixed

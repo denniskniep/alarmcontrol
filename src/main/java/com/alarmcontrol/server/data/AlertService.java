@@ -17,6 +17,8 @@ import com.alarmcontrol.server.maps.GeocodingResult;
 import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
+import com.alarmcontrol.server.notifications.core.NotificationService;
+import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +45,7 @@ public class AlertService {
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
+  private NotificationService notificationService;
 
   public AlertService(AlertRepository alertRepository,
       GeocodingService geocodingService,
@@ -52,7 +55,8 @@ public class AlertService {
       AlertChangedPublisher alertChangedPublisher,
       AlertNumberRepository alertNumberRepository,
       AlertCallRepository alertCallRepository,
-      AlertCallEmployeeRepository alertCallEmployeeRepository) {
+      AlertCallEmployeeRepository alertCallEmployeeRepository,
+      NotificationService notificationService) {
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
@@ -62,6 +66,7 @@ public class AlertService {
     this.alertNumberRepository = alertNumberRepository;
     this.alertCallRepository = alertCallRepository;
     this.alertCallEmployeeRepository = alertCallEmployeeRepository;
+    this.notificationService = notificationService;
   }
 
   public AlertCall create(
@@ -99,6 +104,7 @@ public class AlertService {
     // is triggered through websocket, but isolation level protects new alert to be read until commit.
     if (createdAlertCall.isAlertCreated()) {
       alertAddedPublisher.emitAlertAdded(createdAlertCall.getAlert().getId(), organisationId);
+      notificationService.sendNotifications(new AlertCreatedEvent(createdAlertCall.getAlert()));
     } else {
       alertChangedPublisher.emitAlertChanged(createdAlertCall.getAlert().getId());
     }

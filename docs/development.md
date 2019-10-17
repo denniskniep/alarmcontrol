@@ -29,6 +29,11 @@ sudo docker-compose -f docker-compose.logging.yaml up
 
 The Ui is available at http://localhost:9000
 
+Default credentials are:
+
+Username: admin
+Password: admin
+
 #### Import Content-Pack
 If you initially started the Graylogserver import the content pack:
 * Login to Graylog 
@@ -37,9 +42,15 @@ If you initially started the Graylogserver import the content pack:
 
 * System > Content Packs > Alarmcontrol_Dev > Install
 
+### Mailhog
+Start Mailhog as the Mailserver and configure it as EnvironmentVariable
+ to send mails and view it on the Mailhog WebUi (http://localhost:8025)
 
+```
+sudo docker-compose -f docker-compose.notifications.yaml up
+```
 
-
+The Ui is available at http://localhost:8025
 
 ## Database
 * **H2Console**: http://localhost:8080/h2-console

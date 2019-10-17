@@ -140,6 +140,7 @@ class EditableTable extends Component {
                 || (this.props.canCreate)) &&
             <EditableRow key={this.state.newObjKey}
                          obj={this.state.newObj}
+                         addButtonIcon={this.props.editableRowAddButtonIcon}
                          columns={this.props.columns}
                          onSave={obj => {
                            this.resetNewObjRow();

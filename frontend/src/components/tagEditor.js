@@ -40,6 +40,7 @@ class TagEditor extends Component {
         <ReactTags
             minQueryLength={1}
             autofocus={false}
+            placeholder={this.props.placeholder}
             tags={this.props.value}
             suggestions={this.props.suggestions}
             suggestionsFilter={(suggestion, query) => this.suggestionsFilter(suggestion, query)}
