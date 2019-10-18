@@ -5,10 +5,9 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import com.alarmcontrol.server.AlertBaseTest;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.AlertCall;
-import com.alarmcontrol.server.data.repositories.AlertRepository;
-import com.alarmcontrol.server.data.utils.GraphQLClient;
 import com.alarmcontrol.server.data.utils.TestOrganisation;
 import com.alarmcontrol.server.maps.Coordinate;
 import com.alarmcontrol.server.maps.GeocodingResult;
@@ -17,40 +16,17 @@ import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
-public class AlertServiceTest {
-
-  public static final String TARGET_ADDRESS_LAT = "50.54321";
-  public static final String TARGET_ADDRESS_LNG = "10.12345";
+public class AlertServiceTest extends AlertBaseTest {
 
   @MockBean(name = "geocodingService")
-  GeocodingService geocodingService;
+  private GeocodingService geocodingService;
 
   @MockBean(name = "routingService")
-  RoutingService routingService;
-
-  @Autowired
-  private AlertService alertService;
-
-  @Autowired
-  private GraphQLClient graphQlClient;
-
-  @Autowired
-  private AlertRepository alertRepository;
+  private RoutingService routingService;
 
   @Test
   public void whenTwoAlertCallsWithSameAlertReferenceId_ShouldCreateOneAlertWithTwoCalls() {
@@ -192,9 +168,4 @@ public class AlertServiceTest {
     );
   }
 
-  private TestOrganisation setupOrganisation() {
-    TestOrganisation org = graphQlClient.createOrganisation("Organisation" + UUID.randomUUID());
-    org.addAlertNumber("1234-S04", "Pager");
-    return org;
-  }
 }

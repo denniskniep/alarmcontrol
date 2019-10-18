@@ -8,6 +8,7 @@ class EmployeesEdit extends Component {
 
   constructor(props) {
     super(props);
+    console.log('skills',this.props.skills);
   }
 
   render() {
@@ -41,7 +42,8 @@ class EmployeesEdit extends Component {
                                  viewer: TagViewer,
                                  editor: TagEditor,
                                  editorProps : {
-                                   suggestions : this.props.skills
+                                   suggestions : this.props.skills,
+                                   placeholder: "Skill hinzufügen..."
                                  },
                                  defaultValue: []
                                }

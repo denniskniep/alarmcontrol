@@ -9,10 +9,12 @@ class PagedEditableTable extends Component {
   }
 
   pageChanged(e) {
-    let pageNumber = e.target.text;
-    let pageIndex = pageNumber - 1;
-    if (this.props.onPageRequested) {
-      this.props.onPageRequested({currentPage: pageIndex})
+    if (e.target.text) {
+      let pageNumber = e.target.text;
+      let pageIndex = pageNumber - 1;
+      if (this.props.onPageRequested) {
+        this.props.onPageRequested({currentPage: pageIndex})
+      }
     }
   }
 
@@ -49,18 +51,17 @@ class PagedEditableTable extends Component {
 
           />
           <Pagination onClick={p => this.pageChanged(p)}>
-          {
-            [...Array(this.props.totalPages).keys()].map(pageIndex =>
             {
-              let page = pageIndex + 1;
-              let isCurrentPage = pageIndex == this.props.currentPage;
-              return (
-                  <Pagination.Item key={page} active={isCurrentPage}>
-                    {page}
-                  </Pagination.Item>
-              )
-            })
-          }
+              [...Array(this.props.totalPages).keys()].map(pageIndex => {
+                let page = pageIndex + 1;
+                let isCurrentPage = pageIndex == this.props.currentPage;
+                return (
+                    <Pagination.Item key={page} active={isCurrentPage}>
+                      {page}
+                    </Pagination.Item>
+                )
+              })
+            }
           </Pagination>
         </div>)
   }

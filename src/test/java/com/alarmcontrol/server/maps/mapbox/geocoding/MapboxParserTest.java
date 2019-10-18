@@ -12,42 +12,42 @@ public class MapboxParserTest {
 
   @Test
   public void parse_emptyResult() throws IOException {
-    String json = loadJson("./emptyResult.json");
+    String json = loadJson("./mapbox/emptyResult.json");
     GeocodingResult result = parse(json);
     assertEmptyGeocodingResult(result);
   }
 
   @Test
   public void parse_emptyFeature() throws IOException {
-    String json = loadJson("./emptyFeature.json");
+    String json = loadJson("./mapbox/emptyFeature.json");
     GeocodingResult result = parse(json);
     assertEmptyGeocodingResult(result);
   }
 
   @Test
   public void parse_townOnly() throws IOException {
-    String json = loadJson("./townOnly.json");
+    String json = loadJson("./mapbox/townOnly.json");
     GeocodingResult result = parse(json);
     assertEmptyGeocodingResult(result);
   }
 
   @Test
   public void parse_unknownStreet() throws IOException {
-    String json = loadJson("./unknownStreet.json");
+    String json = loadJson("./mapbox/unknownStreet.json");
     GeocodingResult result = parse(json);
     assertEmptyGeocodingResult(result);
   }
 
   @Test
   public void parse_villageOnly() throws IOException {
-    String json = loadJson("./villageOnly.json");
+    String json = loadJson("./mapbox/villageOnly.json");
     GeocodingResult result = parse(json);
     assertEmptyGeocodingResult(result);
   }
 
   @Test
   public void parse_regularStreet() throws IOException {
-    String json = loadJson("./regularStreet.json");
+    String json = loadJson("./mapbox/regularStreet.json");
     GeocodingResult result = parse(json);
 
     assertGeocodingResult(
@@ -60,7 +60,7 @@ public class MapboxParserTest {
 
   @Test
   public void parse_regularStreetWithoutOptionalValues() throws IOException {
-    String json = loadJson("./regularStreetWithoutOptionalValues.json");
+    String json = loadJson("./mapbox/regularStreetWithoutOptionalValues.json");
     GeocodingResult result = parse(json);
 
     assertGeocodingResult(
@@ -73,7 +73,7 @@ public class MapboxParserTest {
 
   @Test
   public void parse_streetWithoutHouseNumber() throws IOException {
-    String json = loadJson("./streetWithoutHouseNumber.json");
+    String json = loadJson("./mapbox/streetWithoutHouseNumber.json");
     GeocodingResult result = parse(json);
 
     assertGeocodingResult(
@@ -86,7 +86,7 @@ public class MapboxParserTest {
 
   @Test
   public void parse_relevanceIsInteger() throws IOException {
-    String json = loadJson("./relevanceIsInteger.json");
+    String json = loadJson("./mapbox/relevanceIsInteger.json");
     GeocodingResult result = parse(json);
 
     assertGeocodingResult(
@@ -99,7 +99,7 @@ public class MapboxParserTest {
 
   @Test
   public void parse_streetInMainTown() throws IOException {
-    String json = loadJson("./streetInMainTown.json");
+    String json = loadJson("./mapbox/streetInMainTown.json");
     GeocodingResult result = parse(json);
 
     assertGeocodingResult(

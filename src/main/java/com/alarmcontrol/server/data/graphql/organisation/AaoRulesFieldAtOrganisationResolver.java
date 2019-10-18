@@ -27,7 +27,8 @@ public class AaoRulesFieldAtOrganisationResolver implements GraphQLResolver<Orga
     if (organisationConfiguration.isEmpty()) {
       return null;
     }
-    var ruleContainerData = organisationConfiguration.get().deserialize();
-    return ruleContainerData;
+    //var ruleContainerData = organisationConfiguration.get().deserialize();
+    //return ruleContainerData;
+    return null;
   }
 }

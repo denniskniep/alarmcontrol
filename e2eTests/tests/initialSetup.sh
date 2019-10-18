@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Example Execution
+# URL="http://localhost:8080/graphql"  ./initialSetup.sh
+
 # Exit immediately if a command exits with a non-zero status.
 set -e
 

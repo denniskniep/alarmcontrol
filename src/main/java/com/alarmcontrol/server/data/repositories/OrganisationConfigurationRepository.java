@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface OrganisationConfigurationRepository extends CrudRepository<OrganisationConfiguration, Long> {
-    Optional<OrganisationConfiguration> findByOrganisationIdAndKey(Long organisationId, String key);
+  Optional<OrganisationConfiguration> findByOrganisationIdAndKey(Long organisationId, String key);
 }

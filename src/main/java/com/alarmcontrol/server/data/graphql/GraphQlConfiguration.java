@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
 
-@Configuration
+/*@Configuration
 public class GraphQlConfiguration {
     @Bean
     public SchemaParserDictionary getSchemaParser() {
@@ -17,4 +17,4 @@ public class GraphQlConfiguration {
         }});
         return dictionary;
     }
-}
+}*/

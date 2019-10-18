@@ -38,7 +38,9 @@ DATABASE_USER=alarmcontrol \
 DATABASE_PASSWORD=xxx \
 GRAPHHOPPER_APIKEY=xxx \
 MAPBOX_ACCESS_TOKEN=xxx \
-docker-compose up --build
+docker-compose \
+-f docker-compose-dev.yaml \
+up --build
 ```
 
 ### From Release Jar

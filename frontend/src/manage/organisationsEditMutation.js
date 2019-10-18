@@ -32,7 +32,6 @@ class OrganisationsEditMutation extends Component {
     return (
         <QueryHandler fetchPolicy="no-cache" query={ORGANISATIONS}>
           {({data, refetch}) => {
-
             if (data && !data.organisations) {
               return <React.Fragment></React.Fragment>;
             }

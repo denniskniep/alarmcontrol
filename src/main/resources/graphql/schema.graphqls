@@ -37,6 +37,13 @@ type Mutation {
   addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, dateTime: DateTime) : EmployeeStatus
 
   deleteAlert(id: ID!) : ID
+
+  addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
+  deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
+
+  addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  editNotificationSubscriptionForAlertCreated(organisationId: ID!, uniqueSubscriptionId: String!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  deleteNotificationSubscription(organisationId: ID!, uniqueSubscriptionId: String!): String
 }
 
 type Subscription {
@@ -49,18 +56,6 @@ type Subscription {
 type PaginatedAlerts {
   totalCount: Int
   items: [Alert]
-}
-
-type BetweenTimeRangeRuleData {
-    from: LocalTime
-    to: LocalTime
-}
-
-union RuleData = BetweenTimeRangeRuleData
-
-type RuleContainerData {
-    results: [String]
-    rules: [RuleData]
 }
 
 type Alert {
@@ -78,7 +73,6 @@ type Alert {
   addressLng : String,
   route: String,
   distance: Float,
-  aao: [String],
   duration: Int,
   employeeFeedback: [EmployeeFeedback]
   alertCalls: [AlertCall]
@@ -126,7 +120,7 @@ type Organisation {
   employees: [Employee]
   skills: [Skill]
   alertNumbers: [AlertNumber]
-  aaoRules: [RuleContainerData]
+  notificationConfig : NotificationOrganisationConfig
 }
 
 type EmployeeFeedback {
@@ -170,4 +164,3 @@ type Skill {
 }
 
 scalar DateTime
-scalar LocalTime

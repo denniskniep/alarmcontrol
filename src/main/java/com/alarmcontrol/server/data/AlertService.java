@@ -24,6 +24,8 @@ import com.alarmcontrol.server.rules.RuleService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import com.alarmcontrol.server.notifications.core.NotificationService;
+import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,6 +53,7 @@ public class AlertService {
   private AlertNumberRepository alertNumberRepository;
   private AlertCallRepository alertCallRepository;
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
+  private NotificationService notificationService;
 
   public AlertService(RuleService ruleService,
       AlertRepository alertRepository,
@@ -61,7 +64,8 @@ public class AlertService {
       AlertChangedPublisher alertChangedPublisher,
       AlertNumberRepository alertNumberRepository,
       AlertCallRepository alertCallRepository,
-      AlertCallEmployeeRepository alertCallEmployeeRepository) {
+      AlertCallEmployeeRepository alertCallEmployeeRepository,
+      NotificationService notificationService) {
     this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
@@ -72,6 +76,7 @@ public class AlertService {
     this.alertNumberRepository = alertNumberRepository;
     this.alertCallRepository = alertCallRepository;
     this.alertCallEmployeeRepository = alertCallEmployeeRepository;
+    this.notificationService = notificationService;
   }
 
   public AlertCall create(
@@ -109,6 +114,7 @@ public class AlertService {
     // is triggered through websocket, but isolation level protects new alert to be read until commit.
     if (createdAlertCall.isAlertCreated()) {
       alertAddedPublisher.emitAlertAdded(createdAlertCall.getAlert().getId(), organisationId);
+      notificationService.sendNotifications(new AlertCreatedEvent(createdAlertCall.getAlert()));
     } else {
       alertChangedPublisher.emitAlertChanged(createdAlertCall.getAlert().getId());
     }

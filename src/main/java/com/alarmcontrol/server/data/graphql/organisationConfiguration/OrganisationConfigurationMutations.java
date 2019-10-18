@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data.graphql.organisationConfiguration;
 
+//import com.alarmcontrol.server.data.models.Aao;
 import com.alarmcontrol.server.rules.RuleService;
 import com.alarmcontrol.server.rules.data.RuleContainerData;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
@@ -21,5 +22,11 @@ public class OrganisationConfigurationMutations implements GraphQLMutationResolv
         this.ruleService.saveAaoRules(organisationId, json);
         return true;
     }
+
+    /*public Aao editAao(Long id, String keywords, String locations, String vehicles){
+        return null;
+    }*/
+
+
 
 }

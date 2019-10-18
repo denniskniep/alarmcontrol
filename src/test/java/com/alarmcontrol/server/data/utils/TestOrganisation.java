@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data.utils;
 
+import com.alarmcontrol.server.data.models.Feedback;
 import com.graphql.spring.boot.test.GraphQLResponse;
 
 public class TestOrganisation {
@@ -49,5 +50,48 @@ public class TestOrganisation {
     );
 
     return Long.valueOf(response.get("data.newEmployee.id"));
+  }
+
+  public Long addSkill(String name, String shortName, Boolean displayAtOverview){
+    GraphQLResponse response = graphQLClient.perform("" +
+            "mutation newSkill($organisationId: ID!, $name: String!, $shortName: String!, $displayAtOverview: Boolean!) { " +
+            "    newSkill(organisationId: $organisationId, name: $name, shortName: $shortName, displayAtOverview: $displayAtOverview) {"+
+            "      id"+
+            "    }"+
+            "}",
+        Vars.create()
+            .put("organisationId", organisationId)
+            .put("name", name)
+            .put("shortName", shortName)
+            .put("displayAtOverview", displayAtOverview)
+    );
+
+    return Long.valueOf(response.get("data.newSkill.id"));
+  }
+
+  public void addEmployeeFeedback(String alertCallReferenceId, String employeeReferenceId, Feedback feedback){
+    GraphQLResponse response = graphQLClient.perform("" +
+            "mutation addEmployeeFeedback($organisationId: ID!, $alertCallReferenceId: String!, $employeeReferenceId: String!, $feedback: Feedback!) { " +
+            "    addEmployeeFeedback(organisationId: $organisationId, alertCallReferenceId: $alertCallReferenceId, employeeReferenceId: $employeeReferenceId, feedback: $feedback) { " +
+              "feedback" +
+              "} " +
+            "}",
+        Vars.create()
+            .put("organisationId", organisationId)
+            .put("alertCallReferenceId", alertCallReferenceId)
+            .put("employeeReferenceId", employeeReferenceId)
+            .put("feedback", feedback.toString())
+    );
+  }
+
+  public void addEmployeeSkill(Long employeeId, Long skillId){
+    GraphQLResponse response = graphQLClient.perform("" +
+            "mutation addEmployeeSkill($employeeId: ID!, $skillId: ID!) { " +
+            "    addEmployeeSkill(employeeId: $employeeId, skillId: $skillId) " +
+            "}",
+        Vars.create()
+            .put("employeeId", employeeId)
+            .put("skillId", skillId)
+    );
   }
 }
