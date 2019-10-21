@@ -3,15 +3,12 @@ package com.alarmcontrol.server.notifications.core.config;
 import com.alarmcontrol.server.notifications.messaging.mail.MailContact;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-@JsonTypeInfo(use = Id.NAME, include = As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = MailContact.class, name = "MailContact")
+        @JsonSubTypes.Type(value = com.alarmcontrol.server.aaos.Aao.class, name = "AaoRule")
 })
-public interface Contact {
+public interface AaoBase {
   String getUniqueId();
   String getName();
 }
-

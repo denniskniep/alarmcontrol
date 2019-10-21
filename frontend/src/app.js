@@ -21,7 +21,7 @@ import configuration from "./config/configuration";
 import CurrentOrganisationContainer from "./currentOrganisationContainer";
 import AlertsByOrganisationView from "./manage/alertsByOrganisationView";
 import NotificationsByOrganisationView from "./manage/notifications/notificationsByOrganisationView";
-import AaoByOrganisationView from "./manage/aaoByOrganisationView";
+import AaosByOrganisationView from "./manage/aaos/aaosByOrganisationView";
 import AaoView from "./manage/aaoView";
 
 // Create an http link:
@@ -78,9 +78,8 @@ function App() {
           <Route exact path="/app/manage/organisation/:id" component={OrganisationView} />
           <Route exact path="/app/manage/organisation/:id/alerts" component={AlertsByOrganisationView} />
           <Route exact path="/app/manage/organisation/:id/notifications" component={NotificationsByOrganisationView} />
+          <Route exact path="/app/manage/organisation/:id/aaos" component={AaosByOrganisationView} />
           <Route exact path="/app/manage/alerts" component={AlertsByOrganisationView} />
-          <Route exact path="/app/manage/aao" component={AaoByOrganisationView} />
-          <Route exact path="/app/manage/aao/:id" component={AaoView} />
         </CurrentOrganisationContainer>
       </Router>
     </ApolloProvider>

@@ -25,3 +25,19 @@ type MailContact implements Contact {
   name : String
   mailAddress : String
 }
+
+interface AaoBase {
+ uniqueId: String
+ name: String
+}
+
+type Aao implements AaoBase {
+ uniqueId: String,
+ name: String
+}
+
+type AaoConfig {
+ aaoRules: [AaoBase]
+}
+
+
