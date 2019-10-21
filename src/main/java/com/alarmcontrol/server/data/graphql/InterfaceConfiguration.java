@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data.graphql;
 
+import com.alarmcontrol.server.aaos.Aao;
 import com.alarmcontrol.server.notifications.messaging.mail.MailContact;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedNotificationConfig;
 import com.alarmcontrol.server.rules.BetweenTimeRangeRule;
@@ -15,6 +16,7 @@ public class InterfaceConfiguration {
     SchemaParserDictionary dictionary = new SchemaParserDictionary();
     dictionary.add(MailContact.class);
     dictionary.add(AlertCreatedNotificationConfig.class);
+    dictionary.add(Aao.class);
     //dictionary.add(BetweenTimeRangeRule.class);
     return dictionary;
   }

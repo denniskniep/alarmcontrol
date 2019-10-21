@@ -32,11 +32,11 @@ interface AaoBase {
 }
 
 type Aao implements AaoBase {
- uniqueId: String,
+ uniqueId: String
  name: String
 }
 
-type AaoConfig {
+type AaoOrganisationConfiguration {
  aaoRules: [AaoBase]
 }
 

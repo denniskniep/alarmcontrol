@@ -38,7 +38,7 @@ type Mutation {
 
   deleteAlert(id: ID!) : ID
 
-  addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!): Aao
+  addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!) : AaoBase
 
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
   deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
@@ -123,7 +123,7 @@ type Organisation {
   skills: [Skill]
   alertNumbers: [AlertNumber]
   notificationConfig : NotificationOrganisationConfig
-  aaoConfig : AaoConfig
+  aaoConfig : AaoOrganisationConfiguration
 }
 
 type EmployeeFeedback {
