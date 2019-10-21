@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {Col, Container,DropdownButton, Dropdown, Row} from "react-bootstrap";
 import {gql} from "apollo-boost";
 import QueryHandler from "../../utils/queryHandler";
-import MailContactsEditMutation from "./mailContactsEditMutation";
+import MailContactsEditMutation from "./contacts/mailContactsEditMutation";
 import NotificationSubscriptionsEditMutation from "./notificationSubscriptionsEditMutation";
+import FirebaseMessageContactsEditMutation  from "./contacts/firebaseMessageContactsEditMutation";
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {
@@ -16,6 +17,9 @@ query organisationById($id: ID!) {
         __typename
         ... on MailContact {
           mailAddress
+        }
+        ... on FirebaseMessageContact {
+          token
         }
       }
       subscriptions {
@@ -55,6 +59,12 @@ class NotificationsByOrganisationView extends Component {
             .contacts
             .filter(contact => contact.__typename == "MailContact");
 
+            let firebaseMessageContacts = data
+            .organisationById
+            .notificationConfig
+            .contacts
+            .filter(contact => contact.__typename == "FirebaseMessageContact");
+
             return (
                 <Container>
                   <Row className={"row-header"}>
@@ -66,6 +76,13 @@ class NotificationsByOrganisationView extends Component {
                           organisationId={this.props.match.params.id}
                           contacts={mailContacts}
                       />
+
+                      <h2>Firebase Push</h2>
+                      <FirebaseMessageContactsEditMutation
+                          onContactsChanged={() => refetch()}
+                          organisationId={this.props.match.params.id}
+                          contacts={firebaseMessageContacts}
+                        />
 
                     </Col>
                   </Row>

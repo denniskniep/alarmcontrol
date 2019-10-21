@@ -19,6 +19,10 @@ class SubscriberEdit extends Component {
       return "E-Mail"
     }
 
+    if (typename == "FirebaseMessageContact") {
+      return "Firebase Push"
+    }
+
     return "nA";
   }
 

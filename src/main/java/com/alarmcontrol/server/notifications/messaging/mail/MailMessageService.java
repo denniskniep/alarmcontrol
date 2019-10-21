@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.notifications.messaging.mail;
 
+import com.alarmcontrol.server.notifications.core.messaging.AbstractMessageService;
 import com.alarmcontrol.server.notifications.core.messaging.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class MailMessageService {
+public class MailMessageService extends AbstractMessageService<MailContact> {
   @Value("${spring.mail.host:}")
   private String host;
 
@@ -28,10 +29,13 @@ public class MailMessageService {
   private JavaMailSender javaMailSender;
 
   public MailMessageService(JavaMailSender javaMailSender) {
+    super(MailContact.class);
     this.javaMailSender = javaMailSender;
   }
 
-  public void send(String mailaddress, Message message){
+  @Override
+  protected void sendInternal(MailContact contact, Message message) {
+    Assert.notNull(contact, "contact is null");
     Assert.notNull(message, "message is null");
 
     if(StringUtils.isBlank(host)){
@@ -52,11 +56,11 @@ public class MailMessageService {
       }
     }
 
-    if(StringUtils.isBlank(mailaddress)){
+    if(StringUtils.isBlank(contact.getMailAddress())){
       throw new RuntimeException("Mailaddress is not set!");
     }
 
-    sendEmail(mailaddress, message);
+    sendEmail(contact.getMailAddress(), message);
   }
 
   private Boolean getUseAuth() {

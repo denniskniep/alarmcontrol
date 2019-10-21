@@ -37,6 +37,7 @@ type Mutation {
   deleteAlert(id: ID!) : ID
 
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
+  addNotificationFirebaseMessageContact(organisationId: ID!, name: String, token : String!): Contact
   deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
 
   addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription

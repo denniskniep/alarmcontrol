@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
-import MutationHandler from "../../utils/mutationHandler";
-import EditableTable from "../../components/editableTable";
+import MutationHandler from "../../../utils/mutationHandler";
+import EditableTable from "../../../components/editableTable";
 
 const DELETE_NOTIFICATION_CONTACT = gql`
 mutation deleteNotificationContact($organisationId: ID!, $uniqueContactId: String!){
@@ -12,14 +12,14 @@ mutation deleteNotificationContact($organisationId: ID!, $uniqueContactId: Strin
 `;
 
 const ADD_NOTIFICATION_CONTACT = gql`
-mutation addNotificationMailContact($organisationId: ID!, $name : String!, $mailAddress: String!){
-  addNotificationMailContact(organisationId: $organisationId, name: $name, mailAddress: $mailAddress) {   
+mutation addNotificationFirebaseMessageContact($organisationId: ID!, $name : String!, $token: String!){
+  addNotificationFirebaseMessageContact(organisationId: $organisationId, name: $name, token: $token) {   
     uniqueId
   }
 }
 `;
 
-class MailContactsEditMutation extends Component {
+class FirebaseMessageContactsEditMutation extends Component {
 
   render() {
     return (
@@ -44,8 +44,8 @@ class MailContactsEditMutation extends Component {
                                            name: "Name"
                                          },
                                          {
-                                           key: "mailAddress",
-                                           name: "Mail"
+                                           key: "token",
+                                           name: "Token"
                                          }
                                        ]}
 
@@ -54,7 +54,7 @@ class MailContactsEditMutation extends Component {
                                            variables: {
                                              organisationId: this.props.organisationId,
                                              name: newRow.name,
-                                             mailAddress: newRow.mailAddress
+                                             token: newRow.token
                                            }
                                          });
                                        }}
@@ -79,4 +79,4 @@ class MailContactsEditMutation extends Component {
   }
 }
 
-export default MailContactsEditMutation;
+export default FirebaseMessageContactsEditMutation;

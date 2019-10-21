@@ -25,3 +25,9 @@ type MailContact implements Contact {
   name : String
   mailAddress : String
 }
+
+type FirebaseMessageContact implements Contact {
+  uniqueId : String
+  name : String
+  token : String
+}
