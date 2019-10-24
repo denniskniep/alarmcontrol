@@ -26,7 +26,8 @@ class AaoEditMutation extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { entries: []};
+
+        this.state = { };
     }
 
     render() {
@@ -40,23 +41,35 @@ class AaoEditMutation extends Component {
                                          && this.props.onAaoRulesChanged()}>
                         {addContact => {
 
-                            var contacts= this.props.contacts ? this.props.contacts : [];
+                            let vehicleSuggestions = this.props.vehicles.map(v => ({id : v.uniqueId, text: v.name, shortName: v.text}));
+                            let locationSuggestions = this.props.locations.map(v => ({id : v.uniqueId, text: v.name, shortName: v.text}));
+
+                            var aaoRules= this.props.aaoRules ? this.props.aaoRules : [];
+
+                            aaoRules = aaoRules
+                                .map(rule => ({
+                                    locations: this.props.locations.filter(l => rule.locations.map(l2 => l2).includes(l.uniqueId)).map(l3 => ({
+                                        id: l3.uniqueId,
+                                        text: l3.name,
+                                        shortName: l3.name
+                                })),
+                                    vehicles: this.props.vehicles.filter(l => rule.vehicles.map(l2 => l2).includes(l.uniqueId)).map(l3 => ({
+                                        id: l3.uniqueId,
+                                        text: l3.name,
+                                        shortName: l3.name
+                                    }))
+                                }));
                             return (
-                    <EditableTable data={contacts}
+                    <EditableTable data={aaoRules}
                                    canView={false}
                                    columns={[
-                                       {
-                                           key: "id",
-                                           name: "#",
-                                           readOnly: true
-                                       },
                                        {
                                            key: "keywords",
                                            name: "Alarmstichworte",
                                            viewer: TagViewer,
                                            editor: TagEditor,
                                            editorProps : {
-                                               suggestions : [{id: '1', text: 'H1'}, {id:'2', text: 'H1-Y'}]
+                                               suggestions : [{id: '1', text: 'H1', shortName: 'H1'}, {id:'2', text: 'H1-Y', shortName: 'H1-Y'}]
                                            },
                                            defaultValue: []
                                        },
@@ -66,7 +79,7 @@ class AaoEditMutation extends Component {
                                            viewer: TagViewer,
                                            editor: TagEditor,
                                            editorProps : {
-                                               suggestions : [{id: '1', text : 'Carlsdorf'}, {id:'2', text : 'Kelze'}]
+                                               suggestions : locationSuggestions
                                            },
                                            defaultValue: []
                                        },
@@ -76,7 +89,7 @@ class AaoEditMutation extends Component {
                                            viewer: TagViewer,
                                            editor: TagEditor,
                                            editorProps : {
-                                               suggestions : [{id: '1', text : 'HLF'}, {id:'2',text: 'ELW'}]
+                                               suggestions : vehicleSuggestions
                                            },
                                            defaultValue: []
                                        }
@@ -88,8 +101,8 @@ class AaoEditMutation extends Component {
                                            variables: {
                                                organisationId: this.props.organisationId,
                                                keywords: newRow.keywords,
-                                               locations: newRow.locations,
-                                               vehicles: newRow.vehicles
+                                               locations: newRow.locations.map(location => location.id),
+                                               vehicles: newRow.vehicles.map(vehicle => vehicle.id)
                                            }
                                        })
                                    }}

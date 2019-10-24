@@ -26,18 +26,30 @@ type MailContact implements Contact {
   mailAddress : String
 }
 
-interface AaoBase {
+
+type Aao {
+ uniqueId: String
+ vehicles: [String]
+ locations: [String]
+ keywords: [String]
+}
+
+type Vehicle {
  uniqueId: String
  name: String
 }
 
-type Aao implements AaoBase {
+type Location {
  uniqueId: String
  name: String
 }
+
 
 type AaoOrganisationConfiguration {
- aaoRules: [AaoBase]
+ aaoRules: [Aao]
+ vehicles: [Vehicle]
+ locations: [Location]
 }
+
 
 

@@ -65,6 +65,7 @@ class EditableTable extends Component {
           <tbody>
           {this.props.data.map((obj, dataIndex) => {
             let objKey = !obj.id ? dataIndex : obj.id;
+
             return (
                 <React.Fragment key={objKey}>
                   {this.state.rowsInEditMode.includes(dataIndex) &&
@@ -118,8 +119,8 @@ class EditableTable extends Component {
                             </Button>
                           }
                           {
-                            (!this.props.hasOwnProperty("canDelete")
-                                || (this.props.canDelete)) &&
+                            ((this.props.data[dataIndex].canDelete || !this.props.data[dataIndex].hasOwnProperty("canDelete")) && (!this.props.hasOwnProperty("canDelete")
+                                || (this.props.canDelete))) &&
                             <Button className={"btn-icon"}
                                     variant="outline-secondary"
                                     onClick={e => this.props.onRowDeleted

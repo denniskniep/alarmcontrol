@@ -1,5 +1,9 @@
 package com.alarmcontrol.server.notifications.core.config;
 
+import com.alarmcontrol.server.aaos.Aao;
+import com.alarmcontrol.server.aaos.Location;
+import com.alarmcontrol.server.aaos.Vehicle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,17 +11,38 @@ public class AaoOrganisationConfiguration {
 
   public static final String KEY = "AAO";
 
-  private List<AaoBase> aaoRules;
+  private List<Aao> aaoRules;
+  private List<Vehicle> vehicles;
+  private List<Location> locations;
 
   public AaoOrganisationConfiguration() {
     aaoRules = new ArrayList<>();
+    vehicles = new ArrayList<>();
+    locations = new ArrayList<>();
   }
 
-  public List<AaoBase> getAaoRules() {
+  public List<Aao> getAaoRules() {
     return aaoRules;
   }
 
-  public void setAaoRules(List<AaoBase> aaoRules) {
+  public List<Vehicle> getVehicles() {
+    return vehicles;
+  }
+
+  public void setVehicles(List<Vehicle> vehicles) {
+    this.vehicles = vehicles;
+  }
+
+  public void setAaoRules(List<Aao> aaoRules) {
     this.aaoRules = aaoRules;
   }
+
+  public List<Location> getLocations() {
+    return locations;
+  }
+
+  public void setLocations(List<Location> locations) {
+    this.locations = locations;
+  }
+
 }

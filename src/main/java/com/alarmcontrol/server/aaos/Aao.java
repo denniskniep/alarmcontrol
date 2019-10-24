@@ -1,16 +1,13 @@
 package com.alarmcontrol.server.aaos;
 
-import com.alarmcontrol.server.notifications.core.config.AaoBase;
-
 import java.util.ArrayList;
 
-public class Aao implements AaoBase {
+public class Aao {
 
     private String uniqueId;
     private ArrayList<String> vehicles;
     private ArrayList<String> keywords;
     private ArrayList<String> locations;
-    private String name;
 
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
@@ -50,18 +47,8 @@ public class Aao implements AaoBase {
                 '}';
     }
 
-    @Override
     public String getUniqueId() {
         return this.uniqueId;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
 }

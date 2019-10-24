@@ -19,7 +19,10 @@ class DraggableTagEditor extends Component {
   }
 
   handleAddition (tag) {
-    console.log('handleAddition');
+    const existing = this.props.suggestions.map(v => v.id);
+    if (!existing.includes(tag.id)) {
+      return;
+    }
     const tags = [].concat(this.props.value, tag);
     if(this.props.onChange){
       this.props.onChange(tags)
