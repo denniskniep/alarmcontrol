@@ -27,6 +27,10 @@ public class AaoMutation implements GraphQLMutationResolver {
         return aaoConfigurationService.editAao(organisationId, aao);
     }
 
+    public String deleteAao(Long organisationId, String uniqueAaoId) {
+        return aaoConfigurationService.deleteAao(organisationId, uniqueAaoId);
+    }
+
     @NotNull
     private Aao createAao(String uniqueAaoId, List<String> keywords, List<String> locations, List<String> vehicles) {
         Aao aao = new Aao();

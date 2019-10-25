@@ -7,10 +7,10 @@ import TagViewer from "../../components/tagViewer";
 import TagEditor from "../../components/DraggableTagEditor";
 
 const DELETE_NOTIFICATION_CONTACT = gql`
-mutation deleteNotificationContact($organisationId: ID!, $uniqueContactId: String!){
-  deleteNotificationContact(
+mutation deleteAao($organisationId: ID!, $uniqueAaoId: String!){
+  deleteAao(
     organisationId: $organisationId,  
-    uniqueContactId : $uniqueContactId)
+    uniqueAaoId : $uniqueAaoId)
 }
 `;
 //Long organisationId, ArrayList<String> keywords, ArrayList<String> locations, ArrayList<String> vehicles
@@ -151,9 +151,16 @@ class AaoEditMutation extends Component {
                                                                }
                                                                }
 
-                                                               onRowDeleted={(deletedRow) =>
-                                                                   this.props.onAaoDeleted
-                                                                   && this.props.onAaoDeleted(deletedRow)}
+                                                               onRowDeleted={(deletedRow) =>{
+                                                                   console.log('deletedRow',deletedRow);
+                                                                   deleteContact({
+                                                                       variables: {
+                                                                           organisationId: this.props.organisationId,
+                                                                           uniqueAaoId: deletedRow.uniqueId
+                                                                       }
+                                                                   })
+                                                               }
+                                                               }
 
                                                 />
                                             )

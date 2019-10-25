@@ -122,4 +122,22 @@ public class AaoConfigurationService {
 
         return uniqueLocationId;
     }
+
+    public String deleteAao(Long organisationId, String uniqueAaoId) {
+        AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
+
+        List<Aao> aaoRules = config.getAaoRules();
+        Optional<Aao> aaoToDelete = aaoRules
+                .stream()
+                .filter(c -> StringUtils.equals(c.getUniqueId(), uniqueAaoId)).findFirst();
+
+        if (!aaoToDelete.isPresent()) {
+            throw new ClientValidationException("No aao found for id:" + uniqueAaoId);
+        }
+
+        aaoRules.remove(aaoToDelete.get());
+        config.setAaoRules(aaoRules);
+        organisationConfigurationService.saveAaoConfig(organisationId, config);
+        return uniqueAaoId;
+    }
 }
