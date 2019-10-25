@@ -39,6 +39,7 @@ type Mutation {
   deleteAlert(id: ID!) : ID
 
   addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!) : Aao
+  editAao(organisationId: ID!, uniqueAaoId: String!, keywords : [String]!, locations: [String]!, vehicles: [String]!) : Aao
   addVehicle(organisationId: ID!, name: String!): Vehicle
   deleteVehicle(organisationId: ID!, uniqueVehicleId: String!) : String
   addLocation(organisationId: ID!, name: String!): Location

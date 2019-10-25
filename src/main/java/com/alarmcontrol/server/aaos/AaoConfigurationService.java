@@ -1,9 +1,11 @@
 package com.alarmcontrol.server.aaos;
 
 import com.alarmcontrol.server.data.OrganisationConfigurationService;
+import com.alarmcontrol.server.data.graphql.ClientValidationException;
 import com.alarmcontrol.server.notifications.core.config.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +23,30 @@ public class AaoConfigurationService {
 
     public Aao addAao(Long organisationId, Aao aao){
         AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
-
         List<Aao> aaoRules = config.getAaoRules();
         aaoRules.add(aao);
+        config.setAaoRules(aaoRules);
+
+        organisationConfigurationService.saveAaoConfig(organisationId, config);
+
+        return aao;
+    }
+
+    public Aao editAao(Long organisationId, Aao aao){
+        AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
+
+        List<Aao> aaoRules = config.getAaoRules();
+        Optional<Aao> aaoToEdit = aaoRules
+                .stream()
+                .filter(c -> StringUtils.equals(c.getUniqueId(), aao.getUniqueId())).findFirst();
+
+        if (!aaoToEdit.isPresent()) {
+            throw new ClientValidationException("No aao found for id:" + aao.getUniqueId());
+        }
+
+        aaoToEdit.get().setKeywords(aao.getKeywords());
+        aaoToEdit.get().setLocations(aao.getLocations());
+        aaoToEdit.get().setVehicles(aao.getVehicles());
         config.setAaoRules(aaoRules);
 
         organisationConfigurationService.saveAaoConfig(organisationId, config);
