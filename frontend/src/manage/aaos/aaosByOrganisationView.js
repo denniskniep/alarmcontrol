@@ -5,6 +5,7 @@ import QueryHandler from "../../utils/queryHandler";
 import AaoEditMutation from "./aaoEditMutation";
 import VehicleEditMutation from "./vehicleEditMutation";
 import LocationEditMutation from "./locationEditMutation";
+import EditableTable from "../../components/editableTable";
 
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
@@ -73,8 +74,29 @@ class AaosByOrganisationView extends Component {
                         canDelete: false
                     }];
                     let locations = specialLocations.concat(storedLocations)
+
+                    let catalogs= [{ keywordcatalog : 'Hessische Einsatzstichworte für Brandeinsätze' }];
+
                     return (
                         <Container>
+                            <Row className={"row-header"}>
+                                <Col>
+                                    <h2>Alarmstichworte</h2>
+                                    <EditableTable data={catalogs}
+                                                   canView={false}
+                                                   canEdit={false}
+                                                   canDelete={false}
+                                                   canCreate={false}
+                                                   columns={[
+                                                       {
+                                                           key: "keywordcatalog",
+                                                           name: "Katalog"
+                                                       }
+                                                   ]}
+                                    />
+
+                                </Col>
+                            </Row>
                             <Row className={"row-header"}>
                                 <Col>
                                     <h2>Fahrzeuge</h2>
