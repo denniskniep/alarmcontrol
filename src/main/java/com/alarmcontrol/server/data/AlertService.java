@@ -18,6 +18,8 @@ import com.alarmcontrol.server.maps.GeocodingResult;
 import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
+import com.alarmcontrol.server.notifications.core.NotificationService;
+import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
 import com.alarmcontrol.server.rules.AlertContext;
 import com.alarmcontrol.server.rules.MatchResult;
 import com.alarmcontrol.server.rules.RuleService;
@@ -66,7 +68,7 @@ public class AlertService {
       AlertCallRepository alertCallRepository,
       AlertCallEmployeeRepository alertCallEmployeeRepository,
       NotificationService notificationService) {
-    this.ruleService = ruleService;
+      this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;

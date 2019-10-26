@@ -14,4 +14,3 @@ public interface Contact {
   String getUniqueId();
   String getName();
 }
-

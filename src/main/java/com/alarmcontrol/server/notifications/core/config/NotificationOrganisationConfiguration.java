@@ -33,4 +33,3 @@ public class NotificationOrganisationConfiguration {
     this.subscriptions = subscriptions;
   }
 }
-
