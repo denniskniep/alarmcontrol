@@ -1,8 +1,10 @@
 package com.alarmcontrol.server.aaos;
 
-public class Location {
+import java.util.ArrayList;
+
+public class CatalogKeywordInput {
     private String uniqueId;
-    private String name;
+    private String keyword;
 
     public String getUniqueId() {
         return uniqueId;
@@ -12,12 +14,12 @@ public class Location {
         this.uniqueId = uniqueId;
     }
 
-    public String getName() {
-        return name;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }
 

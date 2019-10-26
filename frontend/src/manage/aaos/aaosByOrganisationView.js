@@ -129,6 +129,7 @@ class AaosByOrganisationView extends Component {
                                         aaoRules={aaoRules}
                                         vehicles={vehicles}
                                         locations={locations}
+                                        catalog={catalogs[0]}
                                         /*contacts={mailContacts}*/
                                     />
 

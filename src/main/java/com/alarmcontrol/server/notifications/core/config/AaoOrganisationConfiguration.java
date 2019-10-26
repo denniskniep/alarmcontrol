@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.notifications.core.config;
 
 import com.alarmcontrol.server.aaos.Aao;
+import com.alarmcontrol.server.aaos.CatalogKeywordInput;
 import com.alarmcontrol.server.aaos.Location;
 import com.alarmcontrol.server.aaos.Vehicle;
 
@@ -14,11 +15,13 @@ public class AaoOrganisationConfiguration {
   private List<Aao> aaoRules;
   private List<Vehicle> vehicles;
   private List<Location> locations;
+  private List<CatalogKeywordInput> keywords;
 
   public AaoOrganisationConfiguration() {
     aaoRules = new ArrayList<>();
     vehicles = new ArrayList<>();
     locations = new ArrayList<>();
+    keywords = new ArrayList<>();
   }
 
   public List<Aao> getAaoRules() {
@@ -45,4 +48,11 @@ public class AaoOrganisationConfiguration {
     this.locations = locations;
   }
 
+  public List<CatalogKeywordInput> getKeywords() {
+    return keywords;
+  }
+
+  public void setKeywords(List<CatalogKeywordInput> keywords) {
+    this.keywords = keywords;
+  }
 }

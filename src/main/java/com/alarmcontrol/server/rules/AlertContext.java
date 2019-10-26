@@ -1,20 +1,19 @@
 package com.alarmcontrol.server.rules;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 public class AlertContext {
     private String keyword;
     private LocalTime localTime;
     private Long organisationId;
+    private String location;
 
-    public AlertContext(String keyword, LocalTime localTime, Long organisationId) {
+    public AlertContext(String keyword, LocalTime localTime, Long organisationId, String location) {
 
         this.keyword = keyword;
         this.localTime = localTime;
         this.organisationId = organisationId;
+        this.location = location;
     }
 
     public LocalTime getLocalTime() {
@@ -28,4 +27,6 @@ public class AlertContext {
     public Long getOrganisationId() {
         return organisationId;
     }
+
+    public String getLocation() { return location; }
 }

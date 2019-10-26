@@ -25,3 +25,6 @@ public class LocationMutation implements GraphQLMutationResolver {
         return aaoConfigurationService.deleteLocation(organisationId, uniqueLocationId);
     }
 }
+
+
+

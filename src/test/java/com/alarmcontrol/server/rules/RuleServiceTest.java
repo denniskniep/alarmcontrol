@@ -1,15 +1,9 @@
 package com.alarmcontrol.server.rules;
 
 import com.alarmcontrol.server.data.TestConfiguration;
-import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.utils.GraphQLClient;
 import com.alarmcontrol.server.data.utils.TestOrganisation;
-import com.alarmcontrol.server.rules.data.BetweenTimeRangeRuleData;
-import com.alarmcontrol.server.rules.data.RuleContainerData;
-import com.alarmcontrol.server.rules.data.RuleContainerDataCollection;
-import com.alarmcontrol.server.rules.data.RuleData;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +13,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,7 +74,7 @@ class RuleServiceTest {
         ruleService.saveAaoRules(testOrganisation.getId(), json);
         LocalTime alertTime = LocalTime.parse("12:00");
         alertTime.minusMinutes(30);
-        var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId()));
+        var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId(), ""));
 
         assertThat(result.getResults()).containsExactly("HLF");
     }

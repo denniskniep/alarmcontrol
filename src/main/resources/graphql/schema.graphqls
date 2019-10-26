@@ -41,10 +41,13 @@ type Mutation {
   addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!) : Aao
   editAao(organisationId: ID!, uniqueAaoId: String!, keywords : [String]!, locations: [String]!, vehicles: [String]!) : Aao
   deleteAao(organisationId: ID!, uniqueAaoId: String!) : String
+
   addVehicle(organisationId: ID!, name: String!): Vehicle
   deleteVehicle(organisationId: ID!, uniqueVehicleId: String!) : String
   addLocation(organisationId: ID!, name: String!): Location
   deleteLocation(organisationId: ID!, uniqueLocationId: String!) : String
+
+  addCatalog(organisationId: ID!, keywords: [CatalogKeywordInput]!) : String
 
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
   deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
@@ -84,6 +87,7 @@ type Alert {
   duration: Int,
   employeeFeedback: [EmployeeFeedback]
   alertCalls: [AlertCall]
+  aao: [String]
 }
 
 type AlertCall {

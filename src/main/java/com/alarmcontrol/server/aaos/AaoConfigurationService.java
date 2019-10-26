@@ -140,4 +140,15 @@ public class AaoConfigurationService {
         organisationConfigurationService.saveAaoConfig(organisationId, config);
         return uniqueAaoId;
     }
+
+    public void addOrReplaceCatalogKeywords(Long organisationId, List<CatalogKeywordInput> keywords) {
+        AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
+
+        // TODO Add consistency check. Replacement of all alarm keywords could be problematic if depended aao rules exists
+        List<CatalogKeywordInput> keywordsConfig = config.getKeywords();
+        keywordsConfig.clear();
+        keywordsConfig.addAll(keywords);
+
+        organisationConfigurationService.saveAaoConfig(organisationId, config);
+    }
 }

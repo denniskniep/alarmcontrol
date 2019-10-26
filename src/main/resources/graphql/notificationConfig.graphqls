@@ -44,11 +44,22 @@ type Location {
  name: String
 }
 
+input CatalogKeywordInput {
+ uniqueId: String
+ keyword: String
+}
+
+type CatalogKeyword {
+ uniqueId: String
+ keyword: String
+}
+
 
 type AaoOrganisationConfiguration {
  aaoRules: [Aao]
  vehicles: [Vehicle]
  locations: [Location]
+ keywords: [CatalogKeyword]
 }
 
 

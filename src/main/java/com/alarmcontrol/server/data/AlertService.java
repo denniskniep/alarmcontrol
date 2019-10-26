@@ -203,7 +203,7 @@ public class AlertService {
     MatchResult aaoMatchResult = new MatchResult();
     try {
         var localTime = toLocalTime(dateTime);
-        aaoMatchResult = ruleService.evaluateAao(new AlertContext(keyword,localTime, organisationId));
+        aaoMatchResult = ruleService.evaluateAao(new AlertContext(keyword,localTime, organisationId, addressInfo2));
     } catch(Exception e){
         logger.error("Error during aao evaluation", e);
     }
