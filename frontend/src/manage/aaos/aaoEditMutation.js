@@ -59,15 +59,15 @@ mutation addCatalog($organisationId: ID!, $keywords : [CatalogKeywordInput]!){
 `;
 
 
-const DELETE_NOTIFICATION_CONTACT = gql`
+const DELETE_AAO = gql`
 mutation deleteAao($organisationId: ID!, $uniqueAaoId: String!){
   deleteAao(
     organisationId: $organisationId,  
     uniqueAaoId : $uniqueAaoId)
 }
 `;
-//Long organisationId, ArrayList<String> keywords, ArrayList<String> locations, ArrayList<String> vehicles
-const ADD_NOTIFICATION_CONTACT = gql`
+
+const ADD_AAO = gql`
 mutation addAao($organisationId: ID!, $keywords : [String]!, $locations: [String]!, $vehicles: [String]!){
   addAao(organisationId: $organisationId, keywords: $keywords, locations: $locations, vehicles: $vehicles ) {   
     uniqueId
@@ -92,19 +92,19 @@ class AaoEditMutation extends Component {
     }
 
     render() {
-        return (<MutationHandler mutation={DELETE_NOTIFICATION_CONTACT}
+        return (<MutationHandler mutation={DELETE_AAO}
                                  onCompleted={() => this.props.onAaoRulesChanged
                                      && this.props.onAaoRulesChanged()}>
-                {deleteContact => {
+                {deleteAaoConfig => {
                     return (
-                        <MutationHandler mutation={ADD_NOTIFICATION_CONTACT}
+                        <MutationHandler mutation={ADD_AAO}
                                          onCompleted={() => this.props.onAaoRulesChanged
                                              && this.props.onAaoRulesChanged()}>
-                            {addContact => {
+                            {addAaoConfig => {
                                 return (<MutationHandler mutation={EDIT_AAO}
                                                          onCompleted={() => this.props.onAaoRulesChanged
                                                              && this.props.onAaoRulesChanged()}>
-                                        {editContact => {
+                                        {editAaoConfig => {
                                             return (<MutationHandler mutation={ADD_AAO_CATALOG}
                                                                      onCompleted={() => this.props.onAaoRulesChanged
                                                                          && this.props.onAaoRulesChanged()}>
@@ -185,7 +185,13 @@ class AaoEditMutation extends Component {
 
                                                                            onNewRow={newRow => {
                                                                                console.log('newRow', newRow);
-                                                                               addContact({
+                                                                               addCatalog({
+                                                                                   variables: {
+                                                                                       organisationId: this.props.organisationId,
+                                                                                       keywords: hessischeAaoKeywordlist.map(entry => ({ uniqueId: entry.id, keyword: entry.keyword}))
+                                                                                   }
+                                                                               })
+                                                                               addAaoConfig({
                                                                                    variables: {
                                                                                        organisationId: this.props.organisationId,
                                                                                        keywords: newRow.keywords.map(keyword => keyword.id),
@@ -193,17 +199,12 @@ class AaoEditMutation extends Component {
                                                                                        vehicles: newRow.vehicles.map(vehicle => vehicle.id)
                                                                                    }
                                                                                })
-                                                                               addCatalog({
-                                                                                   variables: {
-                                                                                       organisationId: this.props.organisationId,
-                                                                                       keywords: hessischeAaoKeywordlist.map(entry => ({ uniqueId: entry.id, keyword: entry.keyword}))
-                                                                                   }
-                                                                               })
+
                                                                            }}
 
                                                                            onRowEdited={(oldRow, newRow) => {
                                                                                console.log('onrowedited', oldRow);
-                                                                               editContact({
+                                                                               editAaoConfig({
                                                                                    variables: {
                                                                                        organisationId: this.props.organisationId,
                                                                                        uniqueAaoId: oldRow.uniqueId,
@@ -217,7 +218,7 @@ class AaoEditMutation extends Component {
 
                                                                            onRowDeleted={(deletedRow) => {
                                                                                console.log('deletedRow', deletedRow);
-                                                                               deleteContact({
+                                                                               deleteAaoConfig({
                                                                                    variables: {
                                                                                        organisationId: this.props.organisationId,
                                                                                        uniqueAaoId: deletedRow.uniqueId

@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import MutationHandler from "../../utils/mutationHandler";
-import {Button, Col, Container, Row} from "react-bootstrap";
 import EditableTable from "../../components/editableTable";
-import TagViewer from "../../components/tagViewer";
-import TagEditor from "../../components/DraggableTagEditor";
 
 const DELETE_VEHICLE = gql`
 mutation deleteVehicle($organisationId: ID!, $uniqueVehicleId: String!){
@@ -37,7 +34,7 @@ class VehicleEditMutation extends Component {
                         <MutationHandler mutation={ADD_VEHICLE}
                                          onCompleted={() => this.props.onVehiclesChanged
                                              && this.props.onVehiclesChanged()}>
-                            {addContact => {
+                            {addVehicle => {
 
                                 var vehicles= this.props.vehicles ? this.props.vehicles : [];
                                 return (
@@ -53,7 +50,7 @@ class VehicleEditMutation extends Component {
 
                                                    onNewRow={newRow => {
                                                        console.log('newRow',newRow);
-                                                       addContact({
+                                                       addVehicle({
                                                            variables: {
                                                                organisationId: this.props.organisationId,
                                                                name: newRow.name

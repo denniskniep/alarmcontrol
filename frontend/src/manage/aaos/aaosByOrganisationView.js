@@ -12,6 +12,7 @@ const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {
   organisationById(organisationId: $id) {
     id
+    location
     aaoConfig {
       aaoRules {
         uniqueId
@@ -47,7 +48,6 @@ class AaosByOrganisationView extends Component {
                         return <React.Fragment></React.Fragment>;
                     }
 
-
                     let aaoRules = data
                         .organisationById
                         .aaoConfig
@@ -65,7 +65,7 @@ class AaosByOrganisationView extends Component {
 
                     var specialLocations = [{
                         uniqueId: '0',
-                        name: 'Meine Ortschaft',
+                        name: 'Meine Ortschaft ('+data.organisationById.location+')',
                         canDelete : false
                     },
                     {

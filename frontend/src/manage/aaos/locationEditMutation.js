@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import MutationHandler from "../../utils/mutationHandler";
-import {Button, Col, Container, Row} from "react-bootstrap";
 import EditableTable from "../../components/editableTable";
-import TagViewer from "../../components/tagViewer";
-import TagEditor from "../../components/DraggableTagEditor";
 
 const DELETE_VEHICLE = gql`
 mutation deleteLocation($organisationId: ID!, $uniqueLocationId: String!){
@@ -37,7 +34,7 @@ class LocationEditMutation extends Component {
                         <MutationHandler mutation={ADD_VEHICLE}
                                          onCompleted={() => this.props.onLocationsChanged
                                              && this.props.onLocationsChanged()}>
-                            {addContact => {
+                            {addLocation => {
 
                                 var locations= this.props.locations ? this.props.locations : [];
 
@@ -54,7 +51,7 @@ class LocationEditMutation extends Component {
 
                                                    onNewRow={newRow => {
                                                        console.log('newRow',newRow);
-                                                       addContact({
+                                                       addLocation({
                                                            variables: {
                                                                organisationId: this.props.organisationId,
                                                                name: newRow.name
