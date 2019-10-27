@@ -17,17 +17,17 @@ public class OrganisationMutations implements GraphQLMutationResolver {
     this.organisationRepository = organisationRepository;
   }
 
-  public Organisation newOrganisation(String name, String addressLat, String addressLng) {
+  public Organisation newOrganisation(String name, String addressLat, String addressLng, String location) {
     if (StringUtils.isBlank(name)) {
       throw new ClientValidationException("Name should not be blank");
     }
 
-    Organisation org = new Organisation(name, addressLat, addressLng);
+    Organisation org = new Organisation(name, addressLat, addressLng, location);
     organisationRepository.save(org);
     return org;
   }
 
-  public Organisation editOrganisation(Long id, String name, String addressLat, String addressLng) {
+  public Organisation editOrganisation(Long id, String name, String addressLat, String addressLng, String location) {
     Optional<Organisation> organisationById = organisationRepository.findById(id);
     if (!organisationById.isPresent()) {
       throw new ClientValidationException("No Organisation found for id:" + id);
@@ -41,6 +41,7 @@ public class OrganisationMutations implements GraphQLMutationResolver {
     organisation.setName(name);
     organisation.setAddressLat(addressLat);
     organisation.setAddressLng(addressLng);
+    organisation.setLocation(location);
     organisationRepository.save(organisation);
     return organisation;
   }

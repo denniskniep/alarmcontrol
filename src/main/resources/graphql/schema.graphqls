@@ -10,8 +10,8 @@ type Query {
 }
 
 type Mutation {
-  newOrganisation(name: String!, addressLat: String!, addressLng: String!): Organisation
-  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!): Organisation
+  newOrganisation(name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
+  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
   deleteOrganisation(id: ID!) : ID
 
   newAao(organisationId: ID!, aaoRules: String!) : Boolean
@@ -129,6 +129,7 @@ type Organisation {
   name: String
   addressLat: String
   addressLng: String
+  location: String
   employees: [Employee]
   skills: [Skill]
   alertNumbers: [AlertNumber]

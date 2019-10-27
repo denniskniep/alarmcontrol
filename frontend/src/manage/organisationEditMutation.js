@@ -11,13 +11,14 @@ const ORGANISATION_BY_ID = gql`
       name
       addressLat
       addressLng
+      location
     }
   }
 `;
 
 const UPDATE_ORGANISATION = gql`
-    mutation editOrganisation($id: ID!, $name: String!, $addressLat: String!, $addressLng: String!) {
-     editOrganisation(id: $id, name: $name, addressLat: $addressLat, addressLng: $addressLng) {
+    mutation editOrganisation($id: ID!, $name: String!, $addressLat: String!, $addressLng: String!, $location: String!) {
+     editOrganisation(id: $id, name: $name, addressLat: $addressLat, addressLng: $addressLng, location : $location) {
       id
     }
   }
@@ -51,7 +52,8 @@ class OrganisationEditMutation extends Component {
                                                     id: this.props.id,
                                                     name: org.name,
                                                     addressLng: org.addressLng,
-                                                    addressLat: org.addressLat
+                                                    addressLat: org.addressLat,
+                                                    location: org.location
                                                   }
                                                 }
                                             )}/>
