@@ -125,8 +125,6 @@ class Menu extends Component {
                                               href="/app/manage/organisation">Organisations</NavDropdown.Item>
                                           <NavDropdown.Item
                                               href="/app/manage/alerts">Alerts</NavDropdown.Item>
-                                          <NavDropdown.Item
-                                              href="/app/manage/aao">AAO-Configuration</NavDropdown.Item>
                                         </NavDropdown>
 
                                         <Form inline>
