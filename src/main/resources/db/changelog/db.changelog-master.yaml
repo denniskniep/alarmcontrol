@@ -431,3 +431,15 @@ databaseChangeLog:
             referencedColumnNames: id
             baseTableName: organisation_configuration
             baseColumnNames: organisation_id
+  - changeSet:
+      id: 4
+      author: dweber
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: location
+                  type: nvarchar(255)
+                  constraints:
+                    nullable: false
+            tableName: organisation
