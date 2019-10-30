@@ -6,14 +6,17 @@ public class AlertContext {
     private String keyword;
     private LocalTime localTime;
     private Long organisationId;
-    private String location;
+    private String geocodedAlertLocation;
+    private String organisationLocation;
 
-    public AlertContext(String keyword, LocalTime localTime, Long organisationId, String location) {
+
+    public AlertContext(String keyword, LocalTime localTime, Long organisationId, String geocodedAlertLocation, String organisationLocation) {
 
         this.keyword = keyword;
         this.localTime = localTime;
         this.organisationId = organisationId;
-        this.location = location;
+        this.geocodedAlertLocation = geocodedAlertLocation;
+        this.organisationLocation = organisationLocation;
     }
 
     public LocalTime getLocalTime() {
@@ -28,5 +31,9 @@ public class AlertContext {
         return organisationId;
     }
 
-    public String getLocation() { return location; }
+    public String getGeocodedAlertLocation() { return geocodedAlertLocation; }
+
+    public String getOrganisationLocation() {
+        return organisationLocation;
+    }
 }

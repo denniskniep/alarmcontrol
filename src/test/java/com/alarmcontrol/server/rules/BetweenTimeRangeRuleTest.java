@@ -45,6 +45,6 @@ class BetweenTimeRangeRuleTest {
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         var rule = new BetweenTimeRangeRule(LocalTime.parse("10:00"), LocalTime.parse("12:00"));
         var timeToCheck = LocalTime.parse(alertDate);
-        return rule.match(new AlertContext("H1", timeToCheck, 4711L, ""));
+        return rule.match(new AlertContext("H1", timeToCheck, 4711L, "", ""));
     }
 }

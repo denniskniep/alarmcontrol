@@ -24,4 +24,8 @@ public class MatchResult {
             }
         }
     }
+
+    public boolean hasMatches() {
+        return !matchResults.isEmpty();
+    }
 }

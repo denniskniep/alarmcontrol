@@ -2,7 +2,6 @@ package com.alarmcontrol.server.rules;
 
 import com.alarmcontrol.server.aaos.CatalogKeywordInput;
 import com.alarmcontrol.server.aaos.Location;
-import com.alarmcontrol.server.aaos.Vehicle;
 import com.alarmcontrol.server.data.OrganisationConfigurationService;
 import com.alarmcontrol.server.data.models.OrganisationConfiguration;
 import com.alarmcontrol.server.data.repositories.OrganisationConfigurationRepository;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -41,33 +39,22 @@ public class RuleService {
         AaoOrganisationConfiguration aaoConfig = organisationConfigurationService.loadAaoConfig(alertContext.getOrganisationId());
         var aaoRules = aaoConfig.getAaoRules();
         MatchResult globalMatchResult = new MatchResult(new ArrayList<>());
-        var locations = aaoConfig.getLocations();
-        var keywords = aaoConfig.getKeywords();
-        for(var aaoRule : aaoRules) {
-            ArrayList<String> locationIds = aaoRule.getLocations();
-            ArrayList<String> keywordIds = aaoRule.getKeywords();
-            String alertLocation = alertContext.getLocation();
-            List<Location> matchedLocations = locations.stream()
-                    .filter(location -> locationIds.contains(location.getUniqueId()) && StringUtils.equals(alertLocation, location.getName()))
-                    .collect(Collectors.toList());
 
-            if (matchedLocations.size() > 0) {
-                List<CatalogKeywordInput> matchedKeywords = keywords.stream()
-                        .filter(k -> keywordIds.contains(k.getUniqueId()) && StringUtils.equals(alertContext.getKeyword(), k.getKeyword()))
-                        .collect(Collectors.toList());
-                if (matchedKeywords.size() > 0) {
-                    List<String> vehicles = aaoConfig.getVehicles().stream()
-                            .filter(v -> aaoRule.getVehicles().contains(v.getUniqueId()))
-                            .map(v -> v.getName())
-                            .collect(Collectors.toList());
-                    globalMatchResult.addDistinct(new MatchResult(new ArrayList<>(vehicles)));
-                    break;
-                }
-            }
+        for(var aaoRule : aaoRules) {
+            var keywordAndLocationRule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+            var matchResult = keywordAndLocationRule.match(alertContext);
+            globalMatchResult.addDistinct(matchResult);
         }
 
         return globalMatchResult;
     }
+
+    /*
+        Interface
+        locationIDs, keywordIds, locations, keywords
+
+        result: matchresult..>aao
+     */
 
     public void saveAaoRules(Long organisationId,String json){
         try {

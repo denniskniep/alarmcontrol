@@ -74,7 +74,7 @@ class RuleServiceTest {
         ruleService.saveAaoRules(testOrganisation.getId(), json);
         LocalTime alertTime = LocalTime.parse("12:00");
         alertTime.minusMinutes(30);
-        var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId(), ""));
+        var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId(), "", ""));
 
         assertThat(result.getResults()).containsExactly("HLF");
     }
