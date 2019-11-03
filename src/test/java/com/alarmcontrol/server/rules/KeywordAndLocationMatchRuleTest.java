@@ -1,15 +1,8 @@
 package com.alarmcontrol.server.rules;
 
-import com.alarmcontrol.server.aaos.Aao;
-import com.alarmcontrol.server.aaos.CatalogKeywordInput;
-import com.alarmcontrol.server.aaos.Location;
-import com.alarmcontrol.server.aaos.Vehicle;
-import com.alarmcontrol.server.notifications.core.config.AaoOrganisationConfiguration;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,101 +11,308 @@ public class KeywordAndLocationMatchRuleTest {
     public static final String GOTHAMCITY = "Gothamcity";
     public static final String METROPOLIS = "Metropolis";
 
-    @Test
-    void match_KeywordAndLocationMatching_ReturnsTrue() {
-        MatchResult matchResult = runTest("H 1", GOTHAMCITY, "Anywhere");
-
-        assertThat(matchResult.hasMatches()).isEqualTo(true);
-    }
+    private static final String H1UNIQUEID = "64510d39-e35f-436c-897d-3c53fec3ead8";
+    private static final String H1YUNIQUEID = "219bf9f4-8f9b-465f-9da3-17b336dd8390";
 
     @Test
-    void match_KeywordDiffers_ReturnsFalse() {
-        MatchResult matchResult = runTest("H 1 Y", GOTHAMCITY,"Anywhere");
+    void alertForGothamCity_KeywordAndLocationMatches_ReturnsTrue() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
 
-        assertThat(matchResult.hasMatches()).isEqualTo(false);
-    }
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
 
-    @Test
-    void match_LocationDiffers_ReturnsFalse() {
-        MatchResult matchResult = runTest("H 1", METROPOLIS,"Anywhere");
-
-        assertThat(matchResult.hasMatches()).isEqualTo(false);
-    }
-
-    @Test
-    void match_AaoContainsHomeLocation_ReturnsTrue() {
-        MatchResult matchResult = runTest("H 1", METROPOLIS, METROPOLIS);
-
-        assertThat(matchResult.hasMatches()).isEqualTo(true);
-    }
-
-   /* @Test
-    void match_AaoSaysAllLocationsExceptOfHomeLocation_ReturnsTrue() {
-        MatchResult matchResult = runTest("H 1", METROPOLIS, GOTHAMCITY);
-
-        assertThat(matchResult.hasMatches()).isEqualTo(true);
-    }*/
-
-    private MatchResult runTest(String keyword, String location, String organisationLocation) {
-        var aaoRule = makeAaoRule(location);
-        var aaoConfig = makeAaoConfig();
         var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
-        var alertContext = new AlertContext(keyword, LocalTime.now(), 1L, location, organisationLocation);
-        return rule.match(alertContext);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, GOTHAMCITY, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(true);
     }
 
+    @Test
+    void alertForH1Y_aaoKeywordDiffers_ReturnsFalse() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
 
-    private AaoOrganisationConfiguration makeAaoConfig() {
-        var aaoConfig = new AaoOrganisationConfiguration();
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
 
-        ArrayList<Location> locations = new ArrayList<>();
-        var gotham = new Location();
-        gotham.setName(GOTHAMCITY);
-        gotham.setUniqueId(gotham.getName());
-        locations.add(gotham);
-        var otherLocations = new Location();
-        otherLocations.setName("Other Locations");
-        otherLocations.setUniqueId("1");
-        locations.add(otherLocations);
-        aaoConfig.setLocations(locations);
-        ArrayList<CatalogKeywordInput> keywords = new ArrayList<>();
-        var h1 = new CatalogKeywordInput();
-        h1.setKeyword("H 1");
-        h1.setUniqueId(h1.getKeyword());
-        keywords.add(h1);
-        aaoConfig.setKeywords(keywords);
-        ArrayList<Vehicle> vehicles = new ArrayList<>();
-        var elw = new Vehicle();
-        elw.setName("ELW");
-        elw.setUniqueId(elw.getName());
-        var hlf = new Vehicle();
-        hlf.setName("HLF");
-        hlf.setUniqueId(hlf.getName());
-        var tlf = new Vehicle();
-        tlf.setName("TLF");
-        tlf.setUniqueId(tlf.getName());
-        vehicles.add(elw);
-        vehicles.add(hlf);
-        vehicles.add(tlf);
-        aaoConfig.setVehicles(vehicles);
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1 Y", LocalTime.now(), 1L, GOTHAMCITY, GOTHAMCITY);
+        var matches = rule.match(alertContext);
 
-        return aaoConfig;
+        assertThat(matches.hasMatches()).isEqualTo(false);
     }
 
-    private Aao makeAaoRule(String location) {
-        Aao aao = new Aao();
-        ArrayList<String> keywords = new ArrayList<>();
-        keywords.add("H 1");
-        ArrayList<String> locations = new ArrayList<>();
-        locations.add(location);
-        ArrayList<String> vehicles = new ArrayList<>();
-        vehicles.add("ELW");
-        vehicles.add("HLF");
-        vehicles.add("TLF");
-        aao.setKeywords(keywords);
-        aao.setLocations(locations);
-        aao.setVehicles(vehicles);
-        aao.setUniqueId(UUID.randomUUID().toString());
-        return aao;
+    @Test
+    void alertForMetropolis_AaoLocationDiffers_ReturnsFalse() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, METROPOLIS, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(false);
+    }
+
+    @Test
+    void alertForHomeLocation_AaoContainsHomeLocation_ReturnsTrue() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(KeywordAndLocationMatchRule.OwnOrganisationUniqueKey)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, "MyHomeTown", "MyHomeTown");
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(true);
+    }
+
+    @Test
+    void alertForAnyLocation_AaoContainsOtherLocations_ReturnsTrue() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, METROPOLIS, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(true);
+    }
+
+    @Test
+    void specialCase_AaoWithMyLocationAndOtherLocations_ReturnsTrue(){
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey)
+                .withLocationId(KeywordAndLocationMatchRule.OwnOrganisationUniqueKey)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, GOTHAMCITY, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(true);
+    }
+
+    @Test
+    void match_AaoWithMyLocationAndOtherLocationsAndNonMatchingKeyword_ReturnsFalse() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey)
+                .withLocationId(KeywordAndLocationMatchRule.OwnOrganisationUniqueKey)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1 Y", LocalTime.now(), 1L, METROPOLIS, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(false);
+    }
+
+    @Test
+    void match_NoAaoRuleForAlertLocation_ReturnsFalse() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, METROPOLIS, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(false);
+    }
+
+    @Test
+    void match_NoAaoRuleForAlertKeyword_ReturnsFalse() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1 Y", LocalTime.now(), 1L, GOTHAMCITY, METROPOLIS);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.hasMatches()).isEqualTo(false);
+    }
+
+    @Test
+    void alert_KeywordAndLocationMatches_VehicleOrderAsExpected1() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("ELW")
+                .withVehicleId("HLF")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, GOTHAMCITY, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.getResults().get(0)).isEqualTo("ELW");
+        assertThat(matches.getResults().get(1)).isEqualTo("HLF");
+    }
+
+    @Test
+    void alert_KeywordAndLocationMatches_VehicleOrderAsExpected2() {
+        var aaoConfig = new FluentAaoConfigBuilder()
+                .createConfig()
+                .withLocation(GOTHAMCITY, GOTHAMCITY)
+                .withLocation(KeywordAndLocationMatchRule.OtherOrganisationsUniqueKey, "Other")
+                .withKeyword(H1UNIQUEID, "H 1")
+                .withKeyword(H1YUNIQUEID, "H 1 Y")
+                .withVehicle("ELW", "ELW")
+                .withVehicle("HLF", "HLF")
+                .build();
+
+        var aaoRule = new FluentAaoRuleBuilder()
+                .createRule()
+                .withLocationId(GOTHAMCITY)
+                .withKeywordId(H1UNIQUEID)
+                .withVehicleId("HLF")
+                .withVehicleId("ELW")
+                .build();
+
+        var rule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
+        var alertContext = new AlertContext("H 1", LocalTime.now(), 1L, GOTHAMCITY, GOTHAMCITY);
+        var matches = rule.match(alertContext);
+
+        assertThat(matches.getResults().get(0)).isEqualTo("HLF");
+        assertThat(matches.getResults().get(1)).isEqualTo("ELW");
     }
 }
+

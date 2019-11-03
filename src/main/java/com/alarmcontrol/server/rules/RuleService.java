@@ -49,13 +49,6 @@ public class RuleService {
         return globalMatchResult;
     }
 
-    /*
-        Interface
-        locationIDs, keywordIds, locations, keywords
-
-        result: matchresult..>aao
-     */
-
     public void saveAaoRules(Long organisationId,String json){
         try {
             new ObjectMapper().readValue(json, RuleContainerDataCollection.class);

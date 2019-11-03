@@ -64,12 +64,12 @@ class AaosByOrganisationView extends Component {
                         .locations
 
                     var specialLocations = [{
-                        uniqueId: '0',
+                        uniqueId: '286c1e42-14bb-4620-afcb-eeb9869877a0',
                         name: 'Meine Ortschaft ('+data.organisationById.location+')',
                         canDelete : false
                     },
                     {
-                        uniqueId: '00',
+                        uniqueId: '0522cb63-9553-4429-8ac8-614923d590b6',
                         name: 'Andere Ortschaften',
                         canDelete: false
                     }];
