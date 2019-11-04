@@ -32,7 +32,7 @@ class RuleServiceTest {
     private String from = "2019-03-01 10:00:00";
     private String to = "2019-03-01 12:00:00";
 
-    @Test
+    /*@Test
     void evaluateAao_returnsExpectedResult() throws ParseException, JsonProcessingException {
        /* var testOrganisation = setupOrganisation();
         var ruleContainerDataCollection = new RuleContainerDataCollection();
@@ -54,7 +54,9 @@ class RuleServiceTest {
 
         var json = new ObjectMapper().writeValueAsString(ruleContainerDataCollection);
         System.out.println();*/
-        var testOrganisation = setupOrganisation();
+
+
+        /*var testOrganisation = setupOrganisation();
         var json = "{\n" +
                 "  \"ruleContainers\": [\n" +
                 "    {\n" +
@@ -77,7 +79,7 @@ class RuleServiceTest {
         var result = ruleService.evaluateAao(new AlertContext("H1", alertTime, testOrganisation.getId(), "", ""));
 
         assertThat(result.getResults()).containsExactly("HLF");
-    }
+    }*/
 
 
     /*

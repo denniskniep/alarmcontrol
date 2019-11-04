@@ -14,8 +14,8 @@ const ORGANISATIONS = gql`
 `;
 
 const NEW_ORGANISATION = gql`
-    mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!) {
-     newOrganisation(name: $name, addressLat:  $addressLat, addressLng: $addressLng) {
+    mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!, $location: String!) {
+     newOrganisation(name: $name, addressLat:  $addressLat, addressLng: $addressLng, location: $location) {
       id
     }
   }
@@ -53,7 +53,8 @@ class OrganisationsEditMutation extends Component {
                                     variables: {
                                       name: newOrganisation.name,
                                       addressLat: "",
-                                      addressLng: ""
+                                      addressLng: "",
+                                      location: ""
                                     }
                                   });
                                 }}

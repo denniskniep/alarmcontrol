@@ -13,13 +13,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class RuleService {
     private Logger logger = LoggerFactory.getLogger(RuleService.class);
     public static final String AAO_KEY = "AAO_RULESET";

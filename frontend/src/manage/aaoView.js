@@ -6,7 +6,7 @@ import SkillsEditMutation from "./skillsEditMutation";
 import AlertNumbersEditMutation from "./alertNumbersEditMutation";
 import EditableTable from "../components/editableTable";
 import TagViewer from "../components/tagViewer";
-import TagEditor from "../components/DraggableTagEditor";
+import TagEditor from "../components/draggableTagEditor";
 import OrganisationsEditMutation from "./organisationsEditMutation";
 import AaosEditMutation from "./aaosEditMutation";
 

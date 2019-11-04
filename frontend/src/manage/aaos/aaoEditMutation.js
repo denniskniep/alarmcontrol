@@ -4,7 +4,7 @@ import MutationHandler from "../../utils/mutationHandler";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import EditableTable from "../../components/editableTable";
 import TagViewer from "../../components/tagViewer";
-import TagEditor from "../../components/DraggableTagEditor";
+import TagEditor from "../../components/draggableTagEditor";
 
 const hessischeAaoKeywordlist = [{id: '6bcceb2f-d665-488e-99a6-54c87e3a06a2', keyword: 'F 1 '},
     {id: 'de47acdb-5baa-4009-aaeb-da470b608ed6', keyword: 'F 2'},
