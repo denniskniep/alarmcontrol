@@ -1,5 +1,6 @@
 package com.alarmcontrol.server;
 
+import java.time.Duration;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -26,6 +27,8 @@ public class ServerApplicationConfig {
     requestFactory.setHttpClient(client);
 
     RestTemplate restTemplate = builder
+        .setConnectTimeout(Duration.ofMillis(5000))
+        .setReadTimeout(Duration.ofMillis(10000))
         .requestFactory(() -> requestFactory)
         .build();
 

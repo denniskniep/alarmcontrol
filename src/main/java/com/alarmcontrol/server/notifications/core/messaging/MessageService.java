@@ -64,7 +64,7 @@ public class MessageService {
   private void sendMessage(Message message, List<Contact> contacts, AbstractMessageService messageService) {
     logger.info("Start sending message '{}' via {}",
         message.getSubject(),
-        message.getClass().getSimpleName());
+        messageService.getClass().getSimpleName());
     try{
       messageService.send(contacts, message);
     }catch (Exception e){

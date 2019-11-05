@@ -3,18 +3,13 @@ package com.alarmcontrol.server.notifications.messaging.firebasepush;
 import com.alarmcontrol.server.notifications.core.messaging.AbstractMessageService;
 import com.alarmcontrol.server.notifications.core.messaging.Message;
 import com.alarmcontrol.server.utils.DateToIsoFormatter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
+  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 5000;
   private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
   @Value("${notifications.firebase.push.url:}")
@@ -60,6 +56,9 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
 
   private RestTemplate restTemplate;
 
+  private Map<String, String> tokensByMailCache;
+  private Date lastCacheFetch;
+
   public FirebaseMessageService(RestTemplate restTemplate) {
     super(FirebaseMessageContact.class);
     this.restTemplate = restTemplate;
@@ -78,12 +77,34 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
       throw new RuntimeException("AuthorizationHeader is not set!");
     }
 
-    AuthResult authResult = login();
-    Map<String, String> tokensByMail = getTokensByMail(authResult);
-
+    Map<String, String> tokensByMail = getTokensByMailFromCacheAndRefreshCacheIfNecessary();
     for (FirebaseMessageContact contact : contacts) {
       sendFirebaseMessage(contact, message, tokensByMail);
     }
+  }
+
+  private synchronized Map<String, String> getTokensByMailFromCacheAndRefreshCacheIfNecessary() {
+    boolean cacheTimedOut = false;
+    if(lastCacheFetch != null){
+      long lastCacheFetchInMs = lastCacheFetch.getTime();
+      long dateInMs = new Date().getTime();
+      long cacheAgeInMs = dateInMs - lastCacheFetchInMs;
+      cacheTimedOut = cacheAgeInMs > TOKENS_CACHE_TIMEOUT_IN_MS;
+      if(cacheTimedOut){
+        logger.info("TokensByMail Cache timed out because it is older than {}ms (LastCacheFetch:{})", TOKENS_CACHE_TIMEOUT_IN_MS, cacheAgeInMs);
+      }
+    }
+
+    if(tokensByMailCache == null || lastCacheFetch == null || cacheTimedOut){
+      AuthResult authResult = login();
+      tokensByMailCache = getTokensByMailFromDatastore(authResult);
+      lastCacheFetch = new Date();
+      logger.info("Updated TokensByMail Cache. Now it contains {} entries", tokensByMailCache.size());
+    }else{
+      logger.info("Using existing TokensByMail Cache. It contains {} entries", tokensByMailCache.size());
+    }
+
+    return new HashMap<>(tokensByMailCache);
   }
 
   private AuthResult login() {
@@ -105,7 +126,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     return result.getBody();
   }
 
-  private Map<String, String> getTokensByMail(AuthResult authResult) {
+  private Map<String, String> getTokensByMailFromDatastore(AuthResult authResult) {
     HttpHeaders headers = new HttpHeaders();
     headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + authResult.getIdToken());
@@ -125,10 +146,14 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     JsonNode root = result.getBody();
     ArrayNode documents = (ArrayNode)root.get("documents");
     for (int i = 0; i < documents.size(); i++) {
-      JsonNode document = documents.get(i);
-      String email = document.get("fields").get("email").get("stringValue").textValue();
-      String message_token = document.get("fields").get("message_token").get("stringValue").textValue();
-      mailToToken.put(email, message_token);
+      try{
+        JsonNode document = documents.get(i);
+        String email = document.get("fields").get("email").get("stringValue").textValue();
+        String message_token = document.get("fields").get("message_token").get("stringValue").textValue();
+        mailToToken.put(email, message_token);
+      }catch (Exception e){
+        logger.error("Skipping Token Mapping! Can not read token mapping at index {} due to {}", i, e.getMessage(), e);
+      }
     }
 
     logger.info("Found {} Tokens in Database", mailToToken.size());
