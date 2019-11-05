@@ -24,24 +24,6 @@ import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
     MapboxGeocodingProperties.class})
 public class MapConfiguration {
 
-  @Bean("mapRestTemplate")
-  public RestTemplate mapRestTemplate(RestTemplateBuilder builder, Logbook logbook){
-
-    CloseableHttpClient client = HttpClientBuilder.create()
-        .addInterceptorFirst(new LogbookHttpRequestInterceptor(logbook))
-        .addInterceptorFirst(new LogbookHttpResponseInterceptor())
-        .build();
-
-    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-    requestFactory.setHttpClient(client);
-
-    RestTemplate restTemplate = builder
-        .requestFactory(() -> requestFactory)
-        .build();
-
-    return restTemplate;
-  }
-
   @Bean
   public GeocodingService geocodingService(CachingRestService restService,
       MapboxGeocodingProperties geocodingProperties){

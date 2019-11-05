@@ -22,7 +22,7 @@ public class CachingRestService {
   private ConcurrentHashMap<String, String> cache;
   private ObjectMapper objectMapper;
 
-  public CachingRestService(@Qualifier("mapRestTemplate") RestTemplate restTemplate) {
+  public CachingRestService(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     this.cache = new ConcurrentHashMap<>();
     this.objectMapper = new ObjectMapper();

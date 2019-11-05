@@ -1,5 +1,5 @@
 filebeat:
-  prospectors:
+  inputs:
     - type: log
       paths:
         - /logs/**/*.log.json
@@ -8,3 +8,4 @@ filebeat:
         overwrite_keys: true # override the properties from the json path when they already exists
 output.logstash:
   hosts: ["graylog:5044"]
+logging.level: debug

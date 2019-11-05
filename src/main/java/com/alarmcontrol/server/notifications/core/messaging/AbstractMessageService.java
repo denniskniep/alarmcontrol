@@ -1,6 +1,8 @@
 package com.alarmcontrol.server.notifications.core.messaging;
 
 import com.alarmcontrol.server.notifications.core.config.Contact;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractMessageService<T extends Contact> {
 
@@ -14,11 +16,15 @@ public abstract class AbstractMessageService<T extends Contact> {
     return clazz.isInstance(contact);
   }
 
-  public void send(Contact contact, Message message){
-    if(isResponsible(contact)){
-      sendInternal((T)contact, message);
-    }
+  public void send(List<Contact> contacts, Message message){
+    List<T> casted = contacts
+        .stream()
+        .filter(c -> isResponsible(c))
+        .map(c -> (T)c)
+        .collect(Collectors.toList());
+
+    sendInternal(casted, message);
   }
 
-  protected abstract void sendInternal(T contact, Message message);
+  protected abstract void sendInternal(List<T> contacts, Message message);
 }

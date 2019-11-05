@@ -2,26 +2,61 @@ package com.alarmcontrol.server.notifications.messaging.firebasepush;
 
 import com.alarmcontrol.server.notifications.core.messaging.AbstractMessageService;
 import com.alarmcontrol.server.notifications.core.messaging.Message;
+import com.alarmcontrol.server.utils.DateToIsoFormatter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
-  @Value("${notifications.firebase.url:}")
-  private String url;
+  private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
-  @Value("${notifications.firebase.AuthorizationHeader:}")
-  private String authorizationHeader;
+  @Value("${notifications.firebase.push.url:}")
+  private String pushUrl;
+
+  @Value("${notifications.firebase.auth.url:}")
+  private String authUrl;
+
+  @Value("${notifications.firebase.database.url:}")
+  private String databaseUrl;
+
+  @Value("${notifications.firebase.push.authorizationHeader:}")
+  private String pushAuthorizationHeader;
+
+  @Value("${notifications.firebase.username:}")
+  private String username;
+
+  @Value("${notifications.firebase.password:}")
+  private String password;
+
+  @Value("${notifications.firebase.projectId:}")
+  private String projectId;
+
+  @Value("${notifications.firebase.publicApiKey:}")
+  private String publicApiKey;
 
   private RestTemplate restTemplate;
 
@@ -31,46 +66,126 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
   }
 
   @Override
-  protected void sendInternal(FirebaseMessageContact contact, Message message) {
-    Assert.notNull(contact, "contact is null");
+  protected void sendInternal(List<FirebaseMessageContact> contacts, Message message) {
+    Assert.notNull(contacts, "contacts is null");
     Assert.notNull(message, "message is null");
 
-    if(StringUtils.isBlank(url)){
+    if(StringUtils.isBlank(pushUrl)){
       throw new RuntimeException("Url is not set!");
     }
 
-    if(StringUtils.isBlank(authorizationHeader)){
+    if(StringUtils.isBlank(pushAuthorizationHeader)){
       throw new RuntimeException("AuthorizationHeader is not set!");
     }
 
-    if(StringUtils.isBlank(contact.getToken())){
-      throw new RuntimeException("Token is not set!");
-    }
+    AuthResult authResult = login();
+    Map<String, String> tokensByMail = getTokensByMail(authResult);
 
-    sendFirebaseMessage(contact.getToken(), message);
+    for (FirebaseMessageContact contact : contacts) {
+      sendFirebaseMessage(contact, message, tokensByMail);
+    }
   }
 
-  private void sendFirebaseMessage(String token, Message message) {
+  private AuthResult login() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+    Map<String, Object> bodyWithCredentials = new HashMap<>();
+    bodyWithCredentials.put("email",  username);
+    bodyWithCredentials.put("password", password);
+    bodyWithCredentials.put("returnSecureToken", true);
+
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(authUrl + "/accounts:signInWithPassword");
+    builder.queryParam("key",  publicApiKey);
+    URI uri = builder.build().encode().toUri();
+
+    HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(bodyWithCredentials, headers);
+
+    ResponseEntity<AuthResult> result = restTemplate.exchange(uri, HttpMethod.POST, dataEntity, AuthResult.class);
+    return result.getBody();
+  }
+
+  private Map<String, String> getTokensByMail(AuthResult authResult) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + authResult.getIdToken());
+
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(databaseUrl + "/projects/{projectId}/databases/{database}/documents/{collection}");
+    Map<String, Object> parameter = new HashMap<>();
+    parameter.put("projectId",  projectId);
+    parameter.put("database",  "(default)");
+    parameter.put("collection", "subscriptiontokens");
+    URI uri = builder.buildAndExpand(parameter).encode().toUri();
+
+    HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(new HashMap<>(), headers);
+
+    ResponseEntity<JsonNode> result = restTemplate.exchange(uri, HttpMethod.GET, dataEntity, JsonNode.class);
+    Map<String, String> mailToToken = new HashMap<>();
+
+    JsonNode root = result.getBody();
+    ArrayNode documents = (ArrayNode)root.get("documents");
+    for (int i = 0; i < documents.size(); i++) {
+      JsonNode document = documents.get(i);
+      String email = document.get("fields").get("email").get("stringValue").textValue();
+      String message_token = document.get("fields").get("message_token").get("stringValue").textValue();
+      mailToToken.put(email, message_token);
+    }
+
+    logger.info("Found {} Tokens in Database", mailToToken.size());
+    return mailToToken;
+  }
+
+  private void sendFirebaseMessage(FirebaseMessageContact contact, Message message, Map<String, String> tokensByMail) {
+    try{
+      if(StringUtils.isBlank(contact.getToken())){
+        throw new RuntimeException("Token is not set!");
+      }
+      logger.info("Start sending message '{}' via {} to Mail {}",
+          message.getSubject(),
+          message.getClass().getSimpleName(),
+          contact.getToken());
+
+      String token = tokensByMail.get(contact.getToken());
+      logger.info("Found Token {} for mail {}",
+          token,
+          contact.getToken());
+
+      sendFirebaseMessageToToken(token, "notification", message);
+      Thread.sleep(1000);
+      sendFirebaseMessageToToken(token, "data", message);
+
+      logger.info("Following message sent to Mail {} ({}) \n: {}",
+          contact.getToken(),
+          token,
+          message);
+
+    }catch (Exception e){
+      logger.error("Can not send message to {} \ndue to: {}\n {}", contact, e.getMessage(), message, e);
+    }
+  }
+
+  private void sendFirebaseMessageToToken(String token, String messageKind, Message message) {
     final HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.set(HttpHeaders.AUTHORIZATION, "key=" + authorizationHeader);
+    headers.set(HttpHeaders.AUTHORIZATION, "key=" + pushAuthorizationHeader);
 
-    Map<String, Object> notificationMessage = createMessageWrapper(token);
-    notificationMessage.put("notification", createMessage(message));
-    final HttpEntity<Map<String,Object>> notificationEntity = new HttpEntity<>(notificationMessage, headers);
-    restTemplate.exchange(url, HttpMethod.POST, notificationEntity, String.class);
-
-    Map<String, Object> dataMessage = createMessageWrapper(token);
-    dataMessage.put("data", createMessage(message));
-    final HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(dataMessage, headers);
-    restTemplate.exchange(url, HttpMethod.POST, dataEntity, String.class);
+    Map<String, Object> messageWrapper = createMessageWrapper(token);
+    messageWrapper.put(messageKind, createMessage(message));
+    final HttpEntity<Map<String,Object>> notificationEntity = new HttpEntity<>(messageWrapper, headers);
+    restTemplate.exchange(pushUrl, HttpMethod.POST, notificationEntity, String.class);
   }
 
   private Map<String, Object> createMessage(Message message) {
     Map<String, Object> dataMessage = new HashMap<>();
     dataMessage.put("title", message.getSubject());
     dataMessage.put("body", message.getBody());
+    dataMessage.put("type", message.getSeverity());
+    dataMessage.put("sentAt", asIso(new Date()));
     return dataMessage;
+  }
+
+  private String asIso(Date date) {
+    return DateToIsoFormatter.asIso(date);
   }
 
   private Map<String, Object> createMessageWrapper(String token) {
@@ -83,5 +198,18 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     dataMessage.put("android", android);
 
     return dataMessage;
+  }
+
+  private static class AuthResult{
+
+    private String idToken;
+
+    public String getIdToken() {
+      return idToken;
+    }
+
+    public void setIdToken(String idToken) {
+      this.idToken = idToken;
+    }
   }
 }
