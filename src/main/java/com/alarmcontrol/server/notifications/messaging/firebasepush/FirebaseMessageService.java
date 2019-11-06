@@ -97,7 +97,8 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
 
     if(tokensByMailCache == null || lastCacheFetch == null || cacheTimedOut){
       AuthResult authResult = login();
-      tokensByMailCache = getTokensByMailFromDatastore(authResult);
+      Map<String, String> refreshedTokensByMail = getTokensByMailFromDatastore(authResult);
+      tokensByMailCache = refreshedTokensByMail;
       lastCacheFetch = new Date();
       logger.info("Updated TokensByMail Cache. Now it contains {} entries", tokensByMailCache.size());
     }else{
@@ -121,8 +122,13 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     URI uri = builder.build().encode().toUri();
 
     HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(bodyWithCredentials, headers);
+    ResponseEntity<AuthResult> result;
+    try{
+      result = restTemplate.exchange(uri, HttpMethod.POST, dataEntity, AuthResult.class);
+    }catch (Exception e){
+      throw new RuntimeException(e);
+    }
 
-    ResponseEntity<AuthResult> result = restTemplate.exchange(uri, HttpMethod.POST, dataEntity, AuthResult.class);
     return result.getBody();
   }
 
@@ -139,8 +145,13 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     URI uri = builder.buildAndExpand(parameter).encode().toUri();
 
     HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(new HashMap<>(), headers);
+    ResponseEntity<JsonNode> result;
+    try{
+      result = restTemplate.exchange(uri, HttpMethod.GET, dataEntity, JsonNode.class);
+    }catch (Exception e){
+      throw new RuntimeException(e);
+    }
 
-    ResponseEntity<JsonNode> result = restTemplate.exchange(uri, HttpMethod.GET, dataEntity, JsonNode.class);
     Map<String, String> mailToToken = new HashMap<>();
 
     JsonNode root = result.getBody();
@@ -175,8 +186,8 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
           token,
           contact.getToken());
 
-      sendFirebaseMessageToToken(token, "notification", message);
-      Thread.sleep(1000);
+      /*sendFirebaseMessageToToken(token, "notification", message);
+      Thread.sleep(1000);*/
       sendFirebaseMessageToToken(token, "data", message);
 
       logger.info("Following message sent to Mail {} ({}) \n: {}",
@@ -195,7 +206,8 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     headers.set(HttpHeaders.AUTHORIZATION, "key=" + pushAuthorizationHeader);
 
     Map<String, Object> messageWrapper = createMessageWrapper(token);
-    messageWrapper.put(messageKind, createMessage(message));
+    messageWrapper.put("data", createMessage(message));
+    //messageWrapper.put("notification", createMessage(message));
     final HttpEntity<Map<String,Object>> notificationEntity = new HttpEntity<>(messageWrapper, headers);
     restTemplate.exchange(pushUrl, HttpMethod.POST, notificationEntity, String.class);
   }

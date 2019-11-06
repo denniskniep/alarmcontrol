@@ -110,7 +110,7 @@ public class AlertCreatedNotificationBuilder extends
         organisation.getName() + "\n" +
         alert.getReferenceId();
 
-    return new Message(Severity.INFO, subject, body);
+    return new Message(Severity.ALERT, subject, body);
   }
 
   private void alertStatusUpdate(Organisation organisation, Alert alert,
