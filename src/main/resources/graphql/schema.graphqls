@@ -14,8 +14,6 @@ type Mutation {
   editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
   deleteOrganisation(id: ID!) : ID
 
-  newAao(organisationId: ID!, aaoRules: String!) : Boolean
-
   newSkill(organisationId: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
   editSkill(id: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
   deleteSkill(id: ID!): ID

@@ -190,7 +190,8 @@ class AaoEditMutation extends Component {
                                                                                        organisationId: this.props.organisationId,
                                                                                        keywords: hessischeAaoKeywordlist.map(entry => ({ uniqueId: entry.id, keyword: entry.keyword}))
                                                                                    }
-                                                                               })
+                                                                               });
+                                                                               console.log(newRow);
                                                                                addAaoConfig({
                                                                                    variables: {
                                                                                        organisationId: this.props.organisationId,

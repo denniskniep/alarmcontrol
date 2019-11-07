@@ -1,9 +1,8 @@
 package com.alarmcontrol.server.data.graphql;
 
-import com.alarmcontrol.server.aaos.Aao;
+import com.alarmcontrol.server.aao.config.Aao;
 import com.alarmcontrol.server.notifications.messaging.mail.MailContact;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedNotificationConfig;
-import com.alarmcontrol.server.rules.BetweenTimeRangeRule;
 import com.coxautodev.graphql.tools.SchemaParserDictionary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

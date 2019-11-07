@@ -2,14 +2,13 @@ package com.alarmcontrol.server.data;
 
 import com.alarmcontrol.server.data.models.OrganisationConfiguration;
 import com.alarmcontrol.server.data.repositories.OrganisationConfigurationRepository;
-import com.alarmcontrol.server.notifications.core.config.AaoOrganisationConfiguration;
+import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.notifications.core.config.NotificationOrganisationConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -20,14 +20,12 @@ import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
 import com.alarmcontrol.server.notifications.core.NotificationService;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
-import com.alarmcontrol.server.rules.AlertContext;
-import com.alarmcontrol.server.rules.MatchResult;
-import com.alarmcontrol.server.rules.RuleService;
+import com.alarmcontrol.server.aao.ruleengine.AlertContext;
+import com.alarmcontrol.server.aao.ruleengine.MatchResult;
+import com.alarmcontrol.server.aao.AaoRuleService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import com.alarmcontrol.server.notifications.core.NotificationService;
-import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,7 +43,7 @@ public class AlertService {
 
   private Logger logger = LoggerFactory.getLogger(AlertService.class);
 
-  private RuleService ruleService;
+  private AaoRuleService ruleService;
   private AlertRepository alertRepository;
   private GeocodingService geocodingService;
   private RoutingService routingService;
@@ -57,7 +55,7 @@ public class AlertService {
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
   private NotificationService notificationService;
 
-  public AlertService(RuleService ruleService,
+  public AlertService(AaoRuleService ruleService,
       AlertRepository alertRepository,
       GeocodingService geocodingService,
       RoutingService routingService,
