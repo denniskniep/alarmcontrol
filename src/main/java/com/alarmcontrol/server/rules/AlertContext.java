@@ -11,7 +11,6 @@ public class AlertContext {
 
 
     public AlertContext(String keyword, LocalTime localTime, Long organisationId, String geocodedAlertLocation, String organisationLocation) {
-
         this.keyword = keyword;
         this.localTime = localTime;
         this.organisationId = organisationId;

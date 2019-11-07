@@ -37,17 +37,9 @@ public class RuleService {
     //TODO Support special cases like "my home town" or "other towns"
     //ToDO Refactor make it nice
     public MatchResult evaluateAao(AlertContext alertContext) {
-        AaoOrganisationConfiguration aaoConfig = organisationConfigurationService.loadAaoConfig(alertContext.getOrganisationId());
-        var aaoRules = aaoConfig.getAaoRules();
-        MatchResult globalMatchResult = new MatchResult(new ArrayList<>());
-
-        for(var aaoRule : aaoRules) {
-            var keywordAndLocationRule = new KeywordAndLocationMatchRule(aaoRule, aaoConfig);
-            var matchResult = keywordAndLocationRule.match(alertContext);
-            globalMatchResult.addDistinct(matchResult);
-        }
-
-        return globalMatchResult;
+      AaoOrganisationConfiguration aaoConfig = organisationConfigurationService.loadAaoConfig(alertContext.getOrganisationId());
+      RuleEvaluator ruleEvaluator = new RuleEvaluator(aaoConfig);
+      return ruleEvaluator.match(alertContext);
     }
 
     public void saveAaoRules(Long organisationId,String json){

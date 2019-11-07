@@ -11,6 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface Rule {
-    boolean match(AlertContext alertContext);
+  boolean match(AlertContext alertContext);
 }
 

@@ -1,10 +1,9 @@
 package com.alarmcontrol.server.rules;
 
 import com.alarmcontrol.server.aaos.Aao;
-import com.alarmcontrol.server.aaos.CatalogKeywordInput;
 import com.alarmcontrol.server.aaos.Location;
-import com.alarmcontrol.server.aaos.Vehicle;
 import com.alarmcontrol.server.notifications.core.config.AaoOrganisationConfiguration;
+import java.lang.reflect.Array;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,32 +45,64 @@ public class KeywordAndLocationMatchRule implements AaoRule {
 
     @NotNull
     private boolean anyKeywordMatches(AlertContext alertContext) {
-        var entry =  aaoConfig.getKeywords().stream()
-                .filter(k -> StringUtils.equals(alertContext.getKeyword(), k.getKeyword()))
-                .findFirst();
+        if(aao.getKeywords().size() == 0){
+          return true;
+        }
 
-        return aao.getKeywords().contains(entry.get().getUniqueId());
+        return aaoConfig.getKeywords().stream()
+                .filter(k -> isSameKeyword(alertContext.getKeyword(), k.getKeyword()))
+                .anyMatch(k -> aao.getKeywords().contains(k.getUniqueId()));
     }
 
-    @NotNull
-    private boolean anyLocationMatches(AlertContext alertContext) {
-        var locations = aaoConfig.getLocations();
-        var ownLocation = createOrganisationLocation(alertContext.getOrganisationLocation());
-        locations.add(ownLocation);
-        var alertLocation = alertContext.getGeocodedAlertLocation();
+  private boolean isSameKeyword(String keywordA, String keywordB) {
+    String keywordATrimmed = StringUtils.replace(keywordA, " ", "");
+    String keywordBTrimmed = StringUtils.replace(keywordB, " ", "");
+    return StringUtils.equalsIgnoreCase(keywordATrimmed, keywordBTrimmed);
+  }
 
-        if ((aao.getLocations().contains(OtherOrganisationsUniqueKey) && !StringUtils.equals(alertLocation, ownLocation.getName())) ||
-            (aao.getLocations().contains(OwnOrganisationUniqueKey) && StringUtils.equals(alertLocation, ownLocation.getName()))) {
+  @NotNull
+    private boolean anyLocationMatches(AlertContext alertContext) {
+        var ownLocation = createOrganisationLocation(alertContext.getOrganisationLocation());
+
+        // If the address can not be geocoded we assume that it is an alarm in the organisations location
+        var alertLocation = StringUtils.isBlank(alertContext.getGeocodedAlertLocation()) ?
+            alertContext.getOrganisationLocation() : alertContext.getGeocodedAlertLocation();
+
+        if (isNoLocationSpecifiedInAao(aao.getLocations()) ||
+            isAlertAtOtherLocationThanOrganisationAndInAao(alertLocation, ownLocation) ||
+            isAlertAtOrganisationLocationAndInAao(alertLocation, ownLocation)) {
             return true;
         }
 
-        return locations.stream()
-                    .filter(location -> aao.getLocations().contains(location.getUniqueId()) && StringUtils.equals(alertLocation, location.getName()))
-                    .collect(Collectors.toList()).size() > 0;
+        return isAlertAtAnySpecifiedLocationInAao(alertLocation);
     }
 
+  private boolean isNoLocationSpecifiedInAao(List<String> locations) {
+    return locations.size() == 0;
+  }
 
-    private Location createOrganisationLocation(String organisationLocation) {
+  private boolean isAlertAtAnySpecifiedLocationInAao(String alertLocation) {
+    return aaoConfig.getLocations().stream()
+                .filter(location -> aao.getLocations().contains(location.getUniqueId()) && StringUtils
+                    .equalsIgnoreCase(alertLocation, location.getName()))
+                .collect(Collectors.toList()).size() > 0;
+  }
+
+  private boolean isAlertAtOrganisationLocationAndInAao(String alertLocation, Location ownLocation){
+      return aao.getLocations().contains(OwnOrganisationUniqueKey) &&
+          ownLocation != null &&
+          StringUtils.isNotBlank(ownLocation.getName()) &&
+          StringUtils.equals(alertLocation, ownLocation.getName());
+    }
+
+    private boolean isAlertAtOtherLocationThanOrganisationAndInAao(String alertLocation, Location ownLocation){
+      return aao.getLocations().contains(OtherOrganisationsUniqueKey) &&
+          ownLocation != null &&
+          StringUtils.isNotBlank(ownLocation.getName()) &&
+          !StringUtils.equals(alertLocation, ownLocation.getName());
+    }
+
+  private Location createOrganisationLocation(String organisationLocation) {
         var location = new Location();
         location.setUniqueId(OwnOrganisationUniqueKey);
         location.setName(organisationLocation);
