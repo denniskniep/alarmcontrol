@@ -7,7 +7,7 @@ public class AaoOrganisationConfiguration {
 
   public static final String KEY = "AAO";
 
-  private List<Aao> aaoRules;
+  private List<AaoRule> aaoRules;
   private List<Vehicle> vehicles;
   private List<Location> locations;
   private List<Keyword> keywords;
@@ -19,7 +19,7 @@ public class AaoOrganisationConfiguration {
     keywords = new ArrayList<>();
   }
 
-  public List<Aao> getAaoRules() {
+  public List<AaoRule> getAaoRules() {
     return aaoRules;
   }
 
@@ -31,7 +31,7 @@ public class AaoOrganisationConfiguration {
     this.vehicles = vehicles;
   }
 
-  public void setAaoRules(List<Aao> aaoRules) {
+  public void setAaoRules(List<AaoRule> aaoRules) {
     this.aaoRules = aaoRules;
   }
 

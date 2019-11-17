@@ -6,7 +6,7 @@ import com.alarmcontrol.server.aao.ruleengine.ReferenceContext;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
-public class KeywordRule implements AaoRule {
+public class KeywordRule implements Rule {
 
   private List<Keyword> keywords;
 

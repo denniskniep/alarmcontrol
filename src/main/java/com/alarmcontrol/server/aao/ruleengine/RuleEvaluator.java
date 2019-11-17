@@ -1,13 +1,13 @@
 package com.alarmcontrol.server.aao.ruleengine;
 
-import com.alarmcontrol.server.aao.config.Aao;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
 import com.alarmcontrol.server.aao.config.Vehicle;
-import com.alarmcontrol.server.aao.ruleengine.rules.AaoRule;
 import com.alarmcontrol.server.aao.ruleengine.rules.KeywordRule;
 import com.alarmcontrol.server.aao.ruleengine.rules.LocationRule;
+import com.alarmcontrol.server.aao.ruleengine.rules.Rule;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class RuleEvaluator {
       // Zu den Spezialfahrzeugen addieren
       var aaoRuleConfigs = aaoConfig.getAaoRules();
       for(var aaoRuleConfig : aaoRuleConfigs) {
-        List<AaoRule> rules = createRules(aaoRuleConfig);
+        List<Rule> rules = createRules(aaoRuleConfig);
         if(rules.stream().allMatch(r -> r.match(referenceContext, alertContext))){
           List<Vehicle> vehicles = resolveVehicleIds(aaoRuleConfig.getVehicles());
           List<String> vehicleNames = vehicles
@@ -66,8 +66,8 @@ public class RuleEvaluator {
     return resolvedVehicles;
   }
 
-  private List<AaoRule> createRules(Aao aao){
-    List<AaoRule> rules = new ArrayList<>();
+  private List<Rule> createRules(AaoRule aao){
+    List<Rule> rules = new ArrayList<>();
 
     if(aao.getKeywords() != null) {
       rules.add(new KeywordRule(resolveKeywordIds(aao.getKeywords())));

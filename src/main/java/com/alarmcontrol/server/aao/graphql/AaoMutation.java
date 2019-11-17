@@ -1,6 +1,6 @@
 package com.alarmcontrol.server.aao.graphql;
 
-import com.alarmcontrol.server.aao.config.Aao;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.AaoConfigurationService;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import org.jetbrains.annotations.NotNull;
@@ -19,14 +19,14 @@ public class AaoMutation implements GraphQLMutationResolver {
     this.aaoConfigurationService = aaoConfigurationService;
   }
 
-  public Aao addAao(Long organisationId, List<String> keywords, List<String> locations, List<String> vehicles) {
-    Aao aao = createAao(UUID.randomUUID().toString(), keywords, locations, vehicles);
+  public AaoRule addAao(Long organisationId, List<String> keywords, List<String> locations, List<String> vehicles) {
+    AaoRule aao = createAao(UUID.randomUUID().toString(), keywords, locations, vehicles);
     return aaoConfigurationService.addAao(organisationId, aao);
   }
 
-  public Aao editAao(Long organisationId, String uniqueAaoId, List<String> keywords, List<String> locations,
+  public AaoRule editAao(Long organisationId, String uniqueAaoId, List<String> keywords, List<String> locations,
       List<String> vehicles) {
-    Aao aao = createAao(uniqueAaoId, keywords, locations, vehicles);
+    AaoRule aao = createAao(uniqueAaoId, keywords, locations, vehicles);
     return aaoConfigurationService.editAao(organisationId, aao);
   }
 
@@ -35,8 +35,8 @@ public class AaoMutation implements GraphQLMutationResolver {
   }
 
   @NotNull
-  private Aao createAao(String uniqueAaoId, List<String> keywords, List<String> locations, List<String> vehicles) {
-    Aao aao = new Aao();
+  private AaoRule createAao(String uniqueAaoId, List<String> keywords, List<String> locations, List<String> vehicles) {
+    AaoRule aao = new AaoRule();
     aao.setUniqueId(uniqueAaoId);
     aao.setKeywords(new ArrayList<>(keywords));
     aao.setVehicles(new ArrayList<>(vehicles));

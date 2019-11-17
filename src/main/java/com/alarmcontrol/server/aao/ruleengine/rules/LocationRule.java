@@ -6,7 +6,7 @@ import com.alarmcontrol.server.aao.ruleengine.ReferenceContext;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
-public class LocationRule implements AaoRule {
+public class LocationRule implements Rule {
 
   public static final String OwnOrganisationUniqueKey = "286c1e42-14bb-4620-afcb-eeb9869877a0";
   public static final String OtherOrganisationsUniqueKey = "0522cb63-9553-4429-8ac8-614923d590b6";

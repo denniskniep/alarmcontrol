@@ -1,6 +1,6 @@
 package com.alarmcontrol.server.aao.ruleengine;
 
-import com.alarmcontrol.server.aao.config.Aao;
+import com.alarmcontrol.server.aao.config.AaoRule;
 
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
@@ -32,8 +32,8 @@ public class FluentAaoRuleBuilder {
         return this;
     }
 
-    public Aao build() {
-        Aao aao = new Aao();
+    public AaoRule build() {
+        AaoRule aao = new AaoRule();
         aao.setLocations(_locations);
         aao.setKeywords(_keywords);
         aao.setVehicles(_vehicles);

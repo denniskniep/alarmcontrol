@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DateTimeRule implements AaoRule {
+public class DateTimeRule implements Rule {
 
   private Logger LOG = LoggerFactory.getLogger(DateTimeRule.class);
   private List<Config> configs;

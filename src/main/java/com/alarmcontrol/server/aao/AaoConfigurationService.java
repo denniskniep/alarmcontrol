@@ -1,6 +1,6 @@
 package com.alarmcontrol.server.aao;
 
-import com.alarmcontrol.server.aao.config.Aao;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
@@ -26,9 +26,9 @@ public class AaoConfigurationService {
     }
 
 
-    public Aao addAao(Long organisationId, Aao aao){
+    public AaoRule addAao(Long organisationId, AaoRule aao){
         AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
-        List<Aao> aaoRules = config.getAaoRules();
+        List<AaoRule> aaoRules = config.getAaoRules();
         aaoRules.add(aao);
         config.setAaoRules(aaoRules);
 
@@ -37,11 +37,11 @@ public class AaoConfigurationService {
         return aao;
     }
 
-    public Aao editAao(Long organisationId, Aao aao){
+    public AaoRule editAao(Long organisationId, AaoRule aao){
         AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
 
-        List<Aao> aaoRules = config.getAaoRules();
-        Optional<Aao> aaoToEdit = aaoRules
+        List<AaoRule> aaoRules = config.getAaoRules();
+        Optional<AaoRule> aaoToEdit = aaoRules
                 .stream()
                 .filter(c -> StringUtils.equals(c.getUniqueId(), aao.getUniqueId())).findFirst();
 
@@ -131,8 +131,8 @@ public class AaoConfigurationService {
     public String deleteAao(Long organisationId, String uniqueAaoId) {
         AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
 
-        List<Aao> aaoRules = config.getAaoRules();
-        Optional<Aao> aaoToDelete = aaoRules
+        List<AaoRule> aaoRules = config.getAaoRules();
+        Optional<AaoRule> aaoToDelete = aaoRules
                 .stream()
                 .filter(c -> StringUtils.equals(c.getUniqueId(), uniqueAaoId)).findFirst();
 

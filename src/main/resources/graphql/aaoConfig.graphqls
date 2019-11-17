@@ -1,0 +1,36 @@
+type AaoRule {
+ uniqueId: String
+ vehicles: [String]
+ locations: [String]
+ keywords: [String]
+}
+
+type Vehicle {
+ uniqueId: String
+ name: String
+}
+
+type Location {
+ uniqueId: String
+ name: String
+}
+
+input CatalogKeywordInput {
+ uniqueId: String
+ keyword: String
+}
+
+type CatalogKeyword {
+ uniqueId: String
+ keyword: String
+}
+
+type AaoOrganisationConfiguration {
+ aaoRules: [AaoRule]
+ vehicles: [Vehicle]
+ locations: [Location]
+ keywords: [CatalogKeyword]
+}
+
+
+

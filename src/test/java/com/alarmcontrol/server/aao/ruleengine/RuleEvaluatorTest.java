@@ -14,7 +14,7 @@ import static com.alarmcontrol.server.aao.ruleengine.Constants.RW;
 import static com.alarmcontrol.server.aao.ruleengine.Constants.TLF16;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.alarmcontrol.server.aao.config.Aao;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
@@ -546,7 +546,7 @@ public class RuleEvaluatorTest {
 
 
   private MatchResult matchRules(AaoOrganisationConfiguration aaoConfig,
-      List<Aao> aaoRules,
+      List<AaoRule> aaoRules,
       ReferenceContext referenceContext,
       AlertContext alertContext) {
     aaoConfig.setAaoRules(aaoRules);

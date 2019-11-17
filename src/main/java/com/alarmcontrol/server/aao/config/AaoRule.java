@@ -2,7 +2,7 @@ package com.alarmcontrol.server.aao.config;
 
 import java.util.ArrayList;
 
-public class Aao {
+public class AaoRule {
 
     private String uniqueId;
     private ArrayList<String> vehicles;

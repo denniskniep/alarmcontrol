@@ -102,7 +102,7 @@ class OrganisationView extends Component {
 
       <Row className={"row-mid"}>
         <Col md="10">
-          <Button variant="primary" href={"./"+ this.props.match.params.id +"/aaos"} >
+          <Button variant="primary" href={"./"+ this.props.match.params.id +"/aao"} >
             View
           </Button>
         </Col>

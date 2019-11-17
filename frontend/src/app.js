@@ -21,8 +21,7 @@ import configuration from "./config/configuration";
 import CurrentOrganisationContainer from "./currentOrganisationContainer";
 import AlertsByOrganisationView from "./manage/alertsByOrganisationView";
 import NotificationsByOrganisationView from "./manage/notifications/notificationsByOrganisationView";
-import AaosByOrganisationView from "./manage/aaos/aaosByOrganisationView";
-import AaoView from "./manage/aaoView";
+import AaoByOrganisationView from "./manage/aao/aaoByOrganisationView";
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -78,7 +77,7 @@ function App() {
           <Route exact path="/app/manage/organisation/:id" component={OrganisationView} />
           <Route exact path="/app/manage/organisation/:id/alerts" component={AlertsByOrganisationView} />
           <Route exact path="/app/manage/organisation/:id/notifications" component={NotificationsByOrganisationView} />
-          <Route exact path="/app/manage/organisation/:id/aaos" component={AaosByOrganisationView} />
+          <Route exact path="/app/manage/organisation/:id/aao" component={AaoByOrganisationView} />
           <Route exact path="/app/manage/alerts" component={AlertsByOrganisationView} />
         </CurrentOrganisationContainer>
       </Router>
