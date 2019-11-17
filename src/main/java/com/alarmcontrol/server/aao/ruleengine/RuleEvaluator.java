@@ -13,8 +13,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuleEvaluator {
+
+  private Logger logger = LoggerFactory.getLogger(RuleEvaluator.class);
+
   private AaoOrganisationConfiguration aaoConfig;
 
   public RuleEvaluator(AaoOrganisationConfiguration aaoConfig) {
@@ -36,7 +41,8 @@ public class RuleEvaluator {
               .stream()
               .map(v -> v.getName())
               .collect(Collectors.toList());
-          return new MatchResult(vehicleNames);
+          logger.info("Following AAO Rules matches {}", aaoRuleConfig);
+          return new MatchResult(aaoRuleConfig.getUniqueId(), vehicleNames);
         }
       }
 

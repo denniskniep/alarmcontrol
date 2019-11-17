@@ -5,13 +5,14 @@ import java.util.List;
 
 public class MatchResult {
     private List<String> matchResults;
+    private String matchedRuleUid;
 
-    public MatchResult(List<String> matchResults) {
+    public MatchResult(String matchedRuleUid, List<String> matchResults) {
         this.matchResults = matchResults;
     }
 
     public MatchResult() {
-        this(new ArrayList<>());
+        this(null, new ArrayList<>());
     }
 
     public List<String> getResults() {
@@ -27,6 +28,6 @@ public class MatchResult {
     }
 
     public boolean hasMatches() {
-        return !matchResults.isEmpty();
+        return matchedRuleUid != null;
     }
 }
