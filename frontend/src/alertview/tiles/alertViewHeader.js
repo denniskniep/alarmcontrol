@@ -33,12 +33,12 @@ class AlertViewHeader extends Component {
   }
 
   prettifyDate(alert) {
-    return prettifyDateTimeLong(alert.dateTime);
+    return prettifyDateTimeLong(alert.utcDateTime);
   }
 
   prettifyDuration(alert, currentUTC) {
     let duration = moment.duration(
-        currentUTC.diff(moment.utc(this.props.alert.dateTime))).locale('de');
+        currentUTC.diff(moment.utc(this.props.alert.utcDateTime))).locale('de');
 
     if (duration.asHours() < 72) {
 
@@ -50,7 +50,7 @@ class AlertViewHeader extends Component {
           '0')}:${seconds.padStart(2, '0')}`;
     }
 
-    return prettifyDateLong(alert.dateTime);
+    return prettifyDateLong(alert.utcDateTime);
   }
 
   printAddress1Header(alert){

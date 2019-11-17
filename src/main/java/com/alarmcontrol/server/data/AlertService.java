@@ -1,5 +1,8 @@
 package com.alarmcontrol.server.data;
 
+import com.alarmcontrol.server.aao.AaoRuleService;
+import com.alarmcontrol.server.aao.ruleengine.AlertContext;
+import com.alarmcontrol.server.aao.ruleengine.MatchResult;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
@@ -20,12 +23,6 @@ import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
 import com.alarmcontrol.server.notifications.core.NotificationService;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
-import com.alarmcontrol.server.aao.ruleengine.AlertContext;
-import com.alarmcontrol.server.aao.ruleengine.MatchResult;
-import com.alarmcontrol.server.aao.AaoRuleService;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -66,7 +63,7 @@ public class AlertService {
       AlertCallRepository alertCallRepository,
       AlertCallEmployeeRepository alertCallEmployeeRepository,
       NotificationService notificationService) {
-      this.ruleService = ruleService;
+    this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
@@ -85,28 +82,29 @@ public class AlertService {
       String alertReferenceId,
       String alertCallReferenceId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description,
       String raw) {
 
-    if(StringUtils.isBlank(alertReferenceId)){
+    if (StringUtils.isBlank(alertReferenceId)) {
       throw new IllegalArgumentException("alertReferenceId can not be blank");
     }
 
-    if(StringUtils.isBlank(alertCallReferenceId)){
+    if (StringUtils.isBlank(alertCallReferenceId)) {
       throw new IllegalArgumentException("alertCallReferenceId can not be blank");
     }
 
-    if (dateTime == null) {
-      dateTime = new Date();
+    if (utcDateTime == null) {
+      // TODO: Ensure UTC date --> Check all dates for UTC handling and client must convert utc to localtime!
+      utcDateTime = new Date();
     }
 
     AlertCallCreated createdAlertCall = createWithinTransaction(organisationId, alertNumber, alertReferenceId,
-        alertCallReferenceId, keyword, dateTime, address,
+        alertCallReferenceId, keyword, utcDateTime, address,
         description, raw);
 
-    if(createdAlertCall == null){
+    if (createdAlertCall == null) {
       return null;
     }
 
@@ -128,7 +126,7 @@ public class AlertService {
       String referenceId,
       String referenceCallId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description,
       String raw) {
@@ -136,7 +134,8 @@ public class AlertService {
     Optional<AlertNumber> foundAlertNumber = alertNumberRepository
         .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
     if (foundAlertNumber.isEmpty()) {
-      logger.info("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+      logger.info(
+          "No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
       return null;
     }
 
@@ -147,20 +146,20 @@ public class AlertService {
     boolean alertCreated = false;
 
     if (foundAlert.isEmpty()) {
-      alert = createAlert(organisationId, referenceId, keyword, dateTime, address, description);
+      alert = createAlert(organisationId, referenceId, keyword, utcDateTime, address, description);
       alertCreated = true;
     } else {
       alert = foundAlert.get();
     }
 
-    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, dateTime, raw);
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, utcDateTime, raw);
     return new AlertCallCreated(alertCall, alert, alertCreated);
   }
 
   private Alert createAlert(Long organisationId,
       String referenceId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description) {
 
@@ -190,7 +189,7 @@ public class AlertService {
           routeJson = route.getJson();
           routeDistance = route.getDistance();
           routeDuration = route.getDuration();
-        }else {
+        } else {
           logger.warn("Skipping routing due to lat or lng of organisation is blank!");
         }
 
@@ -200,20 +199,19 @@ public class AlertService {
     } else {
       logger.warn("Skipping geocoding and routing due to address is blank!");
     }
+
     MatchResult aaoMatchResult = new MatchResult();
     try {
-        var localTime = toLocalTime(dateTime);
-        var organisation =  organisationRepository.findById(organisationId).get();
-        aaoMatchResult = ruleService.evaluateAao(new AlertContext(keyword,localTime, organisationId, addressInfo2, organisation.getLocation()));
-    } catch(Exception e){
-        logger.error("Error during aao evaluation", e);
+      aaoMatchResult = ruleService.evaluateAao(organisationId, new AlertContext(keyword, utcDateTime, addressInfo2));
+    } catch (Exception e) {
+      logger.error("Error during aao evaluation", e);
     }
 
     Alert alert = new Alert(organisationId,
         referenceId,
         true,
         keyword,
-        dateTime,
+        utcDateTime,
         description,
         address,
         addressInfo1,
@@ -227,11 +225,6 @@ public class AlertService {
         new StringList(aaoMatchResult.getResults()));
     alertRepository.save(alert);
     return alert;
-  }
-
-  private static LocalTime toLocalTime(Date date){
-    LocalTime time = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalTime();
-    return time;
   }
 
   private Coordinate getOrgCoordinate(Long organisationId) {
@@ -265,7 +258,7 @@ public class AlertService {
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public void delete(Long id){
+  public void delete(Long id) {
     Optional<Alert> foundAlert = alertRepository.findById(id);
     if (!foundAlert.isPresent()) {
       throw new IllegalArgumentException("No Alert found for id:" + id);
@@ -280,6 +273,7 @@ public class AlertService {
   }
 
   private static class AlertCallCreated {
+
     private AlertCall alertCall;
     private Alert alert;
     private boolean alertCreated;

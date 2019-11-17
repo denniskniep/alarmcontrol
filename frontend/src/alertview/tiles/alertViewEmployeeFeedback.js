@@ -29,7 +29,7 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
           lastname
           status {
             status
-            dateTime
+            utcDateTime
           }
           skills{
             id

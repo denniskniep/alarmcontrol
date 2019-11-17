@@ -6,12 +6,12 @@ import java.util.Date;
 public class EmployeeFeedback {
   private Long employeeId;
   private Feedback feedback;
-  Date dateTime;
+  Date utcDateTime;
 
-  public EmployeeFeedback(Long employeeId, Feedback feedback, Date dateTime) {
+  public EmployeeFeedback(Long employeeId, Feedback feedback, Date utcDateTime) {
     this.employeeId = employeeId;
     this.feedback = feedback;
-    this.dateTime = dateTime;
+    this.utcDateTime = utcDateTime;
   }
 
   public Long getEmployeeId() {
@@ -22,7 +22,7 @@ public class EmployeeFeedback {
     return feedback;
   }
 
-  public Date getDateTime() {
-    return dateTime;
+  public Date getUtcDateTime() {
+    return utcDateTime;
   }
 }

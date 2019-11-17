@@ -2,6 +2,9 @@ package com.alarmcontrol.server.aao.ruleengine;
 
 import com.alarmcontrol.server.aao.config.Aao;
 
+import com.alarmcontrol.server.aao.config.Keyword;
+import com.alarmcontrol.server.aao.config.Location;
+import com.alarmcontrol.server.aao.config.Vehicle;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -14,18 +17,18 @@ public class FluentAaoRuleBuilder {
         return new FluentAaoRuleBuilder();
     }
 
-    public FluentAaoRuleBuilder withKeywordId(String uniqueId) {
-        _keywords.add(uniqueId);
+    public FluentAaoRuleBuilder withKeyword(Keyword keyword) {
+        _keywords.add(keyword.getUniqueId());
         return this;
     }
 
-    public FluentAaoRuleBuilder withLocationId(String uniqueId) {
-        _locations.add(uniqueId);
+    public FluentAaoRuleBuilder withLocation(Location location) {
+        _locations.add(location.getUniqueId());
         return this;
     }
 
-    public FluentAaoRuleBuilder withVehicleId(String uniqueVehicleName) {
-        _vehicles.add(uniqueVehicleName);
+    public FluentAaoRuleBuilder withVehicle(Vehicle vehicle) {
+        _vehicles.add(vehicle.getUniqueId());
         return this;
     }
 

@@ -22,7 +22,7 @@ public class AlertCallMutations implements GraphQLMutationResolver {
       String alertReferenceId,
       String alertCallReferenceId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description) {
 
@@ -48,7 +48,7 @@ public class AlertCallMutations implements GraphQLMutationResolver {
             alertReferenceId,
             alertCallReferenceId,
             keyword,
-            dateTime,
+            utcDateTime,
             address,
             description,
             null);

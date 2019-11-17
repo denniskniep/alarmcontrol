@@ -10,7 +10,7 @@ const ALERT_BY_ID = gql`
       id
       keyword
       description
-      dateTime
+      utcDateTime
       route
       distance
       duration
@@ -25,7 +25,7 @@ const ALERT_BY_ID = gql`
       addressLng,
       alertCalls{
         id
-        dateTime
+        utcDateTime
         alertNumber{
           id
           number

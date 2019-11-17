@@ -18,7 +18,7 @@ const ORGANISATIONS_BY_ID = gql`
         lastname
         status {
           status
-          dateTime
+          utcDateTime
         }
       }
     }

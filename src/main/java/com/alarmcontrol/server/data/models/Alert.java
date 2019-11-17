@@ -1,9 +1,5 @@
 package com.alarmcontrol.server.data.models;
 
-import javassist.compiler.ast.StringL;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -23,7 +19,8 @@ public class Alert {
   private String keyword;
 
   @Temporal(TemporalType.TIMESTAMP)
-  Date dateTime;
+  @Column(name="date_time")
+  private Date utcDateTime;
 
   private String description;
 
@@ -56,7 +53,7 @@ public class Alert {
                String referenceId,
                boolean active,
                String keyword,
-               Date dateTime,
+               Date utcDateTime,
                String description,
                String address,
                String addressInfo1,
@@ -71,7 +68,7 @@ public class Alert {
     this.referenceId = referenceId;
     this.active = active;
     this.keyword = keyword;
-    this.dateTime = dateTime;
+    this.utcDateTime = utcDateTime;
     this.description = description;
     this.address = address;
     this.addressInfo1 = addressInfo1;
@@ -105,8 +102,8 @@ public class Alert {
     return keyword;
   }
 
-  public Date getDateTime() {
-    return dateTime;
+  public Date getUtcDateTime() {
+    return utcDateTime;
   }
 
   public String getDescription() {

@@ -1,11 +1,12 @@
 package com.alarmcontrol.server.aao.ruleengine;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MatchResult {
-    private ArrayList<String> matchResults;
+    private List<String> matchResults;
 
-    public MatchResult(ArrayList<String> matchResults) {
+    public MatchResult(List<String> matchResults) {
         this.matchResults = matchResults;
     }
 
@@ -13,7 +14,7 @@ public class MatchResult {
         this(new ArrayList<>());
     }
 
-    public ArrayList<String> getResults() {
+    public List<String> getResults() {
         return matchResults;
     }
 

@@ -1,10 +1,5 @@
 package com.alarmcontrol.server.aao.config;
 
-import com.alarmcontrol.server.aao.config.Aao;
-import com.alarmcontrol.server.aao.graphql.CatalogKeywordInput;
-import com.alarmcontrol.server.aao.config.Location;
-import com.alarmcontrol.server.aao.config.Vehicle;
-
 import java.util.ArrayList;
 import java.util.List;
 

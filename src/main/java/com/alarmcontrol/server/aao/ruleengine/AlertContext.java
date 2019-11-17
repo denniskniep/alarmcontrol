@@ -1,38 +1,25 @@
 package com.alarmcontrol.server.aao.ruleengine;
 
-import java.time.LocalTime;
+import java.util.Date;
 
 public class AlertContext {
     private String keyword;
-    private LocalTime localTime;
-    private Long organisationId;
+    private Date utcDateTime;
     private String geocodedAlertLocation;
-    private String organisationLocation;
 
-
-    public AlertContext(String keyword, LocalTime localTime, Long organisationId, String geocodedAlertLocation, String organisationLocation) {
+    public AlertContext(String keyword, Date utcDateTime, String geocodedAlertLocation) {
         this.keyword = keyword;
-        this.localTime = localTime;
-        this.organisationId = organisationId;
+        this.utcDateTime = utcDateTime;
         this.geocodedAlertLocation = geocodedAlertLocation;
-        this.organisationLocation = organisationLocation;
     }
 
-    public LocalTime getLocalTime() {
-        return localTime;
+    public Date getUtcDateTime() {
+        return utcDateTime;
     }
 
     public String getKeyword() {
         return keyword;
     }
 
-    public Long getOrganisationId() {
-        return organisationId;
-    }
-
     public String getGeocodedAlertLocation() { return geocodedAlertLocation; }
-
-    public String getOrganisationLocation() {
-        return organisationLocation;
-    }
 }

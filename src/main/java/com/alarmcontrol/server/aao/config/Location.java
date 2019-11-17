@@ -4,7 +4,15 @@ public class Location {
     private String uniqueId;
     private String name;
 
-    public String getUniqueId() {
+  public Location() {
+  }
+
+  public Location(String uniqueId, String name) {
+    this.uniqueId = uniqueId;
+    this.name = name;
+  }
+
+  public String getUniqueId() {
         return uniqueId;
     }
 

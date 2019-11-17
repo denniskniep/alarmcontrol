@@ -1,8 +1,8 @@
 package com.alarmcontrol.server.aao.ruleengine.rules;
 
 import com.alarmcontrol.server.aao.ruleengine.AlertContext;
-import com.alarmcontrol.server.aao.ruleengine.MatchResult;
+import com.alarmcontrol.server.aao.ruleengine.ReferenceContext;
 
 public interface AaoRule {
-    MatchResult match(AlertContext alertContext);
+    boolean match(ReferenceContext referenceContext, AlertContext alertContext);
 }
