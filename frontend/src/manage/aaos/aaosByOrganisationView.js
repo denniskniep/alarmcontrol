@@ -121,7 +121,8 @@ class AaosByOrganisationView extends Component {
                             </Row>
                             <Row className={"row-header"}>
                                 <Col>
-                                    <h2>Aaos</h2>
+                                    <h2>Regeln für Alarm- und Ausrückordnung</h2>
+                                    <small className={"text-muted form-text"}>Die Regeln werden von oben nach unten abgearbeitet und verwenden das Ergebnis der ersten passenden Regel. Wird eine Zelle mit keinem Wert gefüllt, ist das Ergebnis für dieses Eigenschaft immer passend.</small>
 
                                     <AaoEditMutation
                                         onAaoRulesChanged={() => refetch()}
@@ -130,10 +131,17 @@ class AaosByOrganisationView extends Component {
                                         vehicles={vehicles}
                                         locations={locations}
                                         catalog={catalogs[0]}
-                                        /*contacts={mailContacts}*/
                                     />
 
                                 </Col>
+                            </Row>
+                            <Row className={"row-mid"}>
+                              <Col md="10">
+                              </Col>
+                            </Row>
+                            <Row className={"row-mid"}>
+                              <Col md="10">
+                              </Col>
                             </Row>
                         </Container>)
                 }}

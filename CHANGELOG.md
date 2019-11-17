@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to start preconfigured Logback
 - Send Notifications on Alert Received
 - Send Notifications via E-Mail
+- Configure and display AAO ("Alarm- und Ausrückordnung")
 
 ### Changed
+
 ### Fixed
+- Refresh menu with alerts on alert added notification
 
 ## [1.1.1] - 2019-08-09
 ### Fixed

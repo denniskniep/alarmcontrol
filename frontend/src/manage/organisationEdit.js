@@ -54,7 +54,7 @@ class OrganisationEdit extends Component {
                                 onChange={ e => this.setState({ location : e.target.value})}
                                 value={this.state.location}/>
                   <Form.Text className="text-muted">
-                    Ortsname der Organisation
+                    Ortsname der Organisation (Wird bei den AAO Regeln verwendet und muss dem geokodiertem Ort der Einsatzaddresse entsprechen)
                   </Form.Text>
                 </Form.Group>
 
