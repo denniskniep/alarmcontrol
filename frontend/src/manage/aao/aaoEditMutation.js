@@ -52,7 +52,9 @@ const hessischeAaoKeywordlist = [
 
 const ADD_AAO_CATALOG = gql`
 mutation addCatalog($organisationId: ID!, $keywords : [CatalogKeywordInput]!){
-  addCatalog(organisationId: $organisationId, keywords: $keywords)
+  addCatalog(organisationId: $organisationId, keywords: $keywords){
+    uniqueId
+  }
 }
 `;
 

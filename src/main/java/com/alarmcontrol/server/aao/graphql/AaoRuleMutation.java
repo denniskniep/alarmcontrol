@@ -1,14 +1,15 @@
 package com.alarmcontrol.server.aao.graphql;
 
-import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.AaoConfigurationService;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Component
 public class AaoRuleMutation implements GraphQLMutationResolver {

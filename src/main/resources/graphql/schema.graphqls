@@ -36,19 +36,6 @@ type Mutation {
 
   deleteAlert(id: ID!) : ID
 
-  addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!, timeRangeNames: [String]!) : AaoRule
-  editAao(organisationId: ID!, uniqueAaoId: String!, keywords : [String]!, locations: [String]!, vehicles: [String]!, timeRangeNames: [String]!) : AaoRule
-  deleteAao(organisationId: ID!, uniqueAaoId: String!) : String
-
-  addVehicle(organisationId: ID!, name: String!): Vehicle
-  deleteVehicle(organisationId: ID!, uniqueVehicleId: String!) : String
-  addLocation(organisationId: ID!, name: String!): Location
-  deleteLocation(organisationId: ID!, uniqueLocationId: String!) : String
-  addTimeRange(organisationId : ID!, name: String!, fromTimeHour : Int!, fromTimeMinute : Int!, toTimeHour : Int!, toTimeMinute : Int!, daysOfWeek : [DayOfWeek]!, feiertagBehaviour : FeiertagBehaviour!) : TimeRange
-  deleteTimeRange(organisationId : ID!, uniqueTimeRangeId: String!) : String
-
-  addCatalog(organisationId: ID!, keywords: [CatalogKeywordInput]!) : String
-
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
   deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
 

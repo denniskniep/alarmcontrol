@@ -101,4 +101,18 @@ public class TimeRange {
       FeiertagBehaviour feiertagBehaviour) {
     this.feiertagBehaviour = feiertagBehaviour;
   }
+
+  @Override
+  public String toString() {
+    return "TimeRange{" +
+        "uniqueId='" + uniqueId + '\'' +
+        ", name='" + name + '\'' +
+        ", fromTimeHour=" + fromTimeHour +
+        ", fromTimeMinute=" + fromTimeMinute +
+        ", toTimeHour=" + toTimeHour +
+        ", toTimeMinute=" + toTimeMinute +
+        ", daysOfWeek=" + daysOfWeek +
+        ", feiertagBehaviour=" + feiertagBehaviour +
+        '}';
+  }
 }

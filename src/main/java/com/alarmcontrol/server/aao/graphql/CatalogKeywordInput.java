@@ -19,5 +19,13 @@ public class CatalogKeywordInput {
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
+
+  @Override
+  public String toString() {
+    return "CatalogKeywordInput{" +
+        "uniqueId='" + uniqueId + '\'' +
+        ", keyword='" + keyword + '\'' +
+        '}';
+  }
 }
 

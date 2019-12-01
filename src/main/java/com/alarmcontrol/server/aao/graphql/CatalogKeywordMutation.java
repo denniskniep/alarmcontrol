@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.aao.graphql;
 
 import com.alarmcontrol.server.aao.AaoConfigurationService;
+import com.alarmcontrol.server.aao.config.Keyword;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,7 @@ public class CatalogKeywordMutation implements GraphQLMutationResolver {
         this.aaoConfigurationService = aaoConfigurationService;
     }
 
-    public String addCatalog(Long organisationId, List<CatalogKeywordInput> keywords) {
-        aaoConfigurationService.addOrReplaceCatalogKeywords(organisationId, keywords);
-        return "Dummy";
+    public List<Keyword> addCatalog(Long organisationId, List<CatalogKeywordInput> keywords) {
+      return aaoConfigurationService.addOrReplaceCatalogKeywords(organisationId, keywords);
     }
 }
