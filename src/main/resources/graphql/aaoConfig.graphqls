@@ -3,6 +3,7 @@ type AaoRule {
  vehicles: [String]
  locations: [String]
  keywords: [String]
+ timeRangeNames: [String]
 }
 
 type Vehicle {
@@ -13,6 +14,17 @@ type Vehicle {
 type Location {
  uniqueId: String
  name: String
+}
+
+type TimeRange {
+ uniqueId: String
+ name: String
+ fromTimeHour : Int
+ fromTimeMinute : Int
+ toTimeHour : Int
+ toTimeMinute : Int
+ daysOfWeek : [DayOfWeek]
+ feiertagBehaviour : FeiertagBehaviour
 }
 
 input CatalogKeywordInput {
@@ -30,7 +42,21 @@ type AaoOrganisationConfiguration {
  vehicles: [Vehicle]
  locations: [Location]
  keywords: [CatalogKeyword]
+ timeRanges : [TimeRange]
 }
 
+enum DayOfWeek {
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAY,
+  SUNDAY,
+}
 
-
+enum FeiertagBehaviour {
+  IGNORE,
+  MATCH,
+  NO_MATCH
+}

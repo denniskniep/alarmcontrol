@@ -65,16 +65,16 @@ mutation deleteAao($organisationId: ID!, $uniqueAaoId: String!){
 `;
 
 const ADD_AAO = gql`
-mutation addAao($organisationId: ID!, $keywords : [String]!, $locations: [String]!, $vehicles: [String]!){
-  addAao(organisationId: $organisationId, keywords: $keywords, locations: $locations, vehicles: $vehicles ) {   
+mutation addAao($organisationId: ID!, $keywords : [String]!, $locations: [String]!, $vehicles: [String]!, $timeRangeNames: [String]!){
+  addAao(organisationId: $organisationId, keywords: $keywords, locations: $locations, vehicles: $vehicles, timeRangeNames: $timeRangeNames ) {   
     uniqueId
   }
 }
 `;
 
 const EDIT_AAO = gql`
-mutation editAao($organisationId: ID!,$uniqueAaoId: String!, $keywords : [String]!, $locations: [String]!, $vehicles: [String]!){
-  editAao(organisationId: $organisationId, uniqueAaoId: $uniqueAaoId, keywords: $keywords, locations: $locations, vehicles: $vehicles ) {   
+mutation editAao($organisationId: ID!,$uniqueAaoId: String!, $keywords : [String]!, $locations: [String]!, $vehicles: [String]!, $timeRangeNames: [String]!){
+  editAao(organisationId: $organisationId, uniqueAaoId: $uniqueAaoId, keywords: $keywords, locations: $locations, vehicles: $vehicles, timeRangeNames: $timeRangeNames ) {   
     uniqueId
   }
 }
@@ -119,7 +119,7 @@ class AaoEditMutation extends Component {
                                           shortName: v.text
                                         }));
 
-                                    var aaoRules = this.props.aaoRules
+                                    let aaoRules = this.props.aaoRules
                                         ? this.props.aaoRules : [];
 
                                     let keywords = hessischeAaoKeywordlist.map(
@@ -155,7 +155,8 @@ class AaoEditMutation extends Component {
                                             l3.uniqueId)
                                       })).sort(
                                           (a, b) => (a.position < b.position)
-                                              ? -1 : 1)
+                                              ? -1 : 1),
+                                      timeRangeNames: []
                                     }));
                                     return (
                                         <EditableTable data={aaoRules}
@@ -215,7 +216,8 @@ class AaoEditMutation extends Component {
                                                              locations: newRow.locations.map(
                                                                  location => location.id),
                                                              vehicles: newRow.vehicles.map(
-                                                                 vehicle => vehicle.id)
+                                                                 vehicle => vehicle.id),
+                                                             timeRangeNames: []
                                                            }
                                                          })
 
@@ -235,7 +237,8 @@ class AaoEditMutation extends Component {
                                                              locations: newRow.locations.map(
                                                                  location => location.id),
                                                              vehicles: newRow.vehicles.map(
-                                                                 vehicle => vehicle.id)
+                                                                 vehicle => vehicle.id),
+                                                             timeRangeNames: []
                                                            }
                                                          })
                                                        }

@@ -10,12 +10,14 @@ public class AaoOrganisationConfiguration {
   private List<AaoRule> aaoRules;
   private List<Vehicle> vehicles;
   private List<Location> locations;
+  private List<TimeRange> timeRanges;
   private List<Keyword> keywords;
 
   public AaoOrganisationConfiguration() {
     aaoRules = new ArrayList<>();
     vehicles = new ArrayList<>();
     locations = new ArrayList<>();
+    timeRanges = new ArrayList<>();
     keywords = new ArrayList<>();
   }
 
@@ -49,5 +51,13 @@ public class AaoOrganisationConfiguration {
 
   public void setKeywords(List<Keyword> keywords) {
     this.keywords = keywords;
+  }
+
+  public List<TimeRange> getTimeRanges() {
+    return timeRanges;
+  }
+
+  public void setTimeRanges(List<TimeRange> timeRanges) {
+    this.timeRanges = timeRanges;
   }
 }

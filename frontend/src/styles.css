@@ -166,3 +166,22 @@ thead tr td{
 .badge-aao{
   background-color: #007bffc7;
 }
+
+.name-field-aao-time-rule{
+  width: 150px;
+}
+
+.time-field-aao{
+  width: 80px;
+}
+
+.feiertag-field-aao{
+  width: 150px;
+}
+
+.cell-valid{
+}
+
+.cell-invalid input {
+  border-color: #dc3545 !important;
+}

@@ -6,6 +6,7 @@ import AaoEditMutation from "./aaoEditMutation";
 import VehicleEditMutation from "./vehicleEditMutation";
 import LocationEditMutation from "./locationEditMutation";
 import EditableTable from "../../components/editableTable";
+import TimeRangeEditMutation from "./timeRangeEditMutation";
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {
@@ -25,8 +26,18 @@ query organisationById($id: ID!) {
         name
       }
       locations {
-       uniqueId
+        uniqueId
         name
+      }
+      timeRanges {
+         uniqueId
+         name
+         fromTimeHour
+         fromTimeMinute
+         toTimeHour
+         toTimeMinute
+         daysOfWeek
+         feiertagBehaviour
       }
     }
   }
@@ -62,19 +73,25 @@ class AaoByOrganisationView extends Component {
                 .aaoConfig
                 .locations
 
-            var specialLocations = [{
+            let specialLocations = [{
               uniqueId: '286c1e42-14bb-4620-afcb-eeb9869877a0',
               name: 'Meine Ortschaft (' + data.organisationById.location + ')',
               canDelete: false
             },
-              {
-                uniqueId: '0522cb63-9553-4429-8ac8-614923d590b6',
-                name: 'Andere Ortschaften',
-                canDelete: false
-              }];
+            {
+              uniqueId: '0522cb63-9553-4429-8ac8-614923d590b6',
+              name: 'Andere Ortschaften',
+              canDelete: false
+            }];
             let locations = specialLocations.concat(storedLocations)
 
             let catalogs = [{keywordcatalog: 'Hessische Einsatzstichworte für Brandeinsätze'}];
+
+            let timeRanges = data
+                .organisationById
+                .aaoConfig
+                .timeRanges;
+
 
             return (
                 <Container>
@@ -115,6 +132,17 @@ class AaoByOrganisationView extends Component {
                           onLocationsChanged={() => refetch()}
                           organisationId={this.props.match.params.id}
                           locations={locations}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className={"row-header"}>
+                    <Col>
+                      <h2>Zeiten</h2>
+
+                      <TimeRangeEditMutation
+                          onTimeRangeChanged={() => refetch()}
+                          organisationId={this.props.match.params.id}
+                          timeRanges={timeRanges}
                       />
                     </Col>
                   </Row>

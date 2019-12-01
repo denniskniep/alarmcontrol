@@ -88,7 +88,8 @@ class EditableTable extends Component {
                               React.createElement(
                                   chooseViewer(column.viewer, obj[column.key]),
                                   {
-                                    value: obj.hasOwnProperty(column.key) ? obj[column.key] : chooseDefaultValue(column.defaultValue)
+                                    value: obj.hasOwnProperty(column.key) ? obj[column.key] : chooseDefaultValue(column.defaultValue),
+                                    ...column.viewerProps
                                   })
                             }
                             </td>

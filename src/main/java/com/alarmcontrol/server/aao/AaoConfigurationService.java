@@ -4,11 +4,13 @@ import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
+import com.alarmcontrol.server.aao.config.TimeRange;
 import com.alarmcontrol.server.aao.config.Vehicle;
 import com.alarmcontrol.server.aao.graphql.CatalogKeywordInput;
 import com.alarmcontrol.server.data.OrganisationConfigurationService;
 import com.alarmcontrol.server.data.graphql.ClientValidationException;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -159,4 +161,41 @@ public class AaoConfigurationService {
 
         organisationConfigurationService.saveAaoConfig(organisationId, config);
     }
+
+  public TimeRange addTimeRange(Long organisationId, TimeRange timeRange) {
+    timeRange.validateFromTime();
+    timeRange.validateToTime();
+
+    AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
+
+    List<TimeRange> timeRanges = config.getTimeRanges();
+    timeRanges.add(timeRange);
+    config.setTimeRanges(timeRanges);
+
+    organisationConfigurationService.saveAaoConfig(organisationId, config);
+
+    return timeRange;
+  }
+
+  public String deleteTimeRange(Long organisationId, String uniqueId) {
+    AaoOrganisationConfiguration config = organisationConfigurationService.loadAaoConfig(organisationId);
+
+    // TODO Consider Relations to AAO Rule
+    List<TimeRange> timeRanges = config.getTimeRanges();
+
+    List<TimeRange> toDelete = timeRanges
+        .stream()
+        .filter(t -> StringUtils.equals(t.getUniqueId(), uniqueId))
+        .collect(Collectors.toList());
+
+    for (TimeRange timeRange : toDelete) {
+      timeRanges.remove(timeRange);
+    }
+
+    config.setTimeRanges(timeRanges);
+
+    organisationConfigurationService.saveAaoConfig(organisationId, config);
+
+    return uniqueId;
+  }
 }
