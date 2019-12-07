@@ -15,7 +15,7 @@ const ALERTS_BY_ORGANISATION = gql`
       items {
         id,
         keyword,
-        dateTime,
+        utcDateTime,
         addressInfo1
       }
     }
@@ -89,7 +89,7 @@ class Menu extends Component {
                             return (
                                 <React.Fragment>
                                   <AlertAddedSubscription
-                                      onSubscriptionData={refetch()}/>
+                                      onSubscriptionData={d => refetch()}/>
                                   <Navbar sticky="top" collapseOnSelect
                                           expand="lg"
                                           bg="dark"

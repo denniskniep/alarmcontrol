@@ -4,6 +4,7 @@ import {gql} from "apollo-boost";
 import QueryHandler from "../../utils/queryHandler";
 import MailContactsEditMutation from "./mailContactsEditMutation";
 import NotificationSubscriptionsEditMutation from "./notificationSubscriptionsEditMutation";
+import EditableTable from "../../components/editableTable";
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {

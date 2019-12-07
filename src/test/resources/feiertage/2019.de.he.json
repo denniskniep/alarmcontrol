@@ -1,0 +1,42 @@
+[
+  {
+    "date": "2019-01-01",
+    "description": "Neujahrstag"
+  },
+  {
+    "date": "2019-04-19",
+    "description": "Karfreitag"
+  },
+  {
+    "date": "2019-04-22",
+    "description": "Ostermontag"
+  },
+  {
+    "date": "2019-05-01",
+    "description": "Tag der Arbeit"
+  },
+  {
+    "date": "2019-05-30",
+    "description": "Christi Himmelfahrt"
+  },
+  {
+    "date": "2019-06-10",
+    "description": "Pfingstmontag"
+  },
+  {
+    "date": "2019-06-20",
+    "description": "Fronleichnam"
+  },
+  {
+    "date": "2019-10-03",
+    "description": "Tag der Deutschen Einheit"
+  },
+  {
+    "date": "2019-12-25",
+    "description": "1. Weihnachtstag"
+  },
+  {
+    "date": "2019-12-26",
+    "description": "2. Weihnachtstag"
+  }
+]

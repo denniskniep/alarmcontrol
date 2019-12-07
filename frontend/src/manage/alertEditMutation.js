@@ -14,7 +14,7 @@ const ALERTS_BY_ORGANISATION_ID = gql`
         id
         keyword
         addressInfo1
-        dateTime
+        utcDateTime
         organisation {
           id
           name

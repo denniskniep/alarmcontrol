@@ -28,19 +28,20 @@ public class AlertCall {
   private String raw;
 
   @Temporal(TemporalType.TIMESTAMP)
-  Date dateTime;
+  @Column(name="date_time")
+  Date utcDateTime;
 
   protected AlertCall() {
   }
 
   public AlertCall(Long alertId, Long organisationId, Long alertNumberId, String referenceId, String raw,
-      Date dateTime) {
+      Date utcDateTime) {
     this.alertId = alertId;
     this.organisationId = organisationId;
     this.alertNumberId = alertNumberId;
     this.referenceId = referenceId;
     this.raw = raw;
-    this.dateTime = dateTime;
+    this.utcDateTime = utcDateTime;
   }
 
   public Long getId() {
@@ -63,7 +64,7 @@ public class AlertCall {
     return raw;
   }
 
-  public Date getDateTime() {
-    return dateTime;
+  public Date getUtcDateTime() {
+    return utcDateTime;
   }
 }

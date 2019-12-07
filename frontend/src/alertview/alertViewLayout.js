@@ -4,6 +4,7 @@ import AlertViewEmployeeFeedback from "./tiles/alertViewEmployeeFeedback";
 import AlertViewHeader from "./tiles/alertViewHeader";
 import AlertViewMapRoute from "./tiles/alertViewMapRoute";
 import AlertViewMapTarget from "./tiles/alertViewMapTarget";
+import AaoAsList from "./tiles/aao/aaoAsList";
 
 class AlertViewLayout extends Component {
   render() {
@@ -19,6 +20,11 @@ class AlertViewLayout extends Component {
                 <Row>
                   <Col>
                     <AlertViewHeader alert={this.props.alert}/>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <AaoAsList alert={this.props.alert}/>
                   </Col>
                 </Row>
                 <Row className={"h-100"}>

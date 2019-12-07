@@ -68,8 +68,8 @@ public class GraphQLClient {
 
   public TestOrganisation createOrganisation(String name) {
     GraphQLResponse response = perform(""
-            + "mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!) {\n"
-            + "  newOrganisation(name: $name, addressLat: $addressLat, addressLng: $addressLng) {\n"
+            + "mutation newOrganisation($name: String!, $addressLat: String!, $addressLng: String!, $location: String!) {\n"
+            + "  newOrganisation(name: $name, addressLat: $addressLat, addressLng: $addressLng, location: $location) {\n"
             + "    id\n"
             + "  }\n"
             + "}",
@@ -77,6 +77,7 @@ public class GraphQLClient {
             .put("name", name)
             .put("addressLat", TestOrganisation.ORG_ADDRESS_LAT)
             .put("addressLng", TestOrganisation.ORG_ADDRESS_LNG)
+            .put("location", TestOrganisation.ORG_LOCATION)
     );
 
     Long orgId = Long.valueOf(response.get("$.data.newOrganisation.id"));

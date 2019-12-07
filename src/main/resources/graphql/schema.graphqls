@@ -10,8 +10,8 @@ type Query {
 }
 
 type Mutation {
-  newOrganisation(name: String!, addressLat: String!, addressLng: String!): Organisation
-  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!): Organisation
+  newOrganisation(name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
+  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
   deleteOrganisation(id: ID!) : ID
 
   newSkill(organisationId: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
@@ -29,10 +29,10 @@ type Mutation {
   addEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
   deleteEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
 
-  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, dateTime: DateTime, address: String, description: String): AlertCall
-  addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, dateTime: DateTime) : EmployeeFeedback
+  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, utcDateTime: DateTime, address: String, description: String): AlertCall
+  addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, utcDateTime: DateTime) : EmployeeFeedback
 
-  addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, dateTime: DateTime) : EmployeeStatus
+  addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, utcDateTime: DateTime) : EmployeeStatus
 
   deleteAlert(id: ID!) : ID
 
@@ -62,7 +62,7 @@ type Alert {
   referenceId: String
   keyword: String
   active: Boolean
-  dateTime: DateTime
+  utcDateTime: DateTime
   description: String
   addressRaw : String,
   addressInfo1 : String,
@@ -74,13 +74,14 @@ type Alert {
   duration: Int,
   employeeFeedback: [EmployeeFeedback]
   alertCalls: [AlertCall]
+  aao: [String]
 }
 
 type AlertCall {
   id: ID
   referenceId: String
   alertNumber: AlertNumber
-  dateTime: DateTime
+  utcDateTime: DateTime
   alert : Alert
 }
 
@@ -115,22 +116,24 @@ type Organisation {
   name: String
   addressLat: String
   addressLng: String
+  location: String
   employees: [Employee]
   skills: [Skill]
   alertNumbers: [AlertNumber]
   notificationConfig : NotificationOrganisationConfig
+  aaoConfig : AaoOrganisationConfiguration
 }
 
 type EmployeeFeedback {
   employee: Employee
   feedback: Feedback
-  dateTime: DateTime
+  utcDateTime: DateTime
 }
 
 type EmployeeStatus {
   employee: Employee
   status: Status
-  dateTime: DateTime
+  utcDateTime: DateTime
 }
 
 enum Feedback {

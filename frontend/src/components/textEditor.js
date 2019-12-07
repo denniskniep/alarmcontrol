@@ -7,6 +7,7 @@ class TextEditor extends Component {
     return (
         <Form.Control
             type="text"
+            className={this.props.className}
             value={this.props.value}
             onChange={e => this.props.onChange && e.target && this.props.onChange(e.target.value)}/>)
   }

@@ -21,7 +21,8 @@ public class EmployeeStatus {
   private int status;
 
   @Temporal(TemporalType.TIMESTAMP)
-  Date dateTime;
+  @Column(name="date_time")
+  private Date utcDateTime;
 
   @Column(columnDefinition="clob")
   private String raw;
@@ -29,9 +30,9 @@ public class EmployeeStatus {
   protected EmployeeStatus() {
   }
 
-  public EmployeeStatus(Long employeeId, Status status, Date dateTime, String raw) {
+  public EmployeeStatus(Long employeeId, Status status, Date utcDateTime, String raw) {
     this.employeeId = employeeId;
-    this.dateTime = dateTime;
+    this.utcDateTime = utcDateTime;
     this.raw = raw;
     this.setStatus(status);
   }
@@ -44,8 +45,8 @@ public class EmployeeStatus {
     return employeeId;
   }
 
-  public Date getDateTime() {
-    return dateTime;
+  public Date getUtcDateTime() {
+    return utcDateTime;
   }
 
   public String getRaw() {
@@ -68,8 +69,8 @@ public class EmployeeStatus {
     this.status = status;
   }
 
-  public void setDateTime(Date dateTime) {
-    this.dateTime = dateTime;
+  public void setUtcDateTime(Date utcDateTime) {
+    this.utcDateTime = utcDateTime;
   }
 
   public void setRaw(String raw) {
