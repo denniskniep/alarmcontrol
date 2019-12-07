@@ -37,12 +37,26 @@ public class RuleEvaluator {
       for(var aaoRuleConfig : aaoConfig.getAaoRules()) {
         List<Rule> rules = createRules(aaoRuleConfig);
         if(rules.stream().allMatch(r -> r.match(referenceContext, alertContext))){
-          logger.info("Following AAO Rules matches {}", aaoRuleConfig);
+          logger.info("Following AAO Rule matches {}", aaoRuleConfig);
+          logger.info("Following AAO Rule matches (resolved)\n" +
+                "uniqueId={}\n" +
+                "keywords={}\n" +
+                "locations={}\n" +
+                "timeRangeNames={}\n" +
+                "vehicles={}",
+              aaoRuleConfig.getUniqueId(),
+              resolveKeywordIds(aaoRuleConfig.getKeywords()),
+              resolveLocationIds(aaoRuleConfig.getLocations()),
+              resolveTimeRanges(aaoRuleConfig.getTimeRangeNames()),
+              resolveVehicleIds(aaoRuleConfig.getVehicles())
+          );
+
           List<Vehicle> vehicles = resolveVehicleIds(aaoRuleConfig.getVehicles());
           List<String> vehicleNames = vehicles
               .stream()
               .map(v -> v.getName())
               .collect(Collectors.toList());
+
           return new MatchResult(aaoRuleConfig.getUniqueId(), vehicleNames);
         }
       }
@@ -52,6 +66,10 @@ public class RuleEvaluator {
     }
 
   private List<Vehicle> resolveVehicleIds(ArrayList<String> vehicleIds) {
+    if(vehicleIds == null){
+      return new ArrayList<>();
+    }
+
     List<Vehicle> resolvedVehicles = new ArrayList<>();
     for (String vehicleId : vehicleIds) {
       Optional<Vehicle> foundVehicle = aaoConfig
@@ -87,6 +105,10 @@ public class RuleEvaluator {
   }
 
   private List<TimeRange> resolveTimeRanges(ArrayList<String> timeRangeNames) {
+    if(timeRangeNames == null){
+      return new ArrayList<>();
+    }
+
     List<TimeRange> resolvedTimeRanges = new ArrayList<>();
     for (String timeRangeName : timeRangeNames) {
       List<TimeRange> timeRanges = aaoConfig
@@ -100,6 +122,10 @@ public class RuleEvaluator {
   }
 
   private List<Keyword> resolveKeywordIds(ArrayList<String> keywordIds) {
+    if(keywordIds == null){
+      return new ArrayList<>();
+    }
+
     List<Keyword> resolvedKeywords = new ArrayList<>();
     for (String keywordId : keywordIds) {
       Optional<Keyword> foundKeyword = aaoConfig
@@ -117,6 +143,10 @@ public class RuleEvaluator {
   }
 
   private List<Location> resolveLocationIds(ArrayList<String> locationIds) {
+    if(locationIds == null){
+      return new ArrayList<>();
+    }
+
     List<Location> referenceLocations = new ArrayList<>(aaoConfig.getLocations());
     Location ownLocation = new Location();
     ownLocation.setUniqueId(LocationRule.OwnOrganisationUniqueKey);

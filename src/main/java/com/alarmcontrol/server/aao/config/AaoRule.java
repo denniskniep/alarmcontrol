@@ -53,7 +53,7 @@ public class AaoRule {
   @Override
   public String toString() {
     return "AaoRule{" +
-        "uniqueId='" + uniqueId +
+        "uniqueId=" + uniqueId +
         ", keywords=" + keywords +
         ", locations=" + locations +
         ", timeRangeNames=" + timeRangeNames +

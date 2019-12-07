@@ -8,6 +8,7 @@ public class MatchResult {
     private String matchedRuleUid;
 
     public MatchResult(String matchedRuleUid, List<String> matchResults) {
+        this.matchedRuleUid = matchedRuleUid;
         this.matchResults = matchResults;
     }
 
