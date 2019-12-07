@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
+import de from 'moment/locale/de'
 import AlertViewBox from "../alertViewBox";
 import {
   prettifyDateLong,
@@ -55,7 +56,10 @@ class AlertViewHeader extends Component {
           '0')}:${seconds.padStart(2, '0')}`;
     }
 
-    return prettifyDateLong(alert.utcDateTime);
+    let durationNegative = moment.duration(
+        moment.utc(this.props.alert.utcDateTime).diff(currentUTC)).locale('de');
+
+    return durationNegative.humanize(true);// prettifyDateLong(alert.utcDateTime);
   }
 
   printAddress1Header(alert) {
