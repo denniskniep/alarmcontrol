@@ -2,7 +2,10 @@ import React, {Component} from 'react';
 import {Badge, Col, Container, Row} from "react-bootstrap";
 import moment from "moment";
 import AlertViewBox from "../alertViewBox";
-import {prettifyDateLong,prettifyDateTimeLong} from "../../utils/prettyPrinter";
+import {
+  prettifyDateLong,
+  prettifyDateTimeLong
+} from "../../utils/prettyPrinter";
 import PropTypes from "prop-types";
 
 class AlertViewHeader extends Component {
@@ -15,8 +18,10 @@ class AlertViewHeader extends Component {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.setState({currentUTC: moment.utc()}),
-        1000);
+    this.interval = setInterval(() =>
+        this.setState(() => {
+          return {currentUTC: moment.utc()};
+        }), 1000);
   }
 
   componentWillUnmount() {
@@ -24,7 +29,7 @@ class AlertViewHeader extends Component {
   }
 
   prettifyDistanceAndDuration(alert) {
-    if(alert.distance && alert.duration) {
+    if (alert.distance && alert.duration) {
       let distanceInKm = Number(alert.distance / 1000).toFixed(1);
       let durationInMin = Number(alert.duration / 1000 / 60).toFixed(0);
       return distanceInKm + " km (" + durationInMin + " min)"
@@ -40,7 +45,7 @@ class AlertViewHeader extends Component {
     let duration = moment.duration(
         currentUTC.diff(moment.utc(this.props.alert.utcDateTime))).locale('de');
 
-    if (duration.asHours() < 72) {
+    if (duration.asHours() < 24) {
 
       let hours = duration.hours() + "";
       let minutes = duration.minutes() + "";
@@ -53,15 +58,15 @@ class AlertViewHeader extends Component {
     return prettifyDateLong(alert.utcDateTime);
   }
 
-  printAddress1Header(alert){
-    if(alert.addressInfo1){
+  printAddress1Header(alert) {
+    if (alert.addressInfo1) {
       return (<h1>{alert.addressInfo1}</h1>);
     }
     return alert.addressRaw;
   }
 
-  printAddress2Header(alert){
-    if(alert.addressInfo2){
+  printAddress2Header(alert) {
+    if (alert.addressInfo2) {
       return alert.addressInfo2;
     }
     return "";
@@ -76,22 +81,27 @@ class AlertViewHeader extends Component {
                 <h1 data-testid="keyword">{this.props.alert.keyword}</h1>
               </Col>
               <Col xs={6}>
-                <span data-testid="address1Header">{this.printAddress1Header(this.props.alert)}</span>
+                <span data-testid="address1Header">{this.printAddress1Header(
+                    this.props.alert)}</span>
               </Col>
               <Col xs={3}>
-                <h1 data-testid="elapsedTime">{this.prettifyDuration(this.props.alert,
+                <h1 data-testid="elapsedTime">{this.prettifyDuration(
+                    this.props.alert,
                     this.state.currentUTC)}</h1>
               </Col>
             </Row>
             <Row className={"align-items-center"}>
               <Col xs={3}>
-                <span data-testid="description">{this.props.alert.description}</span>
+                <span
+                    data-testid="description">{this.props.alert.description}</span>
               </Col>
               <Col xs={6}>
-                <span data-testid="address2Header">{this.printAddress2Header(this.props.alert)}</span>
+                <span data-testid="address2Header">{this.printAddress2Header(
+                    this.props.alert)}</span>
               </Col>
               <Col xs={3}>
-                <span data-testid="date">{this.prettifyDate(this.props.alert)}</span>
+                <span data-testid="date">{this.prettifyDate(
+                    this.props.alert)}</span>
               </Col>
             </Row>
             <Row>

@@ -20,6 +20,7 @@ query organisationById($id: ID!) {
         vehicles
         keywords
         locations
+        timeRangeNames
       }
       vehicles {
         uniqueId
@@ -61,28 +62,31 @@ class AaoByOrganisationView extends Component {
             let aaoRules = data
                 .organisationById
                 .aaoConfig
-                .aaoRules
+                .aaoRules;
 
             let vehicles = data
                 .organisationById
                 .aaoConfig
-                .vehicles
+                .vehicles;
 
             let storedLocations = data
                 .organisationById
                 .aaoConfig
-                .locations
+                .locations;
 
             let specialLocations = [{
               uniqueId: '286c1e42-14bb-4620-afcb-eeb9869877a0',
               name: 'Meine Ortschaft (' + data.organisationById.location + ')',
+              shortName: 'Meine Ortschaft',
               canDelete: false
             },
             {
               uniqueId: '0522cb63-9553-4429-8ac8-614923d590b6',
-              name: 'Andere Ortschaften',
+              name: 'Andere Ortschaften (Alle außer ' + data.organisationById.location + ')',
+              shortName: 'Andere Ortschaften',
               canDelete: false
             }];
+
             let locations = specialLocations.concat(storedLocations)
 
             let catalogs = [{keywordcatalog: 'Hessische Einsatzstichworte für Brandeinsätze'}];
@@ -91,7 +95,6 @@ class AaoByOrganisationView extends Component {
                 .organisationById
                 .aaoConfig
                 .timeRanges;
-
 
             return (
                 <Container>
@@ -138,7 +141,10 @@ class AaoByOrganisationView extends Component {
                   <Row className={"row-header"}>
                     <Col>
                       <h2>Zeiten</h2>
-
+                      <small className={"text-muted form-text"}>Werden mehrere
+                        Einträge mit dem selben Namen erstellt sind diese
+                        ODER Verknüpft. Die angegebene Zeit bei "Von" ist inklusive.
+                        Die angegebene Zeit bei "Bis" ist exklusiv. </small>
                       <TimeRangeEditMutation
                           onTimeRangeChanged={() => refetch()}
                           organisationId={this.props.match.params.id}
@@ -161,6 +167,7 @@ class AaoByOrganisationView extends Component {
                           aaoRules={aaoRules}
                           vehicles={vehicles}
                           locations={locations}
+                          timeRanges={timeRanges}
                           catalog={catalogs[0]}
                       />
 

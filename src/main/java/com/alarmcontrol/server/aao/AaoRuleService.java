@@ -39,6 +39,13 @@ public class AaoRuleService {
 
     List<Feiertag> feiertage = feiertagService.getFeiertage();
     ReferenceContext referenceContext = new ReferenceContext(feiertage, organisation.getLocation());
+    //ToDo: Add Error if there is no FeiertagConfig for this year
+    //ToDo: Add Warn if there is no FeiertagConfig for next year
+
+    if(aaoConfig.getAaoRules().isEmpty()){
+      logger.info("There are no AAO Rules for organisationId {}", organisationId);
+      return new MatchResult();
+    }
 
     RuleEvaluator ruleEvaluator = new RuleEvaluator(aaoConfig);
     return ruleEvaluator.match(referenceContext, alertContext);

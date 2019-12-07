@@ -53,11 +53,11 @@ public class AaoRule {
   @Override
   public String toString() {
     return "AaoRule{" +
-        "uniqueId='" + uniqueId + '\'' +
-        ", vehicles=" + vehicles +
+        "uniqueId='" + uniqueId +
         ", keywords=" + keywords +
         ", locations=" + locations +
         ", timeRangeNames=" + timeRangeNames +
+        ", vehicles=" + vehicles +
         '}';
   }
 }

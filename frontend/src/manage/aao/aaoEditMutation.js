@@ -90,6 +90,10 @@ class AaoEditMutation extends Component {
     this.state = {};
   }
 
+  onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
   render() {
     return (<MutationHandler mutation={DELETE_AAO}
                              onCompleted={() => this.props.onAaoRulesChanged
@@ -112,54 +116,61 @@ class AaoEditMutation extends Component {
                                         v => ({
                                           id: v.uniqueId,
                                           text: v.name,
-                                          shortName: v.text
+                                          shortName: v.shortName ?
+                                              v.shortName : v.name
                                         }));
+
                                     let locationSuggestions = this.props.locations.map(
                                         v => ({
                                           id: v.uniqueId,
                                           text: v.name,
-                                          shortName: v.text
+                                          shortName: v.shortName ?
+                                              v.shortName : v.name
+                                        }));
+
+                                    let timeRangeSuggestions = this.props.timeRanges
+                                    .map(t => t.name)
+                                    .filter(this.onlyUnique)
+                                    .map(
+                                        v => ({
+                                          id: v,
+                                          text: v,
+                                          shortName: v
+                                        }));
+
+                                    let keywordSuggestions = hessischeAaoKeywordlist.map(
+                                        v => ({
+                                          id: v.id,
+                                          text: v.keyword,
+                                          shortName: v.keyword
                                         }));
 
                                     let aaoRules = this.props.aaoRules
                                         ? this.props.aaoRules : [];
 
-                                    let keywords = hessischeAaoKeywordlist.map(
-                                        entry => ({
-                                          id: entry.id,
-                                          text: entry.keyword,
-                                          shortName: entry.keyword
-                                        }));
                                     aaoRules = aaoRules
                                     .map(rule => ({
                                       uniqueId: rule.uniqueId,
-                                      locations: this.props.locations.filter(
-                                          l => rule.locations.includes(
-                                              l.uniqueId)).map(l3 => ({
-                                        id: l3.uniqueId,
-                                        text: l3.name,
-                                        shortName: l3.name
-                                      })),
-                                      keywords: keywords.filter(
-                                          l => rule.keywords.includes(
-                                              l.id)).map(l3 => ({
-                                        id: l3.id,
-                                        text: l3.text,
-                                        shortName: l3.shortName
-                                      })),
-                                      vehicles: this.props.vehicles.filter(
-                                          l => rule.vehicles.includes(
-                                              l.uniqueId)).map(l3 => ({
-                                        id: l3.uniqueId,
-                                        text: l3.name,
-                                        shortName: l3.name,
-                                        position: rule.vehicles.indexOf(
-                                            l3.uniqueId)
-                                      })).sort(
-                                          (a, b) => (a.position < b.position)
-                                              ? -1 : 1),
-                                      timeRangeNames: []
+
+                                      locations: locationSuggestions
+                                      .filter(l => rule.locations &&
+                                          rule.locations.includes(l.id)),
+
+                                      keywords: keywordSuggestions
+                                      .filter(k => rule.keywords &&
+                                          rule.keywords.includes(k.id)),
+
+                                      vehicles: vehicleSuggestions
+                                      .filter(v => rule.vehicles &&
+                                          rule.vehicles.includes(v.id))
+                                      .sort((a, b) =>
+                                          a.position < b.position ? -1 : 1),
+
+                                      timeRanges: timeRangeSuggestions
+                                      .filter(v => rule.timeRangeNames &&
+                                          rule.timeRangeNames.includes(v.id))
                                     }));
+
                                     return (
                                         <EditableTable data={aaoRules}
                                                        canView={false}
@@ -170,7 +181,7 @@ class AaoEditMutation extends Component {
                                                            viewer: TagViewer,
                                                            editor: TagEditor,
                                                            editorProps: {
-                                                             suggestions: keywords
+                                                             suggestions: keywordSuggestions
                                                            },
                                                            defaultValue: []
                                                          },
@@ -181,6 +192,16 @@ class AaoEditMutation extends Component {
                                                            editor: TagEditor,
                                                            editorProps: {
                                                              suggestions: locationSuggestions
+                                                           },
+                                                           defaultValue: []
+                                                         },
+                                                         {
+                                                           key: "timeRanges",
+                                                           name: "Zeit",
+                                                           viewer: TagViewer,
+                                                           editor: TagEditor,
+                                                           editorProps: {
+                                                             suggestions: timeRangeSuggestions
                                                            },
                                                            defaultValue: []
                                                          },
@@ -209,7 +230,7 @@ class AaoEditMutation extends Component {
                                                                  }))
                                                            }
                                                          });
-                                                         console.log(newRow);
+
                                                          addAaoConfig({
                                                            variables: {
                                                              organisationId: this.props.organisationId,
@@ -219,10 +240,10 @@ class AaoEditMutation extends Component {
                                                                  location => location.id),
                                                              vehicles: newRow.vehicles.map(
                                                                  vehicle => vehicle.id),
-                                                             timeRangeNames: []
+                                                             timeRangeNames: newRow.timeRanges.map(
+                                                                 timeRange => timeRange.id)
                                                            }
                                                          })
-
                                                        }}
 
                                                        onRowEdited={(oldRow,
@@ -230,6 +251,7 @@ class AaoEditMutation extends Component {
                                                          console.log(
                                                              'onrowedited',
                                                              oldRow);
+
                                                          editAaoConfig({
                                                            variables: {
                                                              organisationId: this.props.organisationId,
@@ -240,7 +262,8 @@ class AaoEditMutation extends Component {
                                                                  location => location.id),
                                                              vehicles: newRow.vehicles.map(
                                                                  vehicle => vehicle.id),
-                                                             timeRangeNames: []
+                                                             timeRangeNames: newRow.timeRanges.map(
+                                                                 timeRange => timeRange.id)
                                                            }
                                                          })
                                                        }

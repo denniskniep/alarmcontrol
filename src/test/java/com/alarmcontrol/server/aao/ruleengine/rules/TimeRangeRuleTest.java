@@ -2,9 +2,9 @@ package com.alarmcontrol.server.aao.ruleengine.rules;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.alarmcontrol.server.aao.config.TimeRange;
 import com.alarmcontrol.server.aao.ruleengine.Feiertag;
-import com.alarmcontrol.server.aao.ruleengine.rules.DateTimeRule.Config;
-import com.alarmcontrol.server.aao.ruleengine.rules.DateTimeRule.FeiertagBehaviour;
+import com.alarmcontrol.server.aao.config.FeiertagBehaviour;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class DateTimeRuleTest {
+public class TimeRangeRuleTest {
 
   private static Stream<Arguments> mondayAndWednesdayAfternoonProvider() {
     return Stream.of(
@@ -55,13 +55,13 @@ public class DateTimeRuleTest {
   @ParameterizedTest(name = "{index} => date={0}, expected={1}")
   @MethodSource("mondayAndWednesdayAfternoonProvider")
   void mondayAndWednesdayAfternoon(LocalDateTime dateTime, boolean expected){
-    Config configA = new Config(
+    TimeRange configA = new TimeRange(
         13, 30,
         16, 30,
         Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
         FeiertagBehaviour.IGNORE);
 
-    List<Config> configs = Arrays.asList(configA);
+    List<TimeRange> configs = Arrays.asList(configA);
 
     boolean match = match(configs, dateTime);
 
@@ -116,7 +116,7 @@ public class DateTimeRuleTest {
   @ParameterizedTest(name = "{index} => date={0}, expected={1}")
   @MethodSource("weekDayProvider")
   void weekDay(LocalDateTime dateTime, boolean expected){
-    Config configDay = new Config(
+    TimeRange configDay = new TimeRange(
         05, 00,
         18, 00,
         Arrays.asList(
@@ -128,7 +128,7 @@ public class DateTimeRuleTest {
         ),
         FeiertagBehaviour.NO_MATCH);
 
-    List<Config> configs = Arrays.asList(configDay);
+    List<TimeRange> configs = Arrays.asList(configDay);
 
     boolean match = match(configs, dateTime);
 
@@ -179,7 +179,7 @@ public class DateTimeRuleTest {
   @MethodSource("weekNightProvider")
   void weekNight(LocalDateTime dateTime, boolean expected){
 
-    Config configNightA = new Config(
+    TimeRange configNightA = new TimeRange(
         00, 00,
         05, 00,
         Arrays.asList(
@@ -191,7 +191,7 @@ public class DateTimeRuleTest {
         ),
         FeiertagBehaviour.NO_MATCH);
 
-    Config configNightB = new Config(
+    TimeRange configNightB = new TimeRange(
         18, 00,
         24, 00,
         Arrays.asList(
@@ -203,7 +203,7 @@ public class DateTimeRuleTest {
         ),
         FeiertagBehaviour.NO_MATCH);
 
-    List<Config> configs = Arrays.asList(configNightA, configNightB);
+    List<TimeRange> configs = Arrays.asList(configNightA, configNightB);
 
     boolean match = match(configs, dateTime);
 
@@ -249,7 +249,7 @@ public class DateTimeRuleTest {
   @MethodSource("weekendProvider")
   void weekend(LocalDateTime dateTime, boolean expected){
 
-    Config configWE = new Config(
+    TimeRange configWE = new TimeRange(
         00, 00,
         24, 00,
         Arrays.asList(
@@ -258,7 +258,7 @@ public class DateTimeRuleTest {
         ),
         FeiertagBehaviour.MATCH);
 
-    List<Config> configs = Arrays.asList(configWE);
+    List<TimeRange> configs = Arrays.asList(configWE);
 
     boolean match = match(configs, dateTime);
 
@@ -270,8 +270,8 @@ public class DateTimeRuleTest {
     return LocalDateTime.of(year, month, day, hour, minute, second);
   }
 
-  private boolean match(List<Config> configs, LocalDateTime dateTime) {
-    DateTimeRule dateTimeRule = new DateTimeRule(configs);
-    return dateTimeRule.match(dateTime, Arrays.asList(new Feiertag("2019-11-11")));
+  private boolean match(List<TimeRange> configs, LocalDateTime dateTime) {
+    TimeRangeRule timeRangeRule = new TimeRangeRule(configs);
+    return timeRangeRule.match(dateTime, Arrays.asList(new Feiertag("2019-11-11")));
   }
 }

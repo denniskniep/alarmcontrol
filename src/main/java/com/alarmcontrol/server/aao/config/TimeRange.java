@@ -2,6 +2,7 @@ package com.alarmcontrol.server.aao.config;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TimeRange {
   private String uniqueId;
@@ -15,6 +16,32 @@ public class TimeRange {
 
   private List<DayOfWeek> daysOfWeek;
   private FeiertagBehaviour feiertagBehaviour;
+
+  public TimeRange(){
+  }
+
+  public TimeRange(int fromTimeHour, int fromTimeMinute,
+      int toTimeHour, int toTimeMinute,
+      List<String> daysOfWeek, String feiertagBehaviour) {
+    this(fromTimeHour,
+        fromTimeMinute,
+        toTimeHour,
+        toTimeMinute,
+        daysOfWeek.stream().map(d -> DayOfWeek.valueOf(d)).collect(Collectors.toList()),
+        FeiertagBehaviour.valueOf(feiertagBehaviour));
+  }
+
+  public TimeRange(int fromTimeHour, int fromTimeMinute,
+      int toTimeHour, int toTimeMinute,
+      List<DayOfWeek> daysOfWeek,
+      FeiertagBehaviour feiertagBehaviour) {
+    this.fromTimeHour = fromTimeHour;
+    this.fromTimeMinute = fromTimeMinute;
+    this.toTimeHour = toTimeHour;
+    this.toTimeMinute = toTimeMinute;
+    this.daysOfWeek = daysOfWeek;
+    this.feiertagBehaviour = feiertagBehaviour;
+  }
 
   private void validateTime(int hour, int minute) {
     if (hour > 23) {

@@ -4,10 +4,12 @@ import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.aao.config.AaoOrganisationConfiguration;
 import com.alarmcontrol.server.aao.config.Keyword;
 import com.alarmcontrol.server.aao.config.Location;
+import com.alarmcontrol.server.aao.config.TimeRange;
 import com.alarmcontrol.server.aao.config.Vehicle;
 import com.alarmcontrol.server.aao.ruleengine.rules.KeywordRule;
 import com.alarmcontrol.server.aao.ruleengine.rules.LocationRule;
 import com.alarmcontrol.server.aao.ruleengine.rules.Rule;
+import com.alarmcontrol.server.aao.ruleengine.rules.TimeRangeRule;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,20 +34,20 @@ public class RuleEvaluator {
 
       //ToDo: Wurden nicht Spezialfahrzeug SUBs alarmiert?
       // Zu den Spezialfahrzeugen addieren
-      var aaoRuleConfigs = aaoConfig.getAaoRules();
-      for(var aaoRuleConfig : aaoRuleConfigs) {
+      for(var aaoRuleConfig : aaoConfig.getAaoRules()) {
         List<Rule> rules = createRules(aaoRuleConfig);
         if(rules.stream().allMatch(r -> r.match(referenceContext, alertContext))){
+          logger.info("Following AAO Rules matches {}", aaoRuleConfig);
           List<Vehicle> vehicles = resolveVehicleIds(aaoRuleConfig.getVehicles());
           List<String> vehicleNames = vehicles
               .stream()
               .map(v -> v.getName())
               .collect(Collectors.toList());
-          logger.info("Following AAO Rules matches {}", aaoRuleConfig);
           return new MatchResult(aaoRuleConfig.getUniqueId(), vehicleNames);
         }
       }
 
+      logger.info("No AAO Rule matches Alert");
       return new MatchResult();
     }
 
@@ -77,7 +79,24 @@ public class RuleEvaluator {
       rules.add(new LocationRule(resolveLocationIds(aao.getLocations())));
     }
 
+    if(aao.getTimeRangeNames() != null){
+      rules.add(new TimeRangeRule(resolveTimeRanges(aao.getTimeRangeNames())));
+    }
+
     return rules;
+  }
+
+  private List<TimeRange> resolveTimeRanges(ArrayList<String> timeRangeNames) {
+    List<TimeRange> resolvedTimeRanges = new ArrayList<>();
+    for (String timeRangeName : timeRangeNames) {
+      List<TimeRange> timeRanges = aaoConfig
+          .getTimeRanges()
+          .stream()
+          .filter(t -> StringUtils.equalsIgnoreCase(t.getName(), timeRangeName))
+          .collect(Collectors.toList());
+      resolvedTimeRanges.addAll(timeRanges);
+    }
+    return resolvedTimeRanges;
   }
 
   private List<Keyword> resolveKeywordIds(ArrayList<String> keywordIds) {
