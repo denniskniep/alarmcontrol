@@ -30,7 +30,7 @@ public class AlertQueries implements GraphQLQueryResolver {
 
   public PaginatedAlerts alertsByOrganisationId(Long organisationId, int page, int size) {
     Pageable sortedByDateDesc = PageRequest.of(page, size,
-        Sort.by("dateTime")
+        Sort.by("utcDateTime")
             .descending().and(
             Sort.by("id")
                 .descending()));

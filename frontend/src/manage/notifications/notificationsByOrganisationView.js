@@ -5,6 +5,7 @@ import QueryHandler from "../../utils/queryHandler";
 import MailContactsEditMutation from "./contacts/mailContactsEditMutation";
 import NotificationSubscriptionsEditMutation from "./notificationSubscriptionsEditMutation";
 import FirebaseMessageContactsEditMutation  from "./contacts/firebaseMessageContactsEditMutation";
+import EditableTable from "../../components/editableTable";
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {

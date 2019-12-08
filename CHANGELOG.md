@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - View and delete Alerts in ManageUi 
 - Write logfile as JSON
+- Log all HttpRequests (incoming/outgoing) with Logbook and MDC
 - Option to start preconfigured Logback
 - Send Notifications on Alert Received
 - Send Notifications via E-Mail
+- Configure and display AAO ("Alarm- und Ausrückordnung")
 - Send Notifications via Push Message (Firebase)
 - Severity for Notifications
 
@@ -20,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Gzipped Body of HTTP Messages are now logged uncompressed
+- Refresh menu with alerts on alert added notification
+- Two parallel incoming Alert Calls for single Alert ReferenceId
 
 ## [1.1.1] - 2019-08-09
 ### Fixed

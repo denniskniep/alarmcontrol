@@ -8,6 +8,8 @@ class EmployeesEdit extends Component {
 
   constructor(props) {
     super(props);
+    console.log('skills',this.props.skills);
+    console.log('employees',this.props.employees);
   }
 
   render() {

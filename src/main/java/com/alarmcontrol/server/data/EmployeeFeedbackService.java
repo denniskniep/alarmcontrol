@@ -20,9 +20,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class EmployeeFeedbackService {
 
   private AlertRepository alertRepository;
@@ -48,19 +48,19 @@ public class EmployeeFeedbackService {
       String alertCallReferenceId,
       String employeeReferenceId,
       Feedback feedback,
-      Date dateTime) {
-    return addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback, dateTime, null);
+      Date utcDateTime) {
+    return addEmployeeFeedback(organisationId, alertCallReferenceId, employeeReferenceId, feedback, utcDateTime, null);
   }
 
   public EmployeeFeedback addEmployeeFeedback(Long organisationId,
       String alertCallReferenceId,
       String employeeReferenceId,
       Feedback feedback,
-      Date dateTime,
+      Date utcDateTime,
       String raw){
 
-    if (dateTime == null) {
-      dateTime = new Date();
+    if (utcDateTime == null) {
+      utcDateTime = new Date();
     }
 
     Optional<AlertCall> foundAlertCall = alertCallRepository
@@ -80,7 +80,7 @@ public class EmployeeFeedbackService {
     }
 
     AlertCallEmployee alertCallEmployee = new AlertCallEmployee(foundEmployee.get().getId(),
-        foundAlertCall.get().getId(), feedback, "", dateTime);
+        foundAlertCall.get().getId(), feedback, "", utcDateTime);
 
     alertCallEmployeeRepository.save(alertCallEmployee);
 
@@ -90,7 +90,7 @@ public class EmployeeFeedbackService {
 
     return new EmployeeFeedback(alertCallEmployee.getEmployeeId(),
         alertCallEmployee.getFeedback(),
-        alertCallEmployee.getDateTime());
+        alertCallEmployee.getUtcDateTime());
   }
 
   /**
@@ -110,7 +110,7 @@ public class EmployeeFeedbackService {
 
     List<EmployeeFeedback> employeeFeedbacks = alertCallEmployeeRepository.findByAlertId(alertId)
         .stream()
-        .map(ace -> new EmployeeFeedback(ace.getEmployeeId(), ace.getFeedback(), ace.getDateTime()))
+        .map(ace -> new EmployeeFeedback(ace.getEmployeeId(), ace.getFeedback(), ace.getUtcDateTime()))
         .collect(Collectors.toList());
 
     List<EmployeeFeedback> latestEmployeeFeedback = getLatestEmployeeFeedback(employeeFeedbacks);
@@ -136,7 +136,7 @@ public class EmployeeFeedbackService {
   }
 
   private static Long getTimeStamp(EmployeeFeedback t) {
-    return t.getDateTime().getTime();
+    return t.getUtcDateTime().getTime();
   }
 
   private List<EmployeeFeedback> addNoResponseIfNoEmployeeFeedbackAlreadyExists(Long organisationId,

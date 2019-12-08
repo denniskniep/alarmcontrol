@@ -15,7 +15,7 @@ const ALERTS_BY_ORGANISATION = gql`
       items {
         id,
         keyword,
-        dateTime,
+        utcDateTime,
         addressInfo1
       }
     }

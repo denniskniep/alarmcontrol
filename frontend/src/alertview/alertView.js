@@ -1,4 +1,4 @@
-import {Subscription} from "react-apollo";
+import {Query, Subscription} from "react-apollo";
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
 import AlertViewLayout from "./alertViewLayout";
@@ -10,7 +10,7 @@ const ALERT_BY_ID = gql`
       id
       keyword
       description
-      dateTime
+      utcDateTime
       route
       distance
       duration
@@ -25,14 +25,15 @@ const ALERT_BY_ID = gql`
       addressLng,
       alertCalls{
         id
-        dateTime
+        utcDateTime
         alertNumber{
           id
           number
           description
           shortDescription
         }
-      }
+      },
+      aao
     }
   }
 `;

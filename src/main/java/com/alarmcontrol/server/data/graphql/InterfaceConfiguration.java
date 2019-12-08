@@ -1,6 +1,7 @@
 package com.alarmcontrol.server.data.graphql;
 
 import com.alarmcontrol.server.notifications.messaging.firebasepush.FirebaseMessageContact;
+import com.alarmcontrol.server.aao.config.AaoRule;
 import com.alarmcontrol.server.notifications.messaging.mail.MailContact;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedNotificationConfig;
 import com.coxautodev.graphql.tools.SchemaParserDictionary;
@@ -16,6 +17,7 @@ public class InterfaceConfiguration {
     dictionary.add(MailContact.class);
     dictionary.add(FirebaseMessageContact.class);
     dictionary.add(AlertCreatedNotificationConfig.class);
+    dictionary.add(AaoRule.class);
     return dictionary;
   }
 }

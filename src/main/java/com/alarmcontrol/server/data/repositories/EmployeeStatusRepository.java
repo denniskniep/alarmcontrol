@@ -5,5 +5,5 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 public interface EmployeeStatusRepository extends CrudRepository<EmployeeStatus, Long> {
-  List<EmployeeStatus> findByEmployeeIdOrderByDateTimeDesc(Long employeeId);
+  List<EmployeeStatus> findByEmployeeIdOrderByUtcDateTimeDesc(Long employeeId);
 }

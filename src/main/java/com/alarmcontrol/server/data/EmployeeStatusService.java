@@ -29,11 +29,11 @@ public class EmployeeStatusService {
   public EmployeeStatus addEmployeeStatus(Long organisationId,
       String employeeReferenceId,
       Status status,
-      Date dateTime,
+      Date utcDateTime,
       String raw) {
 
-    if (dateTime == null) {
-      dateTime = new Date();
+    if (utcDateTime == null) {
+      utcDateTime = new Date();
     }
 
     Optional<Employee> foundEmployee = employeeRepository
@@ -44,7 +44,7 @@ public class EmployeeStatusService {
           + " in organisationId '" + organisationId + "'");
     }
 
-    EmployeeStatus employeeStatus = new EmployeeStatus(foundEmployee.get().getId(), status, dateTime, "");
+    EmployeeStatus employeeStatus = new EmployeeStatus(foundEmployee.get().getId(), status, utcDateTime, "");
     employeeStatusRepository.save(employeeStatus);
     employeeStatusAddedPublisher.emitEmployeeStatusAdded(employeeStatus.getEmployeeId());
     return employeeStatus;
@@ -52,7 +52,7 @@ public class EmployeeStatusService {
 
   public EmployeeStatus getEmployeeStatus(Long employeeId){
     List<EmployeeStatus> allStatus = employeeStatusRepository
-        .findByEmployeeIdOrderByDateTimeDesc(employeeId);
+        .findByEmployeeIdOrderByUtcDateTimeDesc(employeeId);
 
     if(allStatus.size() == 0){
       return null;

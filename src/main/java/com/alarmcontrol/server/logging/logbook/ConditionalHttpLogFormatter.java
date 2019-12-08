@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.zalando.logbook.Correlation;
-import org.zalando.logbook.DefaultHttpLogFormatter;
 import org.zalando.logbook.HttpLogFormatter;
 import org.zalando.logbook.HttpRequest;
 import org.zalando.logbook.HttpResponse;
@@ -19,7 +18,7 @@ public class ConditionalHttpLogFormatter implements HttpLogFormatter {
   private HttpMessageAsString httpMessageAsString;
   private LogbookCustomProperties properties;
 
-  public ConditionalHttpLogFormatter(DefaultHttpLogFormatter logFormatter,
+  public ConditionalHttpLogFormatter(HttpLogFormatter logFormatter,
       LogbookCustomProperties properties) {
     this.httpMessageAsString = new DefaultHttpMessageAsString(logFormatter);
     this.properties = properties;
@@ -31,8 +30,17 @@ public class ConditionalHttpLogFormatter implements HttpLogFormatter {
     this.properties = properties;
   }
 
+  public ConditionalHttpLogFormatter(PreparedHttpLogFormatter preparedHttpLogFormatter,
+      HttpLogFormatter logFormatter,
+      LogbookCustomProperties properties) {
+    this.httpMessageAsString = new PreparedHttpMessageWithMessageFromHttpLogFormatterAsString(
+        preparedHttpLogFormatter,
+        new DefaultHttpMessageAsString(logFormatter));
+    this.properties = properties;
+  }
+
   @Override
-  public String format(Precorrelation<HttpRequest> precorrelation) throws IOException {    
+  public String format(Precorrelation<HttpRequest> precorrelation) throws IOException {
     LogbookFilterProperties filterProperties = properties.getFilterProperties(precorrelation.getRequest());
     if(!shouldContainBody(precorrelation.getRequest(), filterProperties.getIncludeRequestBody(), filterProperties.getExcludeRequestBody()) &&
         !StringUtils.isBlank(precorrelation.getRequest().getBodyAsString())){
@@ -93,6 +101,56 @@ public class ConditionalHttpLogFormatter implements HttpLogFormatter {
     @Override
     public String withoutBody(Correlation<HttpRequest, HttpResponse> response) throws IOException {
       Map<String, Object> prepared = preparedHttpLogFormatter.prepare(response);
+      if(prepared.containsKey("body")){
+        prepared.put("body", REMOVED_BODY);
+      }
+      return preparedHttpLogFormatter.format(prepared);
+    }
+  }
+
+  private class PreparedHttpMessageWithMessageFromHttpLogFormatterAsString implements HttpMessageAsString {
+    private PreparedHttpLogFormatter preparedHttpLogFormatter;
+    private DefaultHttpMessageAsString defaultHttpMessageAsString;
+
+    public PreparedHttpMessageWithMessageFromHttpLogFormatterAsString(
+        PreparedHttpLogFormatter preparedHttpLogFormatter,
+        DefaultHttpMessageAsString defaultHttpMessageAsString) {
+      this.preparedHttpLogFormatter = preparedHttpLogFormatter;
+      this.defaultHttpMessageAsString = defaultHttpMessageAsString;
+    }
+
+    @Override
+    public String withBody(Precorrelation<HttpRequest> request) throws IOException {
+      Map<String, Object> prepared = preparedHttpLogFormatter.prepare(request);
+      String httpMessage = defaultHttpMessageAsString.withBody(request);
+      prepared.put("message", httpMessage);
+      return preparedHttpLogFormatter.format(prepared);
+    }
+
+    @Override
+    public String withoutBody(Precorrelation<HttpRequest> request) throws IOException {
+      Map<String, Object> prepared = preparedHttpLogFormatter.prepare(request);
+      String httpMessage = defaultHttpMessageAsString.withoutBody(request);
+      prepared.put("message", httpMessage);
+      if(prepared.containsKey("body")){
+        prepared.put("body", REMOVED_BODY);
+      }
+      return preparedHttpLogFormatter.format(prepared);
+    }
+
+    @Override
+    public String withBody(Correlation<HttpRequest, HttpResponse> response) throws IOException {
+      Map<String, Object> prepared = preparedHttpLogFormatter.prepare(response);
+      String httpMessage = defaultHttpMessageAsString.withBody(response);
+      prepared.put("message", httpMessage);
+      return preparedHttpLogFormatter.format(prepared);
+    }
+
+    @Override
+    public String withoutBody(Correlation<HttpRequest, HttpResponse> response) throws IOException {
+      Map<String, Object> prepared = preparedHttpLogFormatter.prepare(response);
+      String httpMessage = defaultHttpMessageAsString.withoutBody(response);
+      prepared.put("message", httpMessage);
       if(prepared.containsKey("body")){
         prepared.put("body", REMOVED_BODY);
       }

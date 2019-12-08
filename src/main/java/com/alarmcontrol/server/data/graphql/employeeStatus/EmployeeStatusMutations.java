@@ -23,7 +23,7 @@ public class EmployeeStatusMutations implements GraphQLMutationResolver {
   public EmployeeStatus addEmployeeStatus(Long organisationId,
       String employeeReferenceId,
       Status status,
-      Date dateTime) {
-    return employeeStatusService.addEmployeeStatus(organisationId, employeeReferenceId, status, dateTime, "");
+      Date utcDateTime) {
+    return employeeStatusService.addEmployeeStatus(organisationId, employeeReferenceId, status, utcDateTime, "");
   }
 }

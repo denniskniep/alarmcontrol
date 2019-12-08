@@ -10,6 +10,7 @@ class OrganisationEdit extends Component {
       name: this.props.organisation.name,
       addressLat: this.props.organisation.addressLat,
       addressLng: this.props.organisation.addressLng,
+      location: this.props.organisation.location
     }
   }
 
@@ -46,6 +47,17 @@ class OrganisationEdit extends Component {
                     Längengrad der Koordinate von der Organisation
                   </Form.Text>
                 </Form.Group>
+
+                <Form.Group>
+                  <Form.Label>Ortschaft</Form.Label>
+                  <Form.Control type="text"
+                                onChange={ e => this.setState({ location : e.target.value})}
+                                value={this.state.location}/>
+                  <Form.Text className="text-muted">
+                    Ortsname der Organisation (Wird bei den AAO Regeln verwendet und muss dem geokodiertem Ort der Einsatzaddresse entsprechen)
+                  </Form.Text>
+                </Form.Group>
+
 
                 <Button variant="success" onClick={ e =>
                     this.props.onSave(this.state)} >

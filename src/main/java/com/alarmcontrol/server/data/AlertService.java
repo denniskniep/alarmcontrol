@@ -1,5 +1,8 @@
 package com.alarmcontrol.server.data;
 
+import com.alarmcontrol.server.aao.AaoRuleService;
+import com.alarmcontrol.server.aao.ruleengine.AlertContext;
+import com.alarmcontrol.server.aao.ruleengine.MatchResult;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
@@ -7,6 +10,7 @@ import com.alarmcontrol.server.data.models.AlertCall;
 import com.alarmcontrol.server.data.models.AlertCallEmployee;
 import com.alarmcontrol.server.data.models.AlertNumber;
 import com.alarmcontrol.server.data.models.Organisation;
+import com.alarmcontrol.server.data.models.StringList;
 import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
 import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertNumberRepository;
@@ -25,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,7 @@ public class AlertService {
 
   private Logger logger = LoggerFactory.getLogger(AlertService.class);
 
+  private AaoRuleService ruleService;
   private AlertRepository alertRepository;
   private GeocodingService geocodingService;
   private RoutingService routingService;
@@ -47,7 +53,8 @@ public class AlertService {
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
   private NotificationService notificationService;
 
-  public AlertService(AlertRepository alertRepository,
+  public AlertService(AaoRuleService ruleService,
+      AlertRepository alertRepository,
       GeocodingService geocodingService,
       RoutingService routingService,
       OrganisationRepository organisationRepository,
@@ -57,6 +64,7 @@ public class AlertService {
       AlertCallRepository alertCallRepository,
       AlertCallEmployeeRepository alertCallEmployeeRepository,
       NotificationService notificationService) {
+    this.ruleService = ruleService;
     this.alertRepository = alertRepository;
     this.geocodingService = geocodingService;
     this.routingService = routingService;
@@ -75,28 +83,29 @@ public class AlertService {
       String alertReferenceId,
       String alertCallReferenceId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description,
       String raw) {
 
-    if(StringUtils.isBlank(alertReferenceId)){
+    if (StringUtils.isBlank(alertReferenceId)) {
       throw new IllegalArgumentException("alertReferenceId can not be blank");
     }
 
-    if(StringUtils.isBlank(alertCallReferenceId)){
+    if (StringUtils.isBlank(alertCallReferenceId)) {
       throw new IllegalArgumentException("alertCallReferenceId can not be blank");
     }
 
-    if (dateTime == null) {
-      dateTime = new Date();
+    if (utcDateTime == null) {
+      // TODO: Ensure UTC date --> Check all dates for UTC handling and client must convert utc to localtime!
+      utcDateTime = new Date();
     }
 
     AlertCallCreated createdAlertCall = createWithinTransaction(organisationId, alertNumber, alertReferenceId,
-        alertCallReferenceId, keyword, dateTime, address,
+        alertCallReferenceId, keyword, utcDateTime, address,
         description, raw);
 
-    if(createdAlertCall == null){
+    if (createdAlertCall == null) {
       return null;
     }
 
@@ -118,7 +127,7 @@ public class AlertService {
       String referenceId,
       String referenceCallId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description,
       String raw) {
@@ -126,34 +135,74 @@ public class AlertService {
     Optional<AlertNumber> foundAlertNumber = alertNumberRepository
         .findByOrganisationIdAndNumberIgnoreCase(organisationId, alertNumber);
     if (foundAlertNumber.isEmpty()) {
-      logger.info("No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
+      logger.info(
+          "No AlertNumber found for number '" + alertNumber + "'" + " in organisationId '" + organisationId + "'");
       return null;
     }
 
-    Optional<Alert> foundAlert = alertRepository
-        .findByOrganisationIdAndReferenceId(organisationId, referenceId);
+    ExistingAlert existingAlert = createAlertIfNotExists(organisationId,
+        referenceId,
+        keyword,
+        utcDateTime,
+        address,
+        description);
 
-    Alert alert;
-    boolean alertCreated = false;
-
-    if (foundAlert.isEmpty()) {
-      alert = createAlert(organisationId, referenceId, keyword, dateTime, address, description);
-      alertCreated = true;
-    } else {
-      alert = foundAlert.get();
+    if(existingAlert.isCreated()){
+      processAlert(existingAlert.getAlert());
     }
 
-    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, dateTime, raw);
-    return new AlertCallCreated(alertCall, alert, alertCreated);
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), existingAlert.getAlert(), referenceCallId, utcDateTime, raw);
+    return new AlertCallCreated(alertCall, existingAlert.getAlert(), existingAlert.isCreated);
   }
 
-  private Alert createAlert(Long organisationId,
+  private ExistingAlert createAlertIfNotExists(Long organisationId,
       String referenceId,
       String keyword,
-      Date dateTime,
+      Date utcDateTime,
       String address,
       String description) {
 
+    logger.info("Start waiting before looking for existing alert");
+    StopWatch stopWatch = StopWatch.createStarted();
+    synchronized (this) {
+      logger.info("Finished waiting before looking for existing alert (Took: {})", stopWatch.toString());
+
+      Optional<Alert> foundAlert = alertRepository
+          .findByOrganisationIdAndReferenceId(organisationId, referenceId);
+
+      if (foundAlert.isEmpty()) {
+        logger.info(
+            "No Alert with ReferenceId '{}'" + " in organisationId '{}' found", referenceId, organisationId);
+
+        Alert alert = new Alert(organisationId,
+            referenceId,
+            true,
+            keyword,
+            utcDateTime,
+            description,
+            address,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+        alertRepository.save(alert);
+        return new ExistingAlert(alert, true);
+      }
+      logger.info(
+          "Alert '{}' already exists with ReferenceId '{}'" + " in organisationId '{}'",
+          foundAlert.get().getId(),
+          referenceId,
+          organisationId);
+      return new ExistingAlert(foundAlert.get(), false);
+    }
+  }
+
+  private void processAlert(Alert alert) {
     String addressInfo1 = null;
     String addressInfo2 = null;
     String addressLat = null;
@@ -164,23 +213,23 @@ public class AlertService {
     Double routeDistance = null;
     Integer routeDuration = null;
 
-    if (!StringUtils.isBlank(address)) {
+    if (!StringUtils.isBlank(alert.getAddress())) {
       try {
-        GeocodingResult geocodedAddress = geocodingService.geocode(address);
+        GeocodingResult geocodedAddress = geocodingService.geocode(alert.getAddress());
         addressInfo1 = geocodedAddress.getAddressInfo1();
         addressInfo2 = geocodedAddress.getAddressInfo2();
         addressLat = geocodedAddress.getCoordinate().getLat();
         addressLng = geocodedAddress.getCoordinate().getLng();
         addressJson = geocodedAddress.getJson();
 
-        Coordinate orgCoordinate = getOrgCoordinate(organisationId);
+        Coordinate orgCoordinate = getOrgCoordinate(alert.getOrganisationId());
         if (orgCoordinate != null) {
           Coordinate targetCoordinate = geocodedAddress.getCoordinate();
           RoutingResult route = routingService.route(new ArrayList<>(Arrays.asList(orgCoordinate, targetCoordinate)));
           routeJson = route.getJson();
           routeDistance = route.getDistance();
           routeDuration = route.getDuration();
-        }else {
+        } else {
           logger.warn("Skipping routing due to lat or lng of organisation is blank!");
         }
 
@@ -191,23 +240,24 @@ public class AlertService {
       logger.warn("Skipping geocoding and routing due to address is blank!");
     }
 
-    Alert alert = new Alert(organisationId,
-        referenceId,
-        true,
-        keyword,
-        dateTime,
-        description,
-        address,
-        addressInfo1,
-        addressInfo2,
-        addressLat,
-        addressLng,
-        addressJson,
-        routeJson,
-        routeDistance,
-        routeDuration);
+    MatchResult aaoMatchResult = new MatchResult();
+    try {
+      aaoMatchResult = ruleService.evaluateAao(alert.getOrganisationId(), new AlertContext(alert.getKeyword(), alert.getUtcDateTime(), addressInfo2));
+    } catch (Exception e) {
+      logger.error("Error during aao evaluation", e);
+    }
+
+    alert.setAddressInfo1(addressInfo1);
+    alert.setAddressInfo2(addressInfo2);
+    alert.setAddressLat(addressLat);
+    alert.setAddressLng(addressLng);
+    alert.setAddressGeocoded(addressJson);
+    alert.setRoute(routeJson);
+    alert.setDistance(routeDistance);
+    alert.setDuration(routeDuration);
+    alert.setAao( new StringList(aaoMatchResult.getResults()));
+
     alertRepository.save(alert);
-    return alert;
   }
 
   private Coordinate getOrgCoordinate(Long organisationId) {
@@ -241,7 +291,7 @@ public class AlertService {
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public void delete(Long id){
+  public void delete(Long id) {
     Optional<Alert> foundAlert = alertRepository.findById(id);
     if (!foundAlert.isPresent()) {
       throw new IllegalArgumentException("No Alert found for id:" + id);
@@ -256,6 +306,7 @@ public class AlertService {
   }
 
   private static class AlertCallCreated {
+
     private AlertCall alertCall;
     private Alert alert;
     private boolean alertCreated;
@@ -276,6 +327,25 @@ public class AlertService {
 
     public boolean isAlertCreated() {
       return alertCreated;
+    }
+  }
+
+  private static class ExistingAlert {
+
+    private Alert alert;
+    private boolean isCreated;
+
+    public ExistingAlert(Alert alert, boolean isCreated) {
+      this.alert = alert;
+      this.isCreated = isCreated;
+    }
+
+    public Alert getAlert() {
+      return alert;
+    }
+
+    public boolean isCreated() {
+      return isCreated;
     }
   }
 }
