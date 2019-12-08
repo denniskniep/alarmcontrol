@@ -15,11 +15,11 @@ public class FirebaseMessageMutation implements GraphQLMutationResolver {
     this.notificationConfigurationService = notificationConfigurationService;
   }
 
-  public Contact addNotificationFirebaseMessageContact(Long organisationId, String name, String token) {
+  public Contact addNotificationFirebaseMessageContact(Long organisationId, String name, String mail) {
     FirebaseMessageContact contact = new FirebaseMessageContact();
     contact.setUniqueId(UUID.randomUUID().toString());
     contact.setName(name);
-    contact.setToken(token);
+    contact.setMail(mail);
     return notificationConfigurationService.addNotificationContact(organisationId, contact);
   }
 }

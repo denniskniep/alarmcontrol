@@ -1,3 +1,13 @@
+extend type Mutation {
+  addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
+  addNotificationFirebaseMessageContact(organisationId: ID!, name: String, mail : String!): Contact
+  deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
+
+  addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  editNotificationSubscriptionForAlertCreated(organisationId: ID!, uniqueSubscriptionId: String!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
+  deleteNotificationSubscription(organisationId: ID!, uniqueSubscriptionId: String!): String
+}
+
 type NotificationOrganisationConfig {
  contacts: [Contact]
  subscriptions : [NotificationSubscription]
@@ -29,5 +39,5 @@ type MailContact implements Contact {
 type FirebaseMessageContact implements Contact {
   uniqueId : String
   name : String
-  token : String
+  mail : String
 }

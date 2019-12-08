@@ -6,7 +6,7 @@ public class FirebaseMessageContact implements Contact {
 
   private String uniqueId;
   private String name;
-  private String token;
+  private String mail;
 
   @Override
   public String getUniqueId() {
@@ -26,12 +26,12 @@ public class FirebaseMessageContact implements Contact {
     this.name = name;
   }
 
-  public String getToken() {
-    return token;
+  public String getMail() {
+    return mail;
   }
 
-  public void setToken(String token) {
-    this.token = token;
+  public void setMail(String mail) {
+    this.mail = mail;
   }
 
   @Override
@@ -39,7 +39,7 @@ public class FirebaseMessageContact implements Contact {
     return "FirebaseMessageContact{" +
         "uniqueId='" + uniqueId + '\'' +
         ", name='" + name + '\'' +
-        ", token='" + token + '\'' +
+        ", mail='" + mail + '\'' +
         '}';
   }
 }

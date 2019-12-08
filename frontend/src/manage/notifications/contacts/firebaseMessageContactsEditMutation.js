@@ -12,8 +12,8 @@ mutation deleteNotificationContact($organisationId: ID!, $uniqueContactId: Strin
 `;
 
 const ADD_NOTIFICATION_CONTACT = gql`
-mutation addNotificationFirebaseMessageContact($organisationId: ID!, $name : String!, $token: String!){
-  addNotificationFirebaseMessageContact(organisationId: $organisationId, name: $name, token: $token) {   
+mutation addNotificationFirebaseMessageContact($organisationId: ID!, $name : String!, $mail: String!){
+  addNotificationFirebaseMessageContact(organisationId: $organisationId, name: $name, mail: $mail) {   
     uniqueId
   }
 }
@@ -33,7 +33,7 @@ class FirebaseMessageContactsEditMutation extends Component {
                                      && this.props.onContactsChanged()}>
                   {addContact => {
 
-                    var contacts= this.props.contacts ? this.props.contacts : [];
+                    let contacts= this.props.contacts ? this.props.contacts : [];
                     return (
                         <EditableTable data={contacts}
                                        canView={false}
@@ -44,8 +44,8 @@ class FirebaseMessageContactsEditMutation extends Component {
                                            name: "Name"
                                          },
                                          {
-                                           key: "token",
-                                           name: "Token"
+                                           key: "mail",
+                                           name: "Registered Mail"
                                          }
                                        ]}
 
@@ -54,7 +54,7 @@ class FirebaseMessageContactsEditMutation extends Component {
                                            variables: {
                                              organisationId: this.props.organisationId,
                                              name: newRow.name,
-                                             token: newRow.token
+                                             mail: newRow.mail
                                            }
                                          });
                                        }}

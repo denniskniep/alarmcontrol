@@ -27,7 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
-  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 5000;
+  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 10000;
   private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
   @Value("${notifications.firebase.push.url:}")
@@ -91,7 +91,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
       long cacheAgeInMs = dateInMs - lastCacheFetchInMs;
       cacheTimedOut = cacheAgeInMs > TOKENS_CACHE_TIMEOUT_IN_MS;
       if(cacheTimedOut){
-        logger.info("TokensByMail Cache timed out because it is older than {}ms (LastCacheFetch:{})", TOKENS_CACHE_TIMEOUT_IN_MS, cacheAgeInMs);
+        logger.info("TokensByMail Cache timed out because it is older than {}ms (CacheAge in MS:{})", TOKENS_CACHE_TIMEOUT_IN_MS, cacheAgeInMs);
       }
     }
 
@@ -173,25 +173,33 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
 
   private void sendFirebaseMessage(FirebaseMessageContact contact, Message message, Map<String, String> tokensByMail) {
     try{
-      if(StringUtils.isBlank(contact.getToken())){
+      if(StringUtils.isBlank(contact.getMail())){
         throw new RuntimeException("Token is not set!");
       }
       logger.info("Start sending message '{}' via {} to Mail {}",
           message.getSubject(),
           message.getClass().getSimpleName(),
-          contact.getToken());
+          contact.getMail());
 
-      String token = tokensByMail.get(contact.getToken());
+      String token = tokensByMail.get(contact.getMail());
+      if(StringUtils.isBlank(token)){
+        throw new RuntimeException("No Token found for mail " + contact.getMail());
+      }
+
       logger.info("Found Token {} for mail {}",
           token,
-          contact.getToken());
+          contact.getMail());
 
-      /*sendFirebaseMessageToToken(token, "notification", message);
-      Thread.sleep(1000);*/
+      // First send a notification message to ensure the Device wake up
+      sendFirebaseMessageToToken(token, "notification", message);
+
+      Thread.sleep(1000);
+
+      // Then send a data message which is customizable at the device
       sendFirebaseMessageToToken(token, "data", message);
 
       logger.info("Following message sent to Mail {} ({}) \n: {}",
-          contact.getToken(),
+          contact.getMail(),
           token,
           message);
 
@@ -201,13 +209,16 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
   }
 
   private void sendFirebaseMessageToToken(String token, String messageKind, Message message) {
+    logger.info("Sending firebase {} message to {}",
+        messageKind,
+        token);
+
     final HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set(HttpHeaders.AUTHORIZATION, "key=" + pushAuthorizationHeader);
 
     Map<String, Object> messageWrapper = createMessageWrapper(token);
-    messageWrapper.put("data", createMessage(message));
-    //messageWrapper.put("notification", createMessage(message));
+    messageWrapper.put(messageKind, createMessage(message));
     final HttpEntity<Map<String,Object>> notificationEntity = new HttpEntity<>(messageWrapper, headers);
     restTemplate.exchange(pushUrl, HttpMethod.POST, notificationEntity, String.class);
   }

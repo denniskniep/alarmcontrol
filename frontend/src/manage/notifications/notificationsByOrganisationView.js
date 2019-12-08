@@ -20,7 +20,7 @@ query organisationById($id: ID!) {
           mailAddress
         }
         ... on FirebaseMessageContact {
-          token
+          mail
         }
       }
       subscriptions {
