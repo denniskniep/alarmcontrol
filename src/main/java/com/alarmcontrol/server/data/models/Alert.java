@@ -150,5 +150,40 @@ public class Alert {
     return aao;
   }
 
+  public void setAddressInfo1(String addressInfo1) {
+    this.addressInfo1 = addressInfo1;
+  }
+
+  public void setAddressInfo2(String addressInfo2) {
+    this.addressInfo2 = addressInfo2;
+  }
+
+  public void setAddressLat(String addressLat) {
+    this.addressLat = addressLat;
+  }
+
+  public void setAddressLng(String addressLng) {
+    this.addressLng = addressLng;
+  }
+
+  public void setAddressGeocoded(String addressGeocoded) {
+    this.addressGeocoded = addressGeocoded;
+  }
+
+  public void setRoute(String route) {
+    this.route = route;
+  }
+
+  public void setDistance(Double distance) {
+    this.distance = distance;
+  }
+
+  public void setDuration(Integer duration) {
+    this.duration = duration;
+  }
+
+  public void setAao(StringList aao) {
+    this.aao = aao;
+  }
 }
 

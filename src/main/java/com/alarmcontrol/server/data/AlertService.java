@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -139,30 +140,69 @@ public class AlertService {
       return null;
     }
 
-    Optional<Alert> foundAlert = alertRepository
-        .findByOrganisationIdAndReferenceId(organisationId, referenceId);
+    ExistingAlert existingAlert = createAlertIfNotExists(organisationId,
+        referenceId,
+        keyword,
+        utcDateTime,
+        address,
+        description);
 
-    Alert alert;
-    boolean alertCreated = false;
-
-    if (foundAlert.isEmpty()) {
-      alert = createAlert(organisationId, referenceId, keyword, utcDateTime, address, description);
-      alertCreated = true;
-    } else {
-      alert = foundAlert.get();
+    if(existingAlert.isCreated()){
+      processAlert(existingAlert.getAlert());
     }
 
-    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), alert, referenceCallId, utcDateTime, raw);
-    return new AlertCallCreated(alertCall, alert, alertCreated);
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), existingAlert.getAlert(), referenceCallId, utcDateTime, raw);
+    return new AlertCallCreated(alertCall, existingAlert.getAlert(), existingAlert.isCreated);
   }
 
-  private Alert createAlert(Long organisationId,
+  private ExistingAlert createAlertIfNotExists(Long organisationId,
       String referenceId,
       String keyword,
       Date utcDateTime,
       String address,
       String description) {
 
+    logger.info("Start waiting before looking for existing alert");
+    StopWatch stopWatch = StopWatch.createStarted();
+    synchronized (this) {
+      logger.info("Finished waiting before looking for existing alert (Took: {})", stopWatch.toString());
+
+      Optional<Alert> foundAlert = alertRepository
+          .findByOrganisationIdAndReferenceId(organisationId, referenceId);
+
+      if (foundAlert.isEmpty()) {
+        logger.info(
+            "No Alert with ReferenceId '{}'" + " in organisationId '{}' found", referenceId, organisationId);
+
+        Alert alert = new Alert(organisationId,
+            referenceId,
+            true,
+            keyword,
+            utcDateTime,
+            description,
+            address,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+        alertRepository.save(alert);
+        return new ExistingAlert(alert, true);
+      }
+      logger.info(
+          "Alert '{}' already exists with ReferenceId '{}'" + " in organisationId '{}'",
+          foundAlert.get().getId(),
+          referenceId,
+          organisationId);
+      return new ExistingAlert(foundAlert.get(), false);
+    }
+  }
+
+  private void processAlert(Alert alert) {
     String addressInfo1 = null;
     String addressInfo2 = null;
     String addressLat = null;
@@ -173,16 +213,16 @@ public class AlertService {
     Double routeDistance = null;
     Integer routeDuration = null;
 
-    if (!StringUtils.isBlank(address)) {
+    if (!StringUtils.isBlank(alert.getAddress())) {
       try {
-        GeocodingResult geocodedAddress = geocodingService.geocode(address);
+        GeocodingResult geocodedAddress = geocodingService.geocode(alert.getAddress());
         addressInfo1 = geocodedAddress.getAddressInfo1();
         addressInfo2 = geocodedAddress.getAddressInfo2();
         addressLat = geocodedAddress.getCoordinate().getLat();
         addressLng = geocodedAddress.getCoordinate().getLng();
         addressJson = geocodedAddress.getJson();
 
-        Coordinate orgCoordinate = getOrgCoordinate(organisationId);
+        Coordinate orgCoordinate = getOrgCoordinate(alert.getOrganisationId());
         if (orgCoordinate != null) {
           Coordinate targetCoordinate = geocodedAddress.getCoordinate();
           RoutingResult route = routingService.route(new ArrayList<>(Arrays.asList(orgCoordinate, targetCoordinate)));
@@ -202,29 +242,22 @@ public class AlertService {
 
     MatchResult aaoMatchResult = new MatchResult();
     try {
-      aaoMatchResult = ruleService.evaluateAao(organisationId, new AlertContext(keyword, utcDateTime, addressInfo2));
+      aaoMatchResult = ruleService.evaluateAao(alert.getOrganisationId(), new AlertContext(alert.getKeyword(), alert.getUtcDateTime(), addressInfo2));
     } catch (Exception e) {
       logger.error("Error during aao evaluation", e);
     }
 
-    Alert alert = new Alert(organisationId,
-        referenceId,
-        true,
-        keyword,
-        utcDateTime,
-        description,
-        address,
-        addressInfo1,
-        addressInfo2,
-        addressLat,
-        addressLng,
-        addressJson,
-        routeJson,
-        routeDistance,
-        routeDuration,
-        new StringList(aaoMatchResult.getResults()));
+    alert.setAddressInfo1(addressInfo1);
+    alert.setAddressInfo2(addressInfo2);
+    alert.setAddressLat(addressLat);
+    alert.setAddressLng(addressLng);
+    alert.setAddressGeocoded(addressJson);
+    alert.setRoute(routeJson);
+    alert.setDistance(routeDistance);
+    alert.setDuration(routeDuration);
+    alert.setAao( new StringList(aaoMatchResult.getResults()));
+
     alertRepository.save(alert);
-    return alert;
   }
 
   private Coordinate getOrgCoordinate(Long organisationId) {
@@ -294,6 +327,25 @@ public class AlertService {
 
     public boolean isAlertCreated() {
       return alertCreated;
+    }
+  }
+
+  private static class ExistingAlert {
+
+    private Alert alert;
+    private boolean isCreated;
+
+    public ExistingAlert(Alert alert, boolean isCreated) {
+      this.alert = alert;
+      this.isCreated = isCreated;
+    }
+
+    public Alert getAlert() {
+      return alert;
+    }
+
+    public boolean isCreated() {
+      return isCreated;
     }
   }
 }

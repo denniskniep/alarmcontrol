@@ -2,6 +2,7 @@ package com.alarmcontrol.server;
 
 import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.TestConfiguration;
+import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.utils.GraphQLClient;
 import com.alarmcontrol.server.data.utils.TestOrganisation;
@@ -34,6 +35,9 @@ public abstract class AlertBaseTest {
 
   @Autowired
   protected AlertRepository alertRepository;
+
+  @Autowired
+  protected AlertCallRepository alertCallRepository;
 
   @Autowired
   protected NotificationService notificationService;
