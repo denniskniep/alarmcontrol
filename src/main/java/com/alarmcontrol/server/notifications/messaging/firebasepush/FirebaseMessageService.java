@@ -193,7 +193,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
       // First send a notification message to ensure the Device wake up
       sendFirebaseMessageToToken(token, "notification", message);
 
-      Thread.sleep(1000);
+      Thread.sleep(500);
 
       // Then send a data message which is customizable at the device
       sendFirebaseMessageToToken(token, "data", message);
