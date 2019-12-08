@@ -14,8 +14,10 @@ import com.alarmcontrol.server.maps.GeocodingResult;
 import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -56,6 +58,51 @@ public class AlertServiceTest extends AlertBaseTest {
 
     assertThat(firstAlertCall.getAlertId()).isEqualTo(secondAlertCall.getAlertId());
     assertThat(alertRepository.findByOrganisationId(organisation.getId()).size()).isEqualTo(1);
+  }
+
+  @Test
+  public void whenTwoAlertCallsWithSameAlertReferenceIdAddedConcurrently_ShouldCreateOneAlertWithTwoCalls()
+      throws InterruptedException {
+    TestOrganisation organisation = setupOrganisation();
+
+    Thread threadFirstAlertCall = new Thread(() ->
+        alertService.create(
+            organisation.getId(),
+            "1234-S04",
+            "B12345",
+            "XY123",
+            "H1",
+            null,
+            "",
+            "",
+            ""));
+
+    Thread threadSecondAlertCall = new Thread(() ->
+        alertService.create(
+            organisation.getId(),
+            "1234-S04",
+            "B12345",
+            "XY124",
+            "H1",
+            null,
+            "",
+            "",
+            ""));
+
+    threadFirstAlertCall.start();
+    threadSecondAlertCall.start();
+
+    threadFirstAlertCall.join();
+    threadSecondAlertCall.join();
+
+    List<Alert> alerts = alertRepository.findByOrganisationId(organisation.getId());
+    assertThat(alerts.size()).isEqualTo(1);
+    assertThat(alerts.get(0).getReferenceId()).isEqualTo("B12345");
+
+    List<AlertCall> alertCalls = alertCallRepository.findByAlertId(alerts.get(0).getId());
+    List<String> callReferenceIds = alertCalls.stream().map(c -> c.getReferenceId()).collect(Collectors.toList());
+    assertThat(alertCalls.size()).isEqualTo(2);
+    assertThat(callReferenceIds).containsAll(Arrays.asList("XY124", "XY123"));
   }
 
   @Test
