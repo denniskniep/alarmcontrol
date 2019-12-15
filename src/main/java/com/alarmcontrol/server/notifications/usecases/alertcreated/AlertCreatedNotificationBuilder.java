@@ -153,7 +153,7 @@ public class AlertCreatedNotificationBuilder extends
     String subject = "Alarmupdate: " + alert.getKeyword();
 
     String body = "KOMMEN:" + employeeIdsThatCommitted.size() + "\n"
-        + "ABGELEHNT:" + employeeIdsThatCancel.size() + "\n\n"
+        + "ABGELEHNT:" + employeeIdsThatCancel.size() + "\n"
         + skillBodyPart.toString() + "\n\n" +
         organisation.getName() + "\n" +
         alert.getReferenceId();
