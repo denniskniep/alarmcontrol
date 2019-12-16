@@ -27,7 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
-  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 10000;
+  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 300000; // 300000ms == 5min
   private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
   @Value("${notifications.firebase.push.url:}")
@@ -124,6 +124,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(bodyWithCredentials, headers);
     ResponseEntity<AuthResult> result;
     try{
+      // By default we get an ID token that expires in one hour (3600 seconds)
       result = restTemplate.exchange(uri, HttpMethod.POST, dataEntity, AuthResult.class);
     }catch (Exception e){
       throw new RuntimeException(e);

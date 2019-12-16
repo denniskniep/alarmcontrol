@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configure and display AAO ("Alarm- und Ausrückordnung")
 - Send Notifications via Push Message (Firebase)
 - Severity for Notifications
+- Receive Notifications via Push Message (Firebase) in PagerPWA (Progressive WebApp)
 
 ### Changed
 - Graylog update from 3.0 to 3.1.2

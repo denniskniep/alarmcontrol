@@ -2,20 +2,12 @@ import React, {Component} from 'react';
 import Grid from "@material-ui/core/Grid";
 import MessagesContainer from "./notifications/messagesContainer";
 import {MessagesContext} from "./notifications/messagesContext";
-import CardHeader from "@material-ui/core/CardHeader";
-import Card from "@material-ui/core/Card";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Message from "./message";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import moment from "moment";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
-import Message from "./message";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import {removeMessage} from "./notifications/messageStore";
 
 class Messages extends Component {
 
@@ -45,16 +37,10 @@ class Messages extends Component {
     });
   }
 
-  deleteItem(message) {
-    return false;
-  }
-
-  renderDate(message){
-    let sentAt = moment(message.sentAt);
-    let receivedAt = moment(message.receivedAt);
-    let formattedSentAt = sentAt.format('DD.MM.YYYY HH:mm:ss');
-    let delay = moment.duration(receivedAt.diff(sentAt));
-    return formattedSentAt + " (Received within a delay of " + delay.humanize() +")";
+  deleteAllItems(messages) {
+    for (const message of messages) {
+      removeMessage(message.uuid);
+    }
   }
 
   render() {
@@ -65,14 +51,37 @@ class Messages extends Component {
               {messagesContext => {
                 return (
                     <React.Fragment>
-                      <h1>Messages</h1>
+                      <div>
+                      <h1>Messages
+                        <IconButton aria-label="settings"
+                                    onClick={(e) => this.handleMenuOpen(
+                                        e)}>
+                          <MoreVertIcon/>
+                        </IconButton>
+                      </h1>
+                      <Menu
+                          id="simple-menu"
+                          anchorEl={this.state.anchorEl}
+                          keepMounted
+                          open={Boolean(this.state.anchorEl)}
+                          onClose={() => this.handleMenuClose()}
+                      >
+                        <MenuItem
+                            onClick={() => {
+                              this.handleMenuClose();
+                              this.deleteAllItems(messagesContext.messages);
+                            }}>
+                          Delete all Messages
+                        </MenuItem>
+                      </Menu>
+                      </div>
                       <Grid container
                             spacing={5}
                             direction="column">
                         {messagesContext.messages.map(
                             (message, messageIndex) => {
                               return (
-                                  <Message message={message} key={moment(message.sentAt).unix()}/>
+                                  <Message message={message} key={messageIndex}/>
                               );
                             })}
                       </Grid>

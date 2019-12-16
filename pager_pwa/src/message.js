@@ -124,7 +124,7 @@ class Message extends Component {
                     this.handleMenuClose();
                     this.deleteItem(this.props.message);
                   }}>
-                Delete
+                Delete Message
               </MenuItem>
             </Menu>
 
@@ -132,7 +132,17 @@ class Message extends Component {
               <Typography variant="body2"
                           color="textSecondary"
                           component="p">
-                {this.props.message.body}
+                {
+                  this.props.message.body.split("\n").map(function(line, idx)
+                  {
+                    return (
+                        <span key={idx}>
+                          {line}
+                          <br/>
+                        </span>
+                      )
+                  })
+                }
               </Typography>
             </CardContent>
             <CardActions disableSpacing>
