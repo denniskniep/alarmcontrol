@@ -42,6 +42,7 @@ RUN groupadd -g 1000 appuser && \
     useradd -r -u 1000 -g appuser appuser
 
 COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY scripts/wait-for.sh /app/wait-for.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
 COPY --from=backend-build /app/target/alarmcontrol-server.jar /app/alarmcontrol-server.jar

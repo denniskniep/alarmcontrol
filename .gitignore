@@ -1,5 +1,5 @@
 HELP.md
-/target/
+**/target/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
@@ -31,4 +31,4 @@ HELP.md
 ### h2 testdatabase ###
 test*.db
 
-/logs
+server/logs/

@@ -41,7 +41,7 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:6.8.4
     volumes:
-      - ./logs:/logs:ro
+      - ./server/logs:/logs:ro
       - ./misc/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - filebeat_data:/usr/share/filebeat/data
     user: root
