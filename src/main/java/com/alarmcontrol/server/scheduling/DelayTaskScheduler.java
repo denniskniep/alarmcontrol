@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.scheduling;
 
+import com.alarmcontrol.server.utils.DateToIsoFormatter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,9 +73,7 @@ public class DelayTaskScheduler {
   }
 
   private String asIso(Date nextExecutionTime) {
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    df.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return df.format(nextExecutionTime);
+    return DateToIsoFormatter.asIso(nextExecutionTime);
   }
 
   private Date getNextExecutionDate(Integer notificationDelayInSeconds) {

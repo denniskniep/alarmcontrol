@@ -1,12 +1,12 @@
-package com.alarmcontrol.server.notifications.messaging.mail;
+package com.alarmcontrol.server.notifications.messaging.firebasepush;
 
 import com.alarmcontrol.server.notifications.core.config.Contact;
 
-public class MailContact implements Contact {
+public class FirebaseMessageContact implements Contact {
 
   private String uniqueId;
-  private String mailAddress;
   private String name;
+  private String mail;
 
   @Override
   public String getUniqueId() {
@@ -26,20 +26,21 @@ public class MailContact implements Contact {
     this.name = name;
   }
 
-  public String getMailAddress() {
-    return mailAddress;
+  public String getMail() {
+    return mail;
   }
 
-  public void setMailAddress(String mailAddress) {
-    this.mailAddress = mailAddress;
+  public void setMail(String mail) {
+    this.mail = mail;
   }
 
   @Override
   public String toString() {
-    return "MailContact{" +
+    return "FirebaseMessageContact{" +
         "uniqueId='" + uniqueId + '\'' +
-        ", mailAddress='" + mailAddress + '\'' +
         ", name='" + name + '\'' +
+        ", mail='" + mail + '\'' +
         '}';
   }
 }
+

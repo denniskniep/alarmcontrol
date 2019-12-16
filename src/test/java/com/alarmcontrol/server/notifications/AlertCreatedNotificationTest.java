@@ -2,6 +2,7 @@ package com.alarmcontrol.server.notifications;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,8 +67,8 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     List<Message> messages = waitForAllMessages();
     assertThat(messages).hasSize(4);
-    assertThat(messages).extracting(m -> m.getSubject()).areExactly(1, isStartingWith("Alarm:H1"));
-    assertThat(messages).extracting(m -> m.getSubject()).areExactly(3, isStartingWith("Alarmupdate:H1"));
+    assertThat(messages).extracting(m -> m.getSubject()).areExactly(1, isStartingWith("Alarm: H1"));
+    assertThat(messages).extracting(m -> m.getSubject()).areExactly(3, isStartingWith("Alarmupdate: H1"));
   }
 
   @Test
@@ -91,10 +92,10 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
     List<Message> messages = waitForAllMessages();
 
     assertThat(messages).hasSize(2);
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
         + "Berlin-Tempelhof"));
 
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:0\n"
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:0\n"
         + "ABGELEHNT:0"));
   }
 
@@ -124,15 +125,20 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
     List<Message> messages = waitForAllMessages();
 
     assertThat(messages).hasSize(2);
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
-        + "Berlin-Tempelhof"));
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
+        + "Berlin-Tempelhof\n"
+        + "\n"
+        + "Organisation"));
 
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:1\n"
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:1\n"
         + "ABGELEHNT:0\n"
+        + "\n"
         + "\n"
         + "KOMMEN pro Skill:\n"
         + "* FK: 1\n"
-        + "* AGT: 1"));
+        + "* AGT: 1\n"
+        + "\n"
+        + "Organisation"));
   }
 
   @Test
@@ -165,15 +171,20 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
     List<Message> messages = waitForAllMessages();
 
     assertThat(messages).hasSize(2);
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("H1\n"
-        + "Berlin-Tempelhof"));
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
+        + "Berlin-Tempelhof\n"
+        + "\n"
+        + "Organisation"));
 
-    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isEqual("KOMMEN:3\n"
+    assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:3\n"
         + "ABGELEHNT:1\n"
+        + "\n"
         + "\n"
         + "KOMMEN pro Skill:\n"
         + "* FK: 1\n"
-        + "* AGT: 2"));
+        + "* AGT: 2\n"
+        + "\n"
+        + "Organisation"));
   }
 
   private List<Message> waitForAllMessages() {

@@ -43,7 +43,7 @@ public abstract class AlertBaseTest {
   protected NotificationService notificationService;
 
   protected TestOrganisation setupOrganisation() {
-    TestOrganisation org = graphQlClient.createOrganisation("Organisation" + UUID.randomUUID());
+    TestOrganisation org = graphQlClient.createOrganisation("Organisation " + UUID.randomUUID());
     org.addAlertNumber("1234-S04", "Pager");
     return org;
   }

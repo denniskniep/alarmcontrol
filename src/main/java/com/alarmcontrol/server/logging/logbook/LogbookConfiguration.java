@@ -1,7 +1,11 @@
 package com.alarmcontrol.server.logging.logbook;
 
-import com.alarmcontrol.server.data.AlertService;
+import static org.zalando.logbook.BodyFilters.defaultValue;
+import static org.zalando.logbook.BodyFilters.truncate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +13,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.zalando.logbook.BodyFilter;
+import org.zalando.logbook.BodyFilters;
 import org.zalando.logbook.CurlHttpLogFormatter;
 import org.zalando.logbook.DefaultHttpLogFormatter;
 import org.zalando.logbook.HttpLogFormatter;
@@ -36,6 +42,27 @@ public class LogbookConfiguration {
       LogbookFilterProperties filterProperties = customProperties.getFilterProperties(rawHttpRequest);
       return Conditions.isRelevant(rawHttpRequest, filterProperties.getInclude(), filterProperties.getExclude());
     };
+  }
+
+  @Bean
+  public BodyFilter bodyFilter(final LogbookProperties properties) {
+    final LogbookProperties.Write write = properties.getWrite();
+    final int maxBodySize = write.getMaxBodySize();
+
+    if (maxBodySize < 0) {
+      return BodyFilter.merge(defaultValue(), customBodyFilter());
+    }
+
+    BodyFilter defaultBodyFilter = BodyFilter.merge(truncate(maxBodySize), defaultValue());
+    return BodyFilter.merge(defaultBodyFilter, customBodyFilter());
+  }
+
+  private BodyFilter customBodyFilter(){
+    final Set<String> properties = new HashSet<>();
+    properties.add("idToken");
+    properties.add("refreshToken");
+    properties.add("password");
+    return BodyFilters.replaceJsonStringProperty(properties,"XXX");
   }
 
   @Bean

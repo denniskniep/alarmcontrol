@@ -5,9 +5,12 @@ import com.alarmcontrol.server.data.graphql.employeeFeedback.EmployeeFeedback;
 import com.alarmcontrol.server.data.models.Alert;
 import com.alarmcontrol.server.data.models.EmployeeSkill;
 import com.alarmcontrol.server.data.models.Feedback;
+import com.alarmcontrol.server.data.models.Organisation;
 import com.alarmcontrol.server.data.models.Skill;
 import com.alarmcontrol.server.data.repositories.EmployeeSkillRepository;
+import com.alarmcontrol.server.data.repositories.OrganisationRepository;
 import com.alarmcontrol.server.data.repositories.SkillRepository;
+import com.alarmcontrol.server.notifications.core.messaging.Severity;
 import com.alarmcontrol.server.scheduling.DelayTaskScheduler;
 import com.alarmcontrol.server.notifications.core.NotificationBuilderBase;
 import com.alarmcontrol.server.notifications.core.messaging.Message;
@@ -17,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,36 +39,42 @@ public class AlertCreatedNotificationBuilder extends
   private EmployeeFeedbackService employeeFeedbackService;
   private SkillRepository skillRepository;
   private EmployeeSkillRepository employeeSkillRepository;
+  private OrganisationRepository organisationRepository;
 
   public AlertCreatedNotificationBuilder(
       DelayTaskScheduler delayTaskScheduler, MessageService messageService,
       EmployeeFeedbackService employeeFeedbackService,
       SkillRepository skillRepository,
-      EmployeeSkillRepository employeeSkillRepository) {
+      EmployeeSkillRepository employeeSkillRepository,
+      OrganisationRepository organisationRepository) {
     super(AlertCreatedNotificationConfig.class);
     this.delayTaskScheduler = delayTaskScheduler;
     this.messageService = messageService;
     this.employeeFeedbackService = employeeFeedbackService;
     this.skillRepository = skillRepository;
     this.employeeSkillRepository = employeeSkillRepository;
+    this.organisationRepository = organisationRepository;
   }
 
   @Override
   protected void sendNotificationsInternal(AlertCreatedEvent event,
       AlertCreatedNotificationConfig config,
       List<Contact> contacts) {
-    scheduleCreatedNotification(event.getAlert(), contacts);
-    scheduleDelayedUpdateNotifications(event.getAlert(), config, contacts);
+
+    Optional<Organisation> foundOrganisation = organisationRepository.findById(event.getAlert().getOrganisationId());
+    scheduleCreatedNotification(foundOrganisation.get(), event.getAlert(), contacts);
+    scheduleDelayedUpdateNotifications(foundOrganisation.get(), event.getAlert(), config, contacts);
   }
 
-  private void scheduleCreatedNotification(Alert alert,
+  private void scheduleCreatedNotification(Organisation organisation, Alert alert,
       List<Contact> contacts) {
     logger.info("New AlertCreatedNotification registered on Scheduler: Immediately");
     delayTaskScheduler.registerOnceScheduledTask(
-        () -> notifyAlertCreated(alert, contacts), 0);
+        () -> notifyAlertCreated(organisation, alert, contacts), 0);
   }
 
-  private void scheduleDelayedUpdateNotifications(Alert alert,
+  private void scheduleDelayedUpdateNotifications(Organisation organisation,
+      Alert alert,
       AlertCreatedNotificationConfig config,
       List<Contact> contacts) {
     for (Integer notificationDelayInSeconds : config.getUpdateDelaysInSeconds()) {
@@ -73,18 +83,19 @@ public class AlertCreatedNotificationBuilder extends
       }
 
       delayTaskScheduler.registerOnceScheduledTask(
-          () -> alertStatusUpdate(alert, contacts), notificationDelayInSeconds);
+          () -> alertStatusUpdate(organisation, alert, contacts), notificationDelayInSeconds);
     }
   }
 
-  private void notifyAlertCreated(Alert alert, List<Contact> contacts) {
+  private void notifyAlertCreated(Organisation organisation, Alert alert,
+      List<Contact> contacts) {
     logger.info("Build AlertCreatedNotification");
-    Message message = buildAlertCreatedMessage(alert);
+    Message message = buildAlertCreatedMessage(organisation, alert);
     messageService.send(message, contacts);
   }
 
-  private Message buildAlertCreatedMessage(Alert alert) {
-    String subject = "Alarm:" + alert.getKeyword() + " (" + alert.getReferenceId() + ")";
+  private Message buildAlertCreatedMessage(Organisation organisation, Alert alert) {
+    String subject = "Alarm: " + alert.getKeyword();
 
     String address = "";
     if (!StringUtils.isBlank(alert.getAddressInfo2())) {
@@ -93,20 +104,23 @@ public class AlertCreatedNotificationBuilder extends
 
     String description = StringUtils.isBlank(alert.getDescription()) ? "" : alert.getDescription() + "\n";
 
-    String body = alert.getKeyword() + "\n"
-        + description
-        + address;
+    String body = alert.getKeyword() + "\n" +
+        description +
+        address + "\n\n" +
+        organisation.getName() + "\n" +
+        alert.getReferenceId();
 
-    return new Message(subject, body);
+    return new Message(Severity.ALERT, subject, body);
   }
 
-  private void alertStatusUpdate(Alert alert, List<Contact> contacts) {
+  private void alertStatusUpdate(Organisation organisation, Alert alert,
+      List<Contact> contacts) {
     logger.info("Build AlertFeedback Notification");
-    Message message = buildAlertStatusUpdateMessage(alert);
+    Message message = buildAlertStatusUpdateMessage(organisation, alert);
     messageService.send(message, contacts);
   }
 
-  private Message buildAlertStatusUpdateMessage(Alert alert) {
+  private Message buildAlertStatusUpdateMessage(Organisation organisation, Alert alert) {
     List<EmployeeFeedback> feedback = employeeFeedbackService.findByAlertId(alert.getId());
 
     List<Long> employeeIdsThatCommitted = feedback
@@ -136,15 +150,15 @@ public class AlertCreatedNotificationBuilder extends
       }
     }
 
-    String subject =
-        "Alarmupdate:" + alert.getKeyword() + " (" + alert.getReferenceId() + "); KOMMEN:" + employeeIdsThatCommitted
-            .size();
+    String subject = "Alarmupdate: " + alert.getKeyword();
 
     String body = "KOMMEN:" + employeeIdsThatCommitted.size() + "\n"
-        + "ABGELEHNT:" + employeeIdsThatCancel.size()
-        + skillBodyPart.toString();
+        + "ABGELEHNT:" + employeeIdsThatCancel.size() + "\n"
+        + skillBodyPart.toString() + "\n\n" +
+        organisation.getName() + "\n" +
+        alert.getReferenceId();
 
-    return new Message(subject, body);
+    return new Message(Severity.INFO, subject, body);
   }
 
   private Map<String, Integer> groupByEmployeeSkillsAndCount(Long

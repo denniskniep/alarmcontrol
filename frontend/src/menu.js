@@ -89,7 +89,7 @@ class Menu extends Component {
                             return (
                                 <React.Fragment>
                                   <AlertAddedSubscription
-                                      onSubscriptionData={d => refetch()}/>
+                                      onSubscriptionData={() => refetch()}/>
                                   <Navbar sticky="top" collapseOnSelect
                                           expand="lg"
                                           bg="dark"

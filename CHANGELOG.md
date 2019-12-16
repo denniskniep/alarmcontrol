@@ -13,10 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Send Notifications on Alert Received
 - Send Notifications via E-Mail
 - Configure and display AAO ("Alarm- und Ausrückordnung")
+- Send Notifications via Push Message (Firebase)
+- Severity for Notifications
 
 ### Changed
+- Graylog update from 3.0 to 3.1.2
+- Filebeat and elasticsearch update from 6.6.1 to 6.8.4
 
 ### Fixed
+- Gzipped Body of HTTP Messages are now logged uncompressed
 - Refresh menu with alerts on alert added notification
 - Two parallel incoming Alert Calls for single Alert ReferenceId
 

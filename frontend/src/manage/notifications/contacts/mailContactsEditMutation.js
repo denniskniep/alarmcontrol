@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {gql} from "apollo-boost";
-import MutationHandler from "../../utils/mutationHandler";
-import EditableTable from "../../components/editableTable";
+import MutationHandler from "../../../utils/mutationHandler";
+import EditableTable from "../../../components/editableTable";
 
 const DELETE_NOTIFICATION_CONTACT = gql`
 mutation deleteNotificationContact($organisationId: ID!, $uniqueContactId: String!){
