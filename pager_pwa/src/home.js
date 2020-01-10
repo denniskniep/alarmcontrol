@@ -116,6 +116,19 @@ class Home extends Component {
 
                         </Grid>
 
+                        <Grid item xs={12}>
+
+                          {userContext.subscribed &&
+                          <CheckCircleOutlineIcon style={{color: "green"}}/>
+                          }
+
+                          {!userContext.subscribed &&
+                          <BlockIcon style={{color: "red"}}/>
+                          }
+                          <span className={"supported-feature-icon-text"}>Subscribed to messages ({JSON.stringify(userContext.subscribed )})</span>
+
+                        </Grid>
+
                       </Grid>
                     </React.Fragment>
                 )

@@ -5,11 +5,14 @@ import Messages from "./messages";
 import Menu from "./menu";
 import CurrentUserContainer from "./auth/currentUserContainer";
 import {CurrentUserContext} from "./auth/currentUserContext";
+import CurrentConfigContainer from "./config/currentConfigContainer";
+import {CurrentConfigContext} from "./config/currentConfigContext";
 
 import Home from "./home";
 import {HashRouter as Router, Route, Switch} from "react-router-dom";
 import firebaseApp from "./firebaseApp";
 import Initialize from "./initialize";
+import InitConfig from "./initConfig";
 
 class App extends Component {
 
@@ -17,8 +20,16 @@ class App extends Component {
     super(props);
   }
 
-  getMenuItems(userContext) {
-    if(!userContext.allSupportedAndGranted){
+  getMenuItems(configContext, userContext) {
+    if(!configContext.config){
+      return [
+        {
+          name: "Setup",
+          href: "/setup"
+        }];
+    }
+
+    if (!userContext.allSupportedAndGranted) {
       return [
         {
           name: "Home",
@@ -41,6 +52,10 @@ class App extends Component {
           href: "/messages"
         },
         {
+          name: "Setup",
+          href: "/setup"
+        },
+        {
           name: "Logout",
           onClick: () => firebaseApp.auth().signOut()
         }
@@ -53,12 +68,19 @@ class App extends Component {
     }
   }
 
-  routes(userContext) {
-    if(userContext.pendingUserAuth){
-      return( <Initialize/>)
+  routes(configContext, userContext) {
+    if (userContext.pendingUserAuth) {
+      return (<Initialize/>)
     }
 
-    if(!userContext.allSupportedAndGranted){
+    if (!configContext.config) {
+      return (
+          <Switch>
+            <Route component={InitConfig}/>
+          </Switch>)
+    }
+
+    if (!userContext.allSupportedAndGranted) {
       return (
           <Switch>
             <Route component={Home}/>
@@ -71,6 +93,7 @@ class App extends Component {
             <Route exact path="/subscription" component={Subscription}/>
             <Route exact path="/messages" component={Messages}/>
             <Route exact path="/home" component={Home}/>
+            <Route exact path="/setup" component={InitConfig}/>
             <Route component={Home}/>
           </Switch>
       )
@@ -84,21 +107,29 @@ class App extends Component {
 
   render() {
     return (
-        <CurrentUserContainer>
-          <CurrentUserContext.Consumer>
-            {userContext => {
+        <CurrentConfigContainer>
+          <CurrentConfigContext.Consumer>
+            {configContext => {
               return (
-                  <Router>
-                    <Menu items={this.getMenuItems(userContext)}
-                          subscribed={userContext.subscribed}>
-                      {
-                        this.routes(userContext)
-                      }
-                    </Menu>
-                  </Router>);
+                  <CurrentUserContainer>
+                    <CurrentUserContext.Consumer>
+                      {userContext => {
+                        return (
+                            <Router>
+                              <Menu items={this.getMenuItems(configContext, userContext)}
+                                    subscribed={userContext.subscribed}>
+                                {
+                                  this.routes(configContext, userContext)
+                                }
+                              </Menu>
+                            </Router>);
+                      }}
+                    </CurrentUserContext.Consumer>
+                  </CurrentUserContainer>);
             }}
-          </CurrentUserContext.Consumer>
-        </CurrentUserContainer>)
+          </CurrentConfigContext.Consumer>
+        </CurrentConfigContainer>
+    )
   }
 }
 
