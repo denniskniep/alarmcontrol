@@ -13,6 +13,7 @@ import {HashRouter as Router, Route, Switch} from "react-router-dom";
 import firebaseApp from "./firebaseApp";
 import Initialize from "./initialize";
 import InitConfig from "./initConfig";
+import MessagesContainer from "./notifications/messagesContainer";
 
 class App extends Component {
 
@@ -115,14 +116,16 @@ class App extends Component {
                     <CurrentUserContext.Consumer>
                       {userContext => {
                         return (
-                            <Router>
-                              <Menu items={this.getMenuItems(configContext, userContext)}
-                                    subscribed={userContext.subscribed}>
-                                {
-                                  this.routes(configContext, userContext)
-                                }
-                              </Menu>
-                            </Router>);
+                            <MessagesContainer>
+                              <Router>
+                                <Menu items={this.getMenuItems(configContext, userContext)}
+                                      subscribed={userContext.subscribed}>
+                                  {
+                                    this.routes(configContext, userContext)
+                                  }
+                                </Menu>
+                              </Router>
+                            </MessagesContainer>);
                       }}
                     </CurrentUserContext.Consumer>
                   </CurrentUserContainer>);

@@ -46,7 +46,6 @@ class Messages extends Component {
   render() {
     return (
         <React.Fragment>
-          <MessagesContainer>
             <MessagesContext.Consumer>
               {messagesContext => {
                 return (
@@ -89,7 +88,6 @@ class Messages extends Component {
                 )
               }}
             </MessagesContext.Consumer>
-          </MessagesContainer>
         </React.Fragment>
     )
   }

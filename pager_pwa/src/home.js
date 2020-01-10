@@ -3,7 +3,6 @@ import firebase from "firebase";
 import Grid from "@material-ui/core/Grid";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import BlockIcon from '@material-ui/icons/Block';
-import CurrentUserContainer from "./auth/currentUserContainer";
 import {CurrentUserContext} from "./auth/currentUserContext";
 
 class Home extends Component {
@@ -13,7 +12,6 @@ class Home extends Component {
   }
 
   render() {
-
     let pushMessagingSupported = firebase.messaging.isSupported();
     let serviceWorkerSupported = 'serviceWorker' in navigator;
     let notificationSupported = "Notification" in window;
@@ -26,7 +24,6 @@ class Home extends Component {
     return (
         <React.Fragment>
           <h1>Welcome</h1>
-          <CurrentUserContainer>
             <CurrentUserContext.Consumer>
               {userContext => {
                 return (
@@ -125,7 +122,7 @@ class Home extends Component {
                           {!userContext.subscribed &&
                           <BlockIcon style={{color: "red"}}/>
                           }
-                          <span className={"supported-feature-icon-text"}>Subscribed to messages ({JSON.stringify(userContext.subscribed )})</span>
+                          <span className={"supported-feature-icon-text"}>Subscribed to messages</span>
 
                         </Grid>
 
@@ -134,8 +131,6 @@ class Home extends Component {
                 )
               }}
             </CurrentUserContext.Consumer>
-          </CurrentUserContainer>
-
         </React.Fragment>
     )
   }

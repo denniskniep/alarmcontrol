@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {CurrentConfigContext} from "./currentConfigContext";
+import {loadConfig, saveConfig} from "./config";
 
 const CONFIG_KEY = 'config';
 
@@ -9,16 +10,8 @@ class CurrentConfigContainer extends Component {
     super(props);
 
     this.state = {
-      config: this.getConfig()
+      config: loadConfig()
     }
-  }
-
-  getConfig() {
-    let config = localStorage.getItem(CONFIG_KEY);
-    if (!config) {
-      return null;
-    }
-    return JSON.parse(config);
   }
 
   setConfig(config) {
@@ -29,7 +22,7 @@ class CurrentConfigContainer extends Component {
         messagingSenderId: config.messagingSenderId,
         appId: config.appId
       };
-      localStorage.setItem(CONFIG_KEY, JSON.stringify(newConfig));
+      saveConfig(newConfig);
       this.setState({ config: newConfig})
     }else {
       console.log("config is not valid!")

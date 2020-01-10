@@ -30,7 +30,6 @@ class InitConfig extends Component {
   render() {
     return (
         <React.Fragment>
-          <CurrentConfigContainer>
             <CurrentConfigContext.Consumer>
               {configContext => {
                 return (
@@ -64,7 +63,6 @@ class InitConfig extends Component {
                     </React.Fragment>);
               }}
             </CurrentConfigContext.Consumer>
-          </CurrentConfigContainer>
         </React.Fragment>
     )
   }
