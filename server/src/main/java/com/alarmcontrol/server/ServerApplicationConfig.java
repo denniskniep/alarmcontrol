@@ -1,16 +1,14 @@
 package com.alarmcontrol.server;
 
-import java.time.Duration;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import okhttp3.OkHttpClient;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zalando.logbook.Logbook;
-import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
-import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
+import org.zalando.logbook.okhttp.GzipInterceptor;
+import org.zalando.logbook.okhttp.LogbookInterceptor;
 
 @Configuration
 public class ServerApplicationConfig {
@@ -18,17 +16,16 @@ public class ServerApplicationConfig {
   @Bean()
   public RestTemplate restTemplate(RestTemplateBuilder builder, Logbook logbook){
 
-    CloseableHttpClient client = HttpClientBuilder.create()
-        .addInterceptorFirst(new LogbookHttpRequestInterceptor(logbook))
-        .addInterceptorLast(new LogbookHttpResponseInterceptor())
+    OkHttpClient client = new OkHttpClient.Builder()
+        .addNetworkInterceptor(new LogbookInterceptor(logbook))
+        .addNetworkInterceptor(new GzipInterceptor())
         .build();
 
-    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-    requestFactory.setHttpClient(client);
+    OkHttp3ClientHttpRequestFactory requestFactory = new OkHttp3ClientHttpRequestFactory(client);
+    requestFactory.setConnectTimeout(5000);
+    requestFactory.setReadTimeout(10000);
 
     RestTemplate restTemplate = builder
-        .setConnectTimeout(Duration.ofMillis(5000))
-        .setReadTimeout(Duration.ofMillis(10000))
         .requestFactory(() -> requestFactory)
         .build();
 

@@ -5,6 +5,7 @@ import com.alarmcontrol.server.notifications.core.messaging.Message;
 import com.alarmcontrol.server.utils.DateToIsoFormatter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.jsonpath.JsonPath;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
-  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 300000; // 300000ms == 5min
+  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 10;
   private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
   @Value("${notifications.firebase.push.url:}")
@@ -145,7 +147,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     parameter.put("collection", "subscriptiontokens");
     URI uri = builder.buildAndExpand(parameter).encode().toUri();
 
-    HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(new HashMap<>(), headers);
+    HttpEntity<Map<String,Object>> dataEntity = new HttpEntity<>(null, headers);
     ResponseEntity<JsonNode> result;
     try{
       result = restTemplate.exchange(uri, HttpMethod.GET, dataEntity, JsonNode.class);
@@ -192,12 +194,14 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
           contact.getMail());
 
       // First send a notification message to ensure the Device wake up
-      sendFirebaseMessageToToken(token, "notification", message);
+      ResponseEntity<String> notificationResponse = sendFirebaseMessageToToken(token, "notification", message);
+      logSendMessageResponse(notificationResponse, contact);
 
       Thread.sleep(500);
 
       // Then send a data message which is customizable at the device
-      sendFirebaseMessageToToken(token, "data", message);
+      ResponseEntity<String> dataResponse = sendFirebaseMessageToToken(token, "data", message);
+      logSendMessageResponse(dataResponse, contact);
 
       logger.info("Following message sent to Mail {} ({}) \n: {}",
           contact.getMail(),
@@ -209,7 +213,35 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     }
   }
 
-  private void sendFirebaseMessageToToken(String token, String messageKind, Message message) {
+  private void logSendMessageResponse(ResponseEntity<String> notificationResponse,
+      FirebaseMessageContact contact) {
+    if(notificationResponse.getStatusCode() == HttpStatus.OK && notificationResponse.hasBody()){
+      String body = notificationResponse.getBody();
+      Integer isSuccess = tryReadJsonPath(body, "$.success");
+      Integer isFailure = tryReadJsonPath(body, "$.failure");
+      Object results = tryReadJsonPath(body, "$.results");
+
+      if(isFailure != null && isFailure > 0){
+        logger.warn("Can not send message to {} due to failure. See response:\n {}", contact, results);
+      } else if(isSuccess != null && isSuccess > 0){
+        logger.info("Successfully sent message to {} with following response:\n {}", contact, results);
+      }
+    }
+  }
+
+  private<T> T tryReadJsonPath(String json, String path){
+    try{
+      logger.debug("Read '{}'", path);
+      T value = JsonPath.read(json, path);
+      logger.debug("Value of '{}' is '{}'", path, value);
+      return value;
+    }catch (Exception e){
+      logger.info("Can't read jsonPath '{}' from json {}.", path, json);
+      return null;
+    }
+  }
+
+  private ResponseEntity<String> sendFirebaseMessageToToken(String token, String messageKind, Message message) {
     logger.info("Sending firebase {} message to {}",
         messageKind,
         token);
@@ -221,7 +253,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     Map<String, Object> messageWrapper = createMessageWrapper(token);
     messageWrapper.put(messageKind, createMessage(message));
     final HttpEntity<Map<String,Object>> notificationEntity = new HttpEntity<>(messageWrapper, headers);
-    restTemplate.exchange(pushUrl, HttpMethod.POST, notificationEntity, String.class);
+    return restTemplate.exchange(pushUrl, HttpMethod.POST, notificationEntity, String.class);
   }
 
   private Map<String, Object> createMessage(Message message) {

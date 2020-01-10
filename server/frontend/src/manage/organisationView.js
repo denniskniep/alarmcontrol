@@ -96,7 +96,7 @@ class OrganisationView extends Component {
 
       <Row>
         <Col md="10">
-          <h4>AAO</h4>
+          <h4>Alarm- und Ausrückordnung</h4>
         </Col>
       </Row>
 

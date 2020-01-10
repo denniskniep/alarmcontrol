@@ -63,6 +63,11 @@
       <artifactId>logbook-spring-boot-starter</artifactId>
       <version>1.13.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.zalando</groupId>
+      <artifactId>logbook-okhttp</artifactId>
+      <version>1.13.0</version>
+    </dependency>
 
     <!-- GraphQl -->
     <dependency>
@@ -109,6 +114,8 @@
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
     </dependency>
+
+
 
     <!-- Test -->
     <dependency>
