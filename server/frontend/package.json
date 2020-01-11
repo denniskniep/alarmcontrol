@@ -27,6 +27,7 @@
     "polyline": "^0.2.0",
     "postcss-browser-comments": "^2.0.0",
     "prop-types": "^15.7.2",
+    "qrcode.react": "^1.0.0",
     "react": "^16.9.0",
     "react-apollo": "^2.5.5",
     "react-bootstrap": "^1.0.0-beta.8",

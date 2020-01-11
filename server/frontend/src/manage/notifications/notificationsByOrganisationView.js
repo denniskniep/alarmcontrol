@@ -1,11 +1,19 @@
 import React, {Component} from 'react';
-import {Col, Container,DropdownButton, Dropdown, Row} from "react-bootstrap";
+import {
+  Col,
+  Container,
+  DropdownButton,
+  Dropdown,
+  Row,
+  Button, Modal
+} from "react-bootstrap";
 import {gql} from "apollo-boost";
 import QueryHandler from "../../utils/queryHandler";
 import MailContactsEditMutation from "./contacts/mailContactsEditMutation";
 import NotificationSubscriptionsEditMutation from "./notificationSubscriptionsEditMutation";
 import FirebaseMessageContactsEditMutation  from "./contacts/firebaseMessageContactsEditMutation";
 import EditableTable from "../../components/editableTable";
+import FirebaseConfig from "./firebaseConfig";
 
 const NOTIFICATION_CONFIG_BY_ORGANISATION_ID = gql`
 query organisationById($id: ID!) {
@@ -39,6 +47,30 @@ query organisationById($id: ID!) {
 `;
 
 class NotificationsByOrganisationView extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showFirebaseConfig: false
+    }
+  }
+
+  handleFirebaseConfigClose(){
+    this.setState((state, props) => {
+      return {
+        showFirebaseConfig: false
+      }
+    });
+  }
+
+  handleFirebaseConfigOpen(){
+    this.setState((state, props) => {
+      return {
+        showFirebaseConfig: true
+      }
+    });
+  }
 
   render() {
     return (
@@ -78,7 +110,29 @@ class NotificationsByOrganisationView extends Component {
                           contacts={mailContacts}
                       />
 
-                      <h2>Firebase Push</h2>
+                       <div className={"float-left"}>
+                         <h2>Firebase Push</h2>
+                       </div>
+                      <div className={"float-left"} style={{marginLeft: "15px"}}>
+                        <Button variant="primary" onClick={() => this.handleFirebaseConfigOpen()}>
+                          View Pager Config
+                        </Button>
+                      </div>
+
+                      <Modal show={this.state.showFirebaseConfig} onHide={() => this.handleFirebaseConfigClose()}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Config for Pager</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <FirebaseConfig/>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="secondary" onClick={() => this.handleFirebaseConfigClose()}>
+                            Close
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+
                       <FirebaseMessageContactsEditMutation
                           onContactsChanged={() => refetch()}
                           organisationId={this.props.match.params.id}

@@ -1,3 +1,7 @@
+extend type Query {
+  firebaseClientConfiguration: FirebaseClientConfiguration
+}
+
 extend type Mutation {
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
   addNotificationFirebaseMessageContact(organisationId: ID!, name: String, mail : String!): Contact
@@ -6,6 +10,14 @@ extend type Mutation {
   addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
   editNotificationSubscriptionForAlertCreated(organisationId: ID!, uniqueSubscriptionId: String!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
   deleteNotificationSubscription(organisationId: ID!, uniqueSubscriptionId: String!): String
+}
+
+type FirebaseClientConfiguration {
+  apiKey : String
+  projectId : String
+  messagingSenderId : String
+  appId : String
+  pagerUrl : String
 }
 
 type NotificationOrganisationConfig {
