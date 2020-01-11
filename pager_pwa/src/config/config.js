@@ -19,6 +19,8 @@ export function saveConfig(config){
     };
 
     localStorage.setItem(CONFIG_KEY, JSON.stringify(newConfig));
+  }else{
+    console.error("Config invalid", config)
   }
 }
 

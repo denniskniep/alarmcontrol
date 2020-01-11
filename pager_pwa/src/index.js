@@ -5,9 +5,21 @@ import {registerForegroundMessageHandler} from './notifications/messageHandler'
 import {startRegisterServiceWorker} from './serviceWorkerRegistrator'
 import './styles.css';
 import {initializeMessageSubscription} from "./notifications/pushNotificationSubscription";
-import firebase from "firebase";
-import {firebaseConfig, loadConfig} from "./config/config";
-import firebaseApp from './firebaseApp';
+import {saveConfig, loadConfig} from "./config/config";
+
+const configAsString = new URL(location).searchParams.get('config');
+if(configAsString){
+  console.log("Set config via URL Parameter", configAsString)
+  let config = JSON.parse(configAsString);
+  saveConfig(config);
+  const currentUrl = new URL(location);
+  currentUrl.search = "";
+  console.log("Reload App without config params", currentUrl.toString())
+  window.location.href = currentUrl.toString()
+  return;
+}else{
+  console.log("No configs in URL Parameter found")
+}
 
 let config = loadConfig();
 if(config){
