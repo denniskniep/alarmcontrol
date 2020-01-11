@@ -1,9 +1,9 @@
 import firebaseApp from './firebaseApp';
 import firebase from "firebase";
 
-export const startRegisterServiceWorker = () => {
+export const startRegisterServiceWorker = (config) => {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./serviceWorker.js')
+    navigator.serviceWorker.register('./serviceWorker.js?config=' + encodeURIComponent(JSON.stringify(config)))
     .then(function(registration) {
       console.log('ServiceWorker Registration successful, scope is:', registration.scope);
 

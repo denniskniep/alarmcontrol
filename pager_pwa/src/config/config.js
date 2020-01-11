@@ -10,11 +10,24 @@ export function loadConfig(){
 }
 
 export function saveConfig(config){
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+  if(config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
+    let newConfig = {
+      apiKey: config.apiKey,
+      projectId: config.projectId,
+      messagingSenderId: config.messagingSenderId,
+      appId: config.appId
+    };
+
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(newConfig));
+  }
 }
 
 export function loadFirebaseConfig() {
   let config = loadConfig();
+  return convertConfigToFirebaseConfig(config);
+}
+
+export function convertConfigToFirebaseConfig(config) {
   if(!config || !config.apiKey || !config.projectId || !config.messagingSenderId || !config.appId ){
     return null;
   }
@@ -29,22 +42,3 @@ export function loadFirebaseConfig() {
     appId: config.appId
   };
 }
-
-
-export const firebaseConfigParams = {
-  apiKey: "AIzaSyC3CjgV1slexBAYh9C47eUS8-VVRBPY6z4",
-  projectId: "alarmcontrol-ffmeimbressen",
-  messagingSenderId: "280424824514",
-  appId: "1:280424824514:web:71f9c6481da1bd2697855b"
-};
-
-export const firebaseConfig = {
-  apiKey: firebaseConfigParams.apiKey,
-  authDomain: firebaseConfigParams.projectId + ".firebaseapp.com",
-  databaseURL: "https://" + firebaseConfigParams.projectId  +".firebaseio.com",
-  projectId: firebaseConfigParams.projectId,
-  storageBucket: firebaseConfigParams.projectId + ".appspot.com",
-  messagingSenderId: firebaseConfigParams.messagingSenderId,
-  appId: firebaseConfigParams.appId
-};
-

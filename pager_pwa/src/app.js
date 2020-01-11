@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   getMenuItems(configContext, userContext) {
-    if(!configContext.config){
+    if (!configContext.config) {
       return [
         {
           name: "Setup",
@@ -74,13 +74,6 @@ class App extends Component {
       return (<Initialize/>)
     }
 
-    if (!configContext.config) {
-      return (
-          <Switch>
-            <Route component={InitConfig}/>
-          </Switch>)
-    }
-
     if (!userContext.allSupportedAndGranted) {
       return (
           <Switch>
@@ -112,23 +105,45 @@ class App extends Component {
           <CurrentConfigContext.Consumer>
             {configContext => {
               return (
-                  <CurrentUserContainer>
-                    <CurrentUserContext.Consumer>
-                      {userContext => {
-                        return (
-                            <MessagesContainer>
-                              <Router>
-                                <Menu items={this.getMenuItems(configContext, userContext)}
-                                      subscribed={userContext.subscribed}>
-                                  {
-                                    this.routes(configContext, userContext)
-                                  }
-                                </Menu>
-                              </Router>
-                            </MessagesContainer>);
-                      }}
-                    </CurrentUserContext.Consumer>
-                  </CurrentUserContainer>);
+                  <React.Fragment>
+                    {
+                      !configContext.config &&
+                      <Router>
+                        <Menu items={[
+                          {
+                            name: "Setup",
+                            href: "/setup"
+                          }]} subscribed={false}>
+                        <Switch>
+                          <Route component={InitConfig}/>
+                        </Switch>
+                        </Menu>
+                      </Router>
+                    }
+
+                    {
+                      configContext.config &&
+                      <CurrentUserContainer>
+                        <CurrentUserContext.Consumer>
+                          {userContext => {
+                            return (
+                                <MessagesContainer>
+                                  <Router>
+                                    <Menu
+                                        items={this.getMenuItems(configContext,
+                                            userContext)}
+                                        subscribed={userContext.subscribed}>
+                                      {
+                                        this.routes(configContext, userContext)
+                                      }
+                                    </Menu>
+                                  </Router>
+                                </MessagesContainer>);
+                          }}
+                        </CurrentUserContext.Consumer>
+                      </CurrentUserContainer>
+                    }</React.Fragment>
+              );
             }}
           </CurrentConfigContext.Consumer>
         </CurrentConfigContainer>

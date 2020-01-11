@@ -4,6 +4,7 @@ import {CurrentConfigContext} from "./config/currentConfigContext";
 import Grid from "@material-ui/core/Grid";
 import QrReader from 'react-qr-reader'
 import Button from "@material-ui/core/Button";
+import {saveConfig} from "./config/config";
 
 class InitConfig extends Component {
 
@@ -15,7 +16,8 @@ class InitConfig extends Component {
     if (data) {
       console.log("QR-Code scanned: ", data)
       let parsedConfig = JSON.parse(data);
-      configContext.setConfig(parsedConfig)
+      saveConfig(parsedConfig);
+      window.location.reload();
     }
   }
 

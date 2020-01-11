@@ -5,10 +5,17 @@ import {registerForegroundMessageHandler} from './notifications/messageHandler'
 import {startRegisterServiceWorker} from './serviceWorkerRegistrator'
 import './styles.css';
 import {initializeMessageSubscription} from "./notifications/pushNotificationSubscription";
+import firebase from "firebase";
+import {firebaseConfig, loadConfig} from "./config/config";
+import firebaseApp from './firebaseApp';
 
-startRegisterServiceWorker();
-registerForegroundMessageHandler();
-initializeMessageSubscription();
+let config = loadConfig();
+if(config){
+  startRegisterServiceWorker(config);
+  registerForegroundMessageHandler();
+  initializeMessageSubscription();
+}
+
 
 ReactDOM.render(
     <App/>,

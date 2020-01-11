@@ -1,4 +1,5 @@
 import firebaseApp from '../firebaseApp';
+import {initFirebaseApp} from '../firebaseApp';
 import firebase from "firebase";
 import {saveMessage, getMessages} from "./messageStore";
 import moment from "moment";
@@ -24,18 +25,20 @@ export const registerForegroundMessageHandler = () => {
       onServiceWorkerNotificationClick(event), false);
 };
 
-export const registerServiceWorkerMessageHandler = (self) => {
+export const registerServiceWorkerMessageHandler = (self, config) => {
   if (!firebase.messaging.isSupported()) {
     console.log("Firebase Messaging is not supported in this Browser!");
     return;
   }
-
+  let firebaseApp = initFirebaseApp(config);
   const messaging = firebaseApp.messaging();
   messaging.setBackgroundMessageHandler((payload) =>
       onServiceWorkerMessage(self, payload));
 
   self.addEventListener('notificationclick', (event) =>
       onServiceWorkerNotificationClick(event), false);
+
+  console.log("Successfully registered ServiceWorkerMessageHandler!");
 };
 
 const onForegroundMessage = (payload) => {
