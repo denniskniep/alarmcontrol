@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class FirebaseMessageService extends AbstractMessageService<FirebaseMessageContact> {
 
-  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 10;
+  public static final int TOKENS_CACHE_TIMEOUT_IN_MS = 1000;
   private Logger logger = LoggerFactory.getLogger(FirebaseMessageService.class);
 
   @Value("${notifications.firebase.push.url:}")
@@ -58,12 +59,15 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
 
   private RestTemplate restTemplate;
 
+  private RetryTemplate retryTemplate;
+
   private Map<String, String> tokensByMailCache;
   private Date lastCacheFetch;
 
-  public FirebaseMessageService(RestTemplate restTemplate) {
+  public FirebaseMessageService(RestTemplate restTemplate, RetryTemplate retryTemplate) {
     super(FirebaseMessageContact.class);
     this.restTemplate = restTemplate;
+    this.retryTemplate = retryTemplate;
   }
 
   @Override
@@ -79,15 +83,25 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
       throw new RuntimeException("AuthorizationHeader is not set!");
     }
 
-    Map<String, String> tokensByMail = getTokensByMailFromCacheAndRefreshCacheIfNecessary();
+    Map<String, String> tokensByMail = retryTemplate.execute(e ->
+      getTokensByMailFromCacheAndRefreshCacheIfNecessary()
+    );
+
     for (FirebaseMessageContact contact : contacts) {
-      sendFirebaseMessage(contact, message, tokensByMail);
+      try{
+        retryTemplate.execute(e ->
+          sendFirebaseMessage(contact, message, tokensByMail)
+        );
+      }catch (Exception e){
+        logger.error("Can not send message to {} \ndue to: {}\n {}", contact, e.getMessage(), message, e);
+      }
     }
   }
 
   private synchronized Map<String, String> getTokensByMailFromCacheAndRefreshCacheIfNecessary() {
     boolean cacheTimedOut = false;
     if(lastCacheFetch != null){
+
       long lastCacheFetchInMs = lastCacheFetch.getTime();
       long dateInMs = new Date().getTime();
       long cacheAgeInMs = dateInMs - lastCacheFetchInMs;
@@ -95,6 +109,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
       if(cacheTimedOut){
         logger.info("TokensByMail Cache timed out because it is older than {}ms (CacheAge in MS:{})", TOKENS_CACHE_TIMEOUT_IN_MS, cacheAgeInMs);
       }
+
     }
 
     if(tokensByMailCache == null || lastCacheFetch == null || cacheTimedOut){
@@ -174,8 +189,8 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
     return mailToToken;
   }
 
-  private void sendFirebaseMessage(FirebaseMessageContact contact, Message message, Map<String, String> tokensByMail) {
-    try{
+  private boolean sendFirebaseMessage(FirebaseMessageContact contact, Message message, Map<String, String> tokensByMail)
+      throws InterruptedException {
       if(StringUtils.isBlank(contact.getMail())){
         throw new RuntimeException("Token is not set!");
       }
@@ -207,10 +222,7 @@ public class FirebaseMessageService extends AbstractMessageService<FirebaseMessa
           contact.getMail(),
           token,
           message);
-
-    }catch (Exception e){
-      logger.error("Can not send message to {} \ndue to: {}\n {}", contact, e.getMessage(), message, e);
-    }
+    return true;
   }
 
   private void logSendMessageResponse(ResponseEntity<String> notificationResponse,
