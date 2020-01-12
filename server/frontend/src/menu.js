@@ -122,11 +122,18 @@ class Menu extends Component {
                                       <Nav>
                                         <NavDropdown title="Manage">
                                           <NavDropdown.Item
-                                              href="/app/manage/organisation">Organisations</NavDropdown.Item>
+                                              href="/app/manage/organisation">
+                                            Organisations
+                                          </NavDropdown.Item>
                                           <NavDropdown.Item
-                                              href="/app/manage/alerts">Alerts</NavDropdown.Item>
+                                              href="/app/manage/alerts">
+                                            Alerts
+                                          </NavDropdown.Item>
+                                          <NavDropdown.Item
+                                              href="/app/manage/testalarm">
+                                            Testalarm
+                                          </NavDropdown.Item>
                                         </NavDropdown>
-
                                         <Form inline>
                                           <Form.Group controlId="formGridState">
                                             <Form.Label

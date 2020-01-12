@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import QRCode from 'qrcode.react';
 import {gql} from "apollo-boost";
 import QueryHandler from "../../utils/queryHandler";
-import {Col, Container, Row} from "react-bootstrap";
-import EmployeeStatus from "../../home/employeeStatus";
+import {Container, Row} from "react-bootstrap";
 
 const QUERY_FIREBASE_CONFIG = gql`
 query firebaseClientConfiguration{

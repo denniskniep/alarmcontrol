@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Send Notifications via Push Message (Firebase)
 - Severity for Notifications
 - Receive Notifications via Push Message (Firebase) in PagerPWA (Progressive WebApp)
+- Display Link to PagerPWA with Configuration for Firebase Push Messages
+- Form to generate a testalarm
 
 ### Changed
 - Graylog update from 3.0 to 3.1.2

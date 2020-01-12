@@ -10,12 +10,14 @@ import com.alarmcontrol.server.data.EmployeeStatusService;
 import com.alarmcontrol.server.data.models.AlertCall;
 import java.util.HashMap;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:1234", "http://localhost:8080"})
 public class ExternalRequestsController {
 
   private static final String ORG_ID =  "organisationId";
@@ -56,7 +58,7 @@ public class ExternalRequestsController {
         alertRequest.getRaw());
 
     if(alertCall == null){
-      return ResponseEntity.ok("No AlertCall created!");
+      return ResponseEntity.ok(new ResponseMessage("No AlertCall created!"));
     }
 
     return ResponseEntity.ok(alertCall.getId());
