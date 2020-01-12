@@ -16,24 +16,22 @@ if(configAsString){
   currentUrl.search = "";
   console.log("Reload App without config params", currentUrl.toString())
   window.location.href = currentUrl.toString()
-  return;
+
 }else{
-  console.log("No configs in URL Parameter found")
+  console.log("No configs in URL Parameter found");
+
+  let config = loadConfig();
+  if(config){
+    startRegisterServiceWorker(config);
+    registerForegroundMessageHandler();
+    initializeMessageSubscription();
+  }
+
+  ReactDOM.render(
+      <App/>,
+      document.getElementById('app')
+  );
 }
-
-let config = loadConfig();
-if(config){
-  startRegisterServiceWorker(config);
-  registerForegroundMessageHandler();
-  initializeMessageSubscription();
-}
-
-
-ReactDOM.render(
-    <App/>,
-    document.getElementById('app')
-);
-
 //Custom Banner für App Allow Notifications & Zum Startbildschirm hinzufügen
 
 // If the app is closed. The Read click on the notification opens the browser not the PWA
