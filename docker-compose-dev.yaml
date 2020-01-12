@@ -16,6 +16,7 @@ services:
       SPRING_PROFILES_ACTIVE: postgres
       GRAPHHOPPER_APIKEY: "${GRAPHHOPPER_APIKEY}"
       MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
+
     depends_on:
       - postgres
     networks: ['alarmcontrol-net']
@@ -32,6 +33,13 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     networks: ['alarmcontrol-net']
+  
+  pager_pwa:
+    build:
+      context: ./pager_pwa
+      dockerfile: Dockerfile
+    ports:
+      - 8081:80
 
 volumes:
   database-data: {}
