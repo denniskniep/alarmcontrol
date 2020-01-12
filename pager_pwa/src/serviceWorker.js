@@ -1,5 +1,5 @@
-import {registerServiceWorkerMessageHandler} from './notifications/messageHandler'
-import {convertConfigToFirebaseConfig} from "./config/config";
+import {registerServiceWorkerMessageHandler} from './notifications/messageHandlerServiceWorker'
+import {convertConfigToFirebaseConfig} from "./config/configConverter";
 
 
 const configAsString = new URL(self.location).searchParams.get('config');

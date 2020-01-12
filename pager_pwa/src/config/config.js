@@ -1,7 +1,13 @@
+import {convertConfigToFirebaseConfig} from "./configConverter";
 
 const CONFIG_KEY = 'config';
 
 export function loadConfig(){
+  if(!localStorage){
+    console.error("trying to load config , but there is no local storage!")
+    return null;
+  }
+
   let config = localStorage.getItem(CONFIG_KEY);
   if (!config) {
     return null;
@@ -29,18 +35,4 @@ export function loadFirebaseConfig() {
   return convertConfigToFirebaseConfig(config);
 }
 
-export function convertConfigToFirebaseConfig(config) {
-  if(!config || !config.apiKey || !config.projectId || !config.messagingSenderId || !config.appId ){
-    return null;
-  }
 
-  return {
-    apiKey: config.apiKey,
-    authDomain: config.projectId + ".firebaseapp.com",
-    databaseURL: "https://" + config.projectId  +".firebaseio.com",
-    projectId: config.projectId,
-    storageBucket: config.projectId + ".appspot.com",
-    messagingSenderId: config.messagingSenderId,
-    appId: config.appId
-  };
-}

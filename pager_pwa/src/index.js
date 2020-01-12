@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './app';
-import {registerForegroundMessageHandler} from './notifications/messageHandler'
+import {registerForegroundMessageHandler} from './notifications/messageHandlerForeground'
 import {startRegisterServiceWorker} from './serviceWorkerRegistrator'
 import './styles.css';
 import {initializeMessageSubscription} from "./notifications/pushNotificationSubscription";
@@ -12,10 +12,10 @@ if(configAsString){
   console.log("Set config via URL Parameter", configAsString)
   let config = JSON.parse(configAsString);
   saveConfig(config);
-  const currentUrl = new URL(location);
-  currentUrl.search = "";
-  console.log("Reload App without config params", currentUrl.toString())
-  window.location.href = currentUrl.toString()
+  const urlWithoutConfig = new URL(location);
+  urlWithoutConfig.search = "";
+  console.log("Reload App without config params", urlWithoutConfig.toString())
+  window.location.href = urlWithoutConfig.toString()
 
 }else{
   console.log("No configs in URL Parameter found");
