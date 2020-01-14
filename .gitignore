@@ -31,4 +31,5 @@ HELP.md
 ### h2 testdatabase ###
 test*.db
 
+logs/
 server/logs/
