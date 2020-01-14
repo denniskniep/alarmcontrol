@@ -1,0 +1,28 @@
+{
+  "name": "alarmcontrol_pager",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "mkdir -p ./dist/ && cp -vr ./src/images/icons/icon-96x96.png ./dist/ && parcel serve src/index.html --port 2345",
+    "build": "mkdir -p ./dist/ && cp -vr ./src/images/icons/icon-96x96.png ./dist/ && parcel build src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.5.1",
+    "@material-ui/icons": "^4.5.1",
+    "core-js": "^3.3.3",
+    "firebase": "^7.2.0",
+    "firebaseui": "^4.1.0",
+    "moment": "^2.24.0",
+    "parcel": "^1.12.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.10.2",
+    "react-firebaseui": "^4.0.0",
+    "react-qr-reader": "^2.2.1",
+    "react-router-dom": "^5.1.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-react": "^7.6.3"
+  }
+}

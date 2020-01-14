@@ -3,6 +3,8 @@
 ## Start Application
 The following steps are necessary to start the application for development:
 
+* Open Maven Project in your IDE `./server/pom.xml`
+
 * Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
 
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
@@ -11,11 +13,15 @@ The following steps are necessary to start the application for development:
 * Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
 (register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
 
-* Start the Spring Application `src/main/java/com/alarmcontrol/server/ServerApplication.java` ( i.e. in your IDE)
+* Start the Spring Application `server/src/main/java/com/alarmcontrol/server/ServerApplication.java`
 
-* Install node_modules inside the folder `frontend` with `npm install`
+* Install node_modules inside the folder `server/frontend` with `npm install`
 
-* Start react client inside the folder `frontend` with `npm run start`
+* Start react client inside the folder `server/frontend` with `npm run start`
+
+* Install node_modules inside the folder `pager_pwa/` with `npm install`
+
+* Start react client inside the folder `pager_pwa/` with `npm run start`
 
 ## Start Application Environment
 The following steps are not necessary for development, but could be handy:
@@ -62,6 +68,9 @@ src/main/resources/db/changelog/db.changelog-master.yaml
 
 ### ERM
 ![database_erm.png](database_erm.png)
+
+## Architecture
+![architecture.png](architecture.png)
 
 ## GraphQL
 Entrypoint for Webrequests `src/main/java/com/alarmcontrol/server/data/graphql/*`:
