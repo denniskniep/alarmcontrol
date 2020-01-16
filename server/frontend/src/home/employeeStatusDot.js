@@ -3,8 +3,8 @@ import EmployeeStates from "./employeeStates";
 
 class EmployeeStatusDot extends Component {
 
-  mapClassForFeedback(feedback) {
-    switch (feedback) {
+  mapClassForStatus(status) {
+    switch (status) {
       case EmployeeStates.getNotAvailable():
         return "dot-not-available"
       case EmployeeStates.getAvailable():
@@ -18,10 +18,10 @@ class EmployeeStatusDot extends Component {
     return (
         <span
             className={"dot " + this.props.className + " "
-            + this.mapClassForFeedback(
-                this.props.employee &&
-                this.props.employee.status &&
-                this.props.employee.status.status)}></span>
+            + this.mapClassForStatus(
+                this.props.employeeStatus &&
+                this.props.employeeStatus.status
+            )}></span>
     );
   }
 }

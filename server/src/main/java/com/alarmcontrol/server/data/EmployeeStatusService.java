@@ -60,4 +60,23 @@ public class EmployeeStatusService {
 
     return allStatus.get(0);
   }
+
+  public EmployeeStatus getEmployeeStatusUntilOrEqual(Long employeeId, Date untilOrEqualUtcDateTime){
+    List<EmployeeStatus> allStatus = employeeStatusRepository
+        .findByEmployeeIdOrderByUtcDateTimeDesc(employeeId);
+
+    if(allStatus.size() == 0){
+      return null;
+    }
+
+    Optional<EmployeeStatus> employeeStatus = allStatus.stream()
+        .filter(s -> s.getUtcDateTime().before(untilOrEqualUtcDateTime) ||
+            s.getUtcDateTime().equals(untilOrEqualUtcDateTime)).findFirst();
+
+    if(employeeStatus.isEmpty()){
+      return null;
+    }
+
+    return employeeStatus.get();
+  }
 }

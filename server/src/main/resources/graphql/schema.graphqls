@@ -66,6 +66,7 @@ type Alert {
   distance: Float,
   duration: Int,
   employeeFeedback: [EmployeeFeedback]
+  employeeStatus: [EmployeeStatus]
   alertCalls: [AlertCall]
   aao: [String]
 }
