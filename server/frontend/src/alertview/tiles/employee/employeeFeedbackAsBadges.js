@@ -21,13 +21,17 @@ class EmployeeFeedbackAsBadges extends Component {
         <Row>
           <Col>
             {this.props.employeeFeedback.map((ef, index) => {
+
+              let employeeStatus = this.props.employeeStatus
+              .find(es => ef.employee.id == es.employee.id);
+
               return (
 
                   <Badge key={ef.employee.id} className={"badgeSpace badgeEmployee"}
                          variant={this.mapColorForFeedback(ef.feedback)}>
                     {
-                      ef.employee && ef.employee.status && ef.feedback == EmployeeFeedbackStates.getNoResponse() &&
-                      <EmployeeStatusDot className={"dot-sm dot-space"} employee={ef.employee} />
+                      ef.employee && employeeStatus && ef.feedback == EmployeeFeedbackStates.getNoResponse() &&
+                      <EmployeeStatusDot className={"dot-sm dot-space"} employeeStatus={employeeStatus} />
                     }
                     <span>
                     {ef.employee.firstname} {ef.employee.lastname}

@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import EmployeeStatusDot from "./employeeStatusDot";
 import EmployeeStates from "./employeeStates";
 
-class EmployeeStatusAsList extends Component {
+class EmployeeStatusAsBadges extends Component {
 
   mapStatusToIntForOrder(employee) {
     if (!employee.status) {
@@ -36,7 +36,7 @@ class EmployeeStatusAsList extends Component {
                       {
                         e.status &&
                         <EmployeeStatusDot className={"dot-sm dot-space"}
-                                           employee={e}/>
+                                           employeeStatus={e.status}/>
                       }
                       <span>
                         {e.firstname} {e.lastname}
@@ -50,4 +50,4 @@ class EmployeeStatusAsList extends Component {
   }
 }
 
-export default EmployeeStatusAsList
+export default EmployeeStatusAsBadges

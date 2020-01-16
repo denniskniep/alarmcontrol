@@ -21,6 +21,13 @@ const ALERT_WITH_EMPLOYEE_BY_ID = gql`
           displayAtOverview
         }
       },
+      employeeStatus {
+        status
+        utcDateTime
+        employee{
+          id
+        }
+      },      
       employeeFeedback{
         feedback
         employee{
@@ -175,6 +182,9 @@ class AlertViewEmployeeFeedback extends Component {
                                           EmployeeFeedbackStates.getNoResponse(),
                                           EmployeeFeedbackStates.getCancel()
                                         ])
+                                  }
+                                  employeeStatus={
+                                    alertData.alertById.employeeStatus
                                   }
                               />
 

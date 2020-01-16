@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import AlertViewBox from "../alertview/alertViewBox";
 import {CurrentOrganisationContext} from "../currentOrganisationContext";
 import EmployeeStatusAddedSubscription from "./employeeStatusAddedSubscription";
-import EmployeeStatusAsList from "./employeeStatusAsList";
+import EmployeeStatusAsBadges from "./employeeStatusAsBadges";
 import EmployeeStatusAggregated from "./employeeStatusAggregated";
 import QueryHandler from "../utils/queryHandler";
 
@@ -61,7 +61,7 @@ class EmployeeStatus extends Component {
                                 <EmployeeStatusAddedSubscription
                                     onSubscriptionData={(o) => refetch()}/>
                                 <EmployeeStatusAggregated employees={this.getEmployees(organisations) }/>
-                                <EmployeeStatusAsList employees={this.getEmployees(organisations) }/>
+                                <EmployeeStatusAsBadges employees={this.getEmployees(organisations) }/>
 
                               </React.Fragment>
                              )
