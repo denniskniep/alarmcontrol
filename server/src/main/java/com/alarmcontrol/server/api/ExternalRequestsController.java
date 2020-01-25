@@ -8,13 +8,11 @@ import com.alarmcontrol.server.data.AlertService;
 import com.alarmcontrol.server.data.EmployeeFeedbackService;
 import com.alarmcontrol.server.data.EmployeeStatusService;
 import com.alarmcontrol.server.data.models.AlertCall;
+
+import java.security.Principal;
 import java.util.HashMap;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:1234", "http://localhost:8080"})
@@ -105,5 +103,16 @@ public class ExternalRequestsController {
 
   private ExternalEmployeeStatusRequest parseEmployeeStatusRequest(HashMap<String, String> parameters) {
     return tetraPagerEmployeeStatusParser.parse(parameters);
+  }
+
+  @RequestMapping(path = "/hello", method = RequestMethod.GET)
+  @ResponseBody
+  public String hello(Principal principal) {
+    //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String name = "";
+    if (principal != null) {
+      name = principal.getName();
+    }
+    return "Hello World! Hello " + name + "!";
   }
 }

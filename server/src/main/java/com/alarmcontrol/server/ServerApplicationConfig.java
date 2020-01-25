@@ -2,7 +2,10 @@ package com.alarmcontrol.server;
 
 import com.alarmcontrol.server.utils.DefaultRetryListenerSupport;
 import okhttp3.OkHttpClient;
+import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
+import org.keycloak.adapters.springboot.client.KeycloakSecurityContextClientRequestInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
@@ -10,6 +13,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.client.RestTemplate;
 import org.zalando.logbook.Logbook;
 import org.zalando.logbook.okhttp.GzipInterceptor;
@@ -51,5 +55,15 @@ public class ServerApplicationConfig {
 
     retryTemplate.registerListener(new DefaultRetryListenerSupport());
     return retryTemplate;
+  }
+
+  @Bean
+  public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
+    return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
+  }
+
+  @Bean
+  public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
+    return new KeycloakSpringBootConfigResolver();
   }
 }
