@@ -55,16 +55,16 @@ services:
     depends_on:
       - "postgres"
     environment:
-      KEYCLOAK_FRONTEND_URL: http://localhost:8090/auth
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: CDn6rbugo7hDPw
-      KEYCLOAK_IMPORT: /tmp/alarmcontrol_realm.json
+      KEYCLOAK_FRONTEND_URL: ${KEYCLOAK_FRONTEND_URL}
+      KEYCLOAK_USER: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_IMPORT: /tmp/import/alarmcontrol_realm.json
       DB_VENDOR: postgres
       DB_ADDR: postgres
-      DB_USER: keycloak
-      DB_PASSWORD: 8uV5Z7GXg1u9Sw
+      DB_USER: ${KEYCLOAK_DATABASE_USER}
+      DB_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
     volumes:
-      - ./misc/keycloak:/tmp
+      - ./misc/keycloak:/tmp/import
     ports:
       - 8090:8080
     networks: ['alarmcontrol-net']

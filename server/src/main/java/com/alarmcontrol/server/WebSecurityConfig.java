@@ -38,15 +38,13 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.authorizeRequests()
-            .antMatchers("/hello/**")
-            .hasAuthority("alarmcontrol_admin")
-            .anyRequest()
-            .permitAll();
-
-    //Both are necessary for the h2-console
-    http.antMatcher("/h2-console/**").csrf().disable();
-    http.antMatcher("/h2-console/**").headers().frameOptions().disable();
+    http.
+            //Disable csrf for matched urls
+            csrf().ignoringAntMatchers("/h2-console/**", "/graphql").and().
+            //Auth request
+            authorizeRequests()
+              .antMatchers("/hello/**").hasAuthority("alarmcontrol_admin")
+              .anyRequest().permitAll();
   }
 
 }
