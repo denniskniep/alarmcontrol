@@ -1,33 +1,9 @@
 #!/bin/sh
 
-echoerr() {
-  if [ "$QUIET" -ne 1 ]; then printf "%s\n" "$*" 1>&2; fi
-}
-
-while [ $# -gt 0 ]
-do
-  case "$1" in
-    *:* )
-    URL=$(printf "%s\n" "$1")
-    shift 1
-    ;;
-    -q | --quiet)
-    QUIET=1
-    shift 1
-    ;;
-    --)
-    shift
-    break
-    ;;
-    *)
-    echoerr "Unknown argument: $1"
-    usage 1
-    ;;
-  esac
-done
+URL=$(printf "%s\n" "$1")
 
 if [ "$URL" = "" ]; then
-  echoerr "Error: you need to provide a url"
+  printf "Error: you need to provide a url\n" 1>&2;
   exit 2
 fi
 
