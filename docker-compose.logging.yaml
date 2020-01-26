@@ -1,21 +1,5 @@
 version: '3.7'
 services:
-  promtail:
-    image: grafana/promtail:master
-    ports:
-      - "9080:9080"
-    volumes:
-      - ./server/logs:/logs/server
-      - ./misc/promtail/config.yaml:/config/config.yaml
-    command: -config.file=/config/config.yaml
-
-  loki:
-    image: grafana/loki:master
-    volumes:
-      - loki_data:/data/loki
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
     image: grafana/grafana:master
@@ -27,8 +11,60 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: "admin"
       GF_SECURITY_ADMIN_PASSWORD: "admin"
+    networks: ['alarmcontrol-net']
+
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.5.1
+    volumes:
+      - ./server/logs:/logs:ro
+      - ./misc/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - filebeat_data:/usr/share/filebeat/data
+    user: root
+    command: ["-strict.perms=false", "-e"]
+    networks: ['alarmcontrol-net']
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    networks: ['alarmcontrol-net']
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.1
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks: ['alarmcontrol-net']
+
+  kibana_init:
+    image: curlimages/curl
+    volumes:
+      - ./misc/kibana:/app:ro
+    command: ["/app/wait-for.sh", "http://kibana:5601/api/status", "--timeout=600", "--", "/app/setup.sh", "http://kibana:5601"]
+    networks: ['alarmcontrol-net']
+
+  prometheus:
+    image: prom/prometheus:v2.2.1
+    volumes:
+      - prometheus-data:/prometheus
+      - ./misc/prometheus/:/etc/prometheus/
+    ports:
+      - 9090:9090
+    networks: ['alarmcontrol-net']
 
 volumes:
   grafana_data: {}
-  loki_data: {}
+  es_data: {}
+  filebeat_data: {}
+  prometheus-data: {}
+
+networks: {alarmcontrol-net: {}}
+
 

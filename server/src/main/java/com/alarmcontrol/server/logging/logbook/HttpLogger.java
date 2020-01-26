@@ -85,7 +85,7 @@ public class HttpLogger implements Logger {
         String message = s;
         if (object.containsKey("message")) {
           message = object.get("message").toString();
-          object.put("message", null);
+          object.remove("message");
         }
         try (MDCValues mdcValues = new MDCValues()) {
           for (Entry<String, Object> objectEntry : object.entrySet()) {
