@@ -1,56 +1,70 @@
 version: '3.7'
 services:
-  mongodb:
-    image: mongo:3
-    volumes:
-      - mongo_data:/data/db
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.4
+  grafana:
+    image: grafana/grafana:master
     volumes:
-      - es_data:/usr/share/elasticsearch/data
-    environment:
-      - http.host=0.0.0.0
-      - transport.host=localhost
-      - network.host=0.0.0.0
-      - action.auto_create_index=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-
-  graylog:
-    image: graylog/graylog:3.1.2
-    volumes:
-      - graylog_journal:/usr/share/graylog/data/journal
-    environment:
-      # CHANGE ME (must be at least 16 characters)!
-      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
-      # Password: admin
-      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
-    links:
-      - mongodb:mongo
-      - elasticsearch
-    depends_on:
-      - mongodb
-      - elasticsearch
+      - grafana_data:/var/lib/grafana
+      - ./misc/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      # Graylog web interface and REST API
-      - 9000:9000
-      # Beat
-      - 5044:5044
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "admin"
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+    networks: ['alarmcontrol-net']
+
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:6.8.4
+    image: docker.elastic.co/beats/filebeat:7.5.1
     volumes:
       - ./server/logs:/logs:ro
       - ./misc/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - filebeat_data:/usr/share/filebeat/data
     user: root
-    depends_on:
-      - graylog
-    command: ["-strict.perms=false","-e"]
+    command: ["-strict.perms=false", "-e"]
+    networks: ['alarmcontrol-net']
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    networks: ['alarmcontrol-net']
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.1
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks: ['alarmcontrol-net']
+
+  kibana_init:
+    image: curlimages/curl
+    volumes:
+      - ./misc/kibana:/app:ro
+    command: ["/app/wait-for.sh", "http://kibana:5601/api/status", "--timeout=600", "--", "/app/setup.sh", "http://kibana:5601"]
+    networks: ['alarmcontrol-net']
+
+  prometheus:
+    image: prom/prometheus:v2.2.1
+    volumes:
+      - prometheus-data:/prometheus
+      - ./misc/prometheus/:/etc/prometheus/
+    ports:
+      - 9090:9090
+    networks: ['alarmcontrol-net']
 
 volumes:
-  mongo_data: {}
+  grafana_data: {}
   es_data: {}
-  graylog_journal: {}
   filebeat_data: {}
+  prometheus-data: {}
+
+networks: {alarmcontrol-net: {}}
+
+

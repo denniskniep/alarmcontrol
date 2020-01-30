@@ -8,7 +8,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./logs:/app/logs
+      - ./server/logs:/app/logs
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${DATABASE_NAME}"
       SPRING_DATASOURCE_USERNAME: "${DATABASE_USER}"
@@ -24,12 +24,12 @@ services:
       FIREBASE_APP_ID: "${FIREBASE_APP_ID}"
       FIREBASE_MESSAGING_SENDER_ID: "${FIREBASE_MESSAGING_SENDER_ID}"
       PAGER_URL: "http://localhost:8081"
-
     depends_on:
       - postgres
     networks: ['alarmcontrol-net']
     command: ["/app/wait-for.sh", "postgres:5432", "--timeout=300", "--", "/app/docker-entrypoint.sh",
               "-Xms1g", "-Xmx4g", "-Duser.timezone=UTC", "-jar", "/app/alarmcontrol-server.jar"]
+
   postgres:
     image: postgres:11.3
     volumes:
@@ -49,6 +49,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8081:80
+    networks: ['alarmcontrol-net']
 
   keycloak:
     image: jboss/keycloak:8.0.1
