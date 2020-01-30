@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+### Changed
+### Fixed
+
+## [1.2.0] - 2020-01-30
+### Added
 - View and delete Alerts in ManageUi 
 - Write logfile as JSON
 - Log all HttpRequests (incoming/outgoing) with Logbook and MDC
@@ -18,10 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Receive Notifications via Push Message (Firebase) in PagerPWA (Progressive WebApp)
 - Display Link to PagerPWA with Configuration for Firebase Push Messages
 - Form to generate a testalarm
+- Scrape Actuator Metrics with Prometheus and display in Grafana
 
 ### Changed
 - Graylog update from 3.0 to 3.1.2
 - Filebeat and elasticsearch update from 6.6.1 to 6.8.4
+- Replace Graylogstack with Filebeat, ElasticSearch & Kibana
 - Restructured repository folders 
 - Use OKHttpClient
 
