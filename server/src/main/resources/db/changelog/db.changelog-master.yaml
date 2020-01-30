@@ -86,9 +86,6 @@ databaseChangeLog:
               - column:
                   name: duration
                   type: int
-              - column:
-                  name: aao
-                  type: nvarchar(255)
         - addForeignKeyConstraint:
             constraintName: fk_organisation-id_alert-organisation_id
             referencedTableName: organisation
@@ -443,3 +440,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
             tableName: organisation
+  - changeSet:
+      id: 5
+      author: dkniep
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: aao
+                  type: nvarchar(255)
+            tableName: alert
