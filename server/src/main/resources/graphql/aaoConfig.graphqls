@@ -1,0 +1,78 @@
+extend type Mutation {
+  addAao(organisationId: ID!, keywords : [String]!, locations: [String]!, vehicles: [String]!, timeRangeNames: [String]!) : AaoRule
+  editAao(organisationId: ID!, uniqueAaoId: String!, keywords : [String]!, locations: [String]!, vehicles: [String]!, timeRangeNames: [String]!) : AaoRule
+  deleteAao(organisationId: ID!, uniqueAaoId: String!) : String
+
+  addVehicle(organisationId: ID!, name: String!): Vehicle
+  deleteVehicle(organisationId: ID!, uniqueVehicleId: String!) : String
+  addLocation(organisationId: ID!, name: String!): Location
+  deleteLocation(organisationId: ID!, uniqueLocationId: String!) : String
+  addTimeRange(organisationId : ID!, name: String!, fromTimeHour : Int!, fromTimeMinute : Int!, toTimeHour : Int!, toTimeMinute : Int!, daysOfWeek : [DayOfWeek]!, feiertagBehaviour : FeiertagBehaviour!) : TimeRange
+  deleteTimeRange(organisationId : ID!, uniqueTimeRangeId: String!) : String
+
+  addCatalog(organisationId: ID!, keywords: [CatalogKeywordInput]!) : [CatalogKeyword]
+}
+
+
+type AaoRule {
+ uniqueId: String
+ vehicles: [String]
+ locations: [String]
+ keywords: [String]
+ timeRangeNames: [String]
+}
+
+type Vehicle {
+ uniqueId: String
+ name: String
+}
+
+type Location {
+ uniqueId: String
+ name: String
+}
+
+type TimeRange {
+ uniqueId: String
+ name: String
+ fromTimeHour : Int
+ fromTimeMinute : Int
+ toTimeHour : Int
+ toTimeMinute : Int
+ daysOfWeek : [DayOfWeek]
+ feiertagBehaviour : FeiertagBehaviour
+}
+
+input CatalogKeywordInput {
+ uniqueId: String
+ keyword: String
+}
+
+type CatalogKeyword {
+ uniqueId: String
+ keyword: String
+}
+
+type AaoOrganisationConfiguration {
+ aaoRules: [AaoRule]
+ vehicles: [Vehicle]
+ locations: [Location]
+ keywords: [CatalogKeyword]
+ timeRanges : [TimeRange]
+}
+
+enum DayOfWeek {
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAY,
+  SUNDAY,
+}
+
+enum FeiertagBehaviour {
+  IGNORE,
+  MATCH,
+  NO_MATCH
+}

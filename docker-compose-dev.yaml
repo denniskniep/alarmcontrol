@@ -3,12 +3,12 @@ services:
 
   alarmcontrol:
     build:
-      context: ./
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - 8080:8080
     volumes:
-      - ./scripts/wait-for.sh:/app/wait-for.sh:ro
+      - ./server/logs:/app/logs
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${DATABASE_NAME}"
       SPRING_DATASOURCE_USERNAME: "${DATABASE_USER}"
@@ -16,11 +16,20 @@ services:
       SPRING_PROFILES_ACTIVE: postgres
       GRAPHHOPPER_APIKEY: "${GRAPHHOPPER_APIKEY}"
       MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
+      FIREBASE_PUSH_AUTHORIZATION_HEADER: "${FIREBASE_PUSH_AUTHORIZATION_HEADER}"
+      FIREBASE_USERNAME: "${FIREBASE_USERNAME}"
+      FIREBASE_PASSWORD: "${FIREBASE_PASSWORD}"
+      FIREBASE_PROJECT_ID: "${FIREBASE_PROJECT_ID}"
+      FIREBASE_PUBLIC_API_KEY: "${FIREBASE_PUBLIC_API_KEY}"
+      FIREBASE_APP_ID: "${FIREBASE_APP_ID}"
+      FIREBASE_MESSAGING_SENDER_ID: "${FIREBASE_MESSAGING_SENDER_ID}"
+      PAGER_URL: "http://localhost:8081"
     depends_on:
       - postgres
     networks: ['alarmcontrol-net']
     command: ["/app/wait-for.sh", "postgres:5432", "--timeout=300", "--", "/app/docker-entrypoint.sh",
               "-Xms1g", "-Xmx4g", "-Duser.timezone=UTC", "-jar", "/app/alarmcontrol-server.jar"]
+
   postgres:
     image: postgres:11.3
     volumes:
@@ -31,6 +40,14 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks: ['alarmcontrol-net']
+  
+  pager_pwa:
+    build:
+      context: ./pager_pwa
+      dockerfile: Dockerfile
+    ports:
+      - 8081:80
     networks: ['alarmcontrol-net']
 
 volumes:

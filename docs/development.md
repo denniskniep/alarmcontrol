@@ -1,5 +1,10 @@
 # Development
 
+## Start Application
+The following steps are necessary to start the application for development:
+
+* Open Maven Project in your IDE `./server/pom.xml`
+
 * Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
 
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
@@ -8,11 +13,50 @@
 * Set the env variable `MAPBOX_ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxx`
 (register for a free account [here](https://www.mapbox.com/) and generate your accesstoken)
 
-* Start the Spring Application `src/main/java/com/alarmcontrol/server/ServerApplication.java` ( i.e. in your IDE)
+* Start the Spring Application `server/src/main/java/com/alarmcontrol/server/ServerApplication.java`
 
-* Install node_modules inside the folder `frontend` with `npm install`
+* Install node_modules inside the folder `server/frontend` with `npm install`
 
-* Start react client inside the folder `frontend` with `npm run start`
+* Start react client inside the folder `server/frontend` with `npm run start`
+
+* Install node_modules inside the folder `pager_pwa/` with `npm install`
+
+* Start react client inside the folder `pager_pwa/` with `npm run start`
+
+## Start Application Environment
+The following steps are not necessary for development, but could be handy:
+
+### Graylog
+Start Graylogserver
+
+```
+sudo docker-compose -f docker-compose.logging.yaml up
+```
+
+The Ui is available at http://localhost:9000
+
+Default credentials are:
+
+Username: admin
+Password: admin
+
+#### Import Content-Pack
+If you initially started the Graylogserver import the content pack:
+* Login to Graylog 
+* System > Content Packs > Upload
+(Use this File: `misc/graylog/content-packs/content-pack-alarmcontrol.json`)
+
+* System > Content Packs > Alarmcontrol_Dev > Install
+
+### Mailhog
+Start Mailhog as the Mailserver and configure it as EnvironmentVariable
+ to send mails and view it on the Mailhog WebUi (http://localhost:8025)
+
+```
+sudo docker-compose -f docker-compose.notifications.yaml up
+```
+
+The Ui is available at http://localhost:8025
 
 ## Database
 * **H2Console**: http://localhost:8080/h2-console
@@ -24,6 +68,9 @@ src/main/resources/db/changelog/db.changelog-master.yaml
 
 ### ERM
 ![database_erm.png](database_erm.png)
+
+## Architecture
+![architecture.png](architecture.png)
 
 ## GraphQL
 Entrypoint for Webrequests `src/main/java/com/alarmcontrol/server/data/graphql/*`:
@@ -42,13 +89,15 @@ https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
 * **Editor**: http://localhost:8080/graphiql
 * **Schema**: http://localhost:8080/graphql/schema.json
 
-#### Add Testdata
+## Testdata
+
+### Add via Script
 This script is intentionally for the e2e tests but could also be used to initially setup a db for development purposes
 ```
 URL="http://localhost:8080/graphql" e2eTests/tests/initialSetup.sh
 ```
 
-#### Add Testdata via GraphQL-Editor
+### Add via GraphQL-Editor
 Go to `http://localhost:8080/graphiql` and execute the following Mutations: 
 
 ##### Add an Organisation
@@ -227,7 +276,7 @@ mutation {
     alertCallReferenceId: "123"
     keyword: "H1"
     address:"Hinter den Gärten 8, 34379 Calden"
-    # dateTime: "2019-05-03T12:23:32.456Z"
+    # utcDateTime: "2019-05-03T12:23:32.456Z"
   ){
     id
     alert {

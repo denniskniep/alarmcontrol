@@ -1,0 +1,17 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /logs/**/*.log.json
+  json:
+    keys_under_root: true # maps all properties under the path json to the root properties
+    overwrite_keys: true # override the properties from the json path when they already exists
+
+logging.level: debug
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+
+setup:
+  template.enabled: false
+  ilm.rollover_alias: "alarmcontrol-logs"

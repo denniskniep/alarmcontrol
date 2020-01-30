@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Example Execution
+# URL="http://localhost:8080/graphql"  ./initialSetup.sh
+
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -15,7 +18,7 @@ function executeGQLQuery(){
 }
 
 # Alert Numbers
-executeGQLQuery '{"query":"mutation { \r\n  newOrganisation(\r\n    name: \"FF Meimbressen\"\r\n    addressLat: \"51.406339\"\r\n    addressLng: \"9.359186\"\r\n  ){id}\r\n}"}'
+executeGQLQuery '{"query":"mutation { \r\n  newOrganisation(\r\n    name: \"FF Meimbressen\"\r\n    addressLat: \"51.406339\"\r\n    addressLng: \"9.359186\"\r\n   location: \"Calden-Meimbressen\"\r\n  ){id}\r\n}"}'
 
 executeGQLQuery '{"query":"mutation { \r\n  newAlertNumber (\r\n    organisationId: 1\r\n    number: \"123456-S04\"\r\n    shortDescription: \"Pager\"\r\n description: \"Pager Meimbressen\"\r\n  ){id}\r\n}"}'
 

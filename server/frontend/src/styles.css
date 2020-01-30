@@ -1,0 +1,187 @@
+html,body,#app{
+  height:100%;
+}
+
+.h-full{
+  height: calc(100% - 56px);
+}
+
+.flex-fill {
+  flex:1;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+.alertView{
+  background-color: #fafafa;
+}
+
+.alertViewOuterBox {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.alertViewBox{
+  border-radius: .8rem;
+  border: 1px solid #e5e5e5;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  overflow: hidden;
+}
+
+.alertViewBoxStretch{
+  height: calc(100% - 20px) !important;
+}
+
+.noPadding{
+  padding: 0px;
+}
+
+.insideBadge{
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.badgeSpace{
+  margin-right: 10px;
+}
+
+.dot-td{
+  width: 10px !important;
+}
+
+.dot-td-container{
+  margin-top: 2px;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid gray;
+}
+
+.dot-sm {
+  height: 8px;
+  width: 8px;
+}
+
+.dot-space {
+  margin-right: 5px;
+}
+
+.dot-not-available{
+  background-color: #dc3545;
+}
+
+.dot-available{
+  background-color: #28a745;
+}
+
+.available{
+  background-color: #b1dfbb42;
+}
+
+.not-available{
+  background-color: rgba(255, 16, 0, 0.18);
+}
+
+.later-available{
+  background-color: #8ec0ff42;
+}
+
+.employee-status-name {
+  margin-bottom: 0px;
+}
+
+.employee-status-date {
+  font-size: 10px;
+  color: gray;
+  margin-bottom: 0px;
+}
+
+.leaflet-routing-container-hide{
+  display:none;
+}
+
+.badgeEmployee.badge-light{
+  background-color: #d8d8d8 !important;
+}
+
+.btn-icon{
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.btn-icon-space{
+  margin-left: 5px;
+}
+
+.row-header{
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.row-mid{
+  padding-bottom: 75px;
+}
+
+thead{
+  font-weight: bold;
+}
+
+thead tr td{
+  border-top-width: 0px !important;
+}
+
+.navLabel{
+  color:rgba(255, 255, 255, 0.5);
+  padding-right: 10px;
+  padding-left: 15px;
+}
+
+.left-table table td{
+  padding-left: 0px !important;
+}
+
+.left-to-h4 {
+  padding-left: 10px;
+  padding-top: 4px;
+}
+
+.aao-fzg{
+  vertical-align: sub;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.badge-aao{
+  background-color: #007bffc7;
+}
+
+.name-field-aao-time-rule{
+  width: 150px;
+}
+
+.time-field-aao{
+  width: 80px;
+}
+
+.feiertag-field-aao{
+  width: 150px;
+}
+
+.cell-valid{
+}
+
+.cell-invalid input {
+  border-color: #dc3545 !important;
+}

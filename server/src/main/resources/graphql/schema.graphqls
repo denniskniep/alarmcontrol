@@ -1,0 +1,161 @@
+type Query {
+  alertById(id: ID!): Alert
+
+  # If there is no organisationId specified all alerts will be returned
+  alertsByOrganisationId(organisationId: ID, page: Int!, size: Int!): PaginatedAlerts
+
+  organisations : [Organisation]
+  organisationsById(organisationId: ID): [Organisation]
+  organisationById(organisationId: ID!): Organisation
+}
+
+type Mutation {
+  newOrganisation(name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
+  editOrganisation(id: ID!, name: String!, addressLat: String!, addressLng: String!, location: String!): Organisation
+  deleteOrganisation(id: ID!) : ID
+
+  newSkill(organisationId: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
+  editSkill(id: ID!, name: String!, shortName: String!, displayAtOverview: Boolean!): Skill
+  deleteSkill(id: ID!): ID
+
+  newEmployee(organisationId: ID!, firstname: String!, lastname: String!, referenceId: String!) : Employee
+  editEmployee(id: ID!, firstname: String!, lastname: String!, referenceId: String!) : Employee
+  deleteEmployee(id: ID!) : ID
+
+  newAlertNumber(organisationId: ID!, number: String!, description: String, shortDescription: String!) : AlertNumber
+  editAlertNumber(id: ID!, number: String!, description: String, shortDescription: String!) : AlertNumber
+  deleteAlertNumber(id: ID!) : ID
+
+  addEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
+  deleteEmployeeSkill(employeeId: ID!, skillId: ID!) : Boolean
+
+  newAlertCall(organisationId: ID!, alertNumber: String!, alertReferenceId: String!, alertCallReferenceId: String!, keyword: String!, utcDateTime: DateTime, address: String, description: String): AlertCall
+  addEmployeeFeedback(organisationId: ID!, alertCallReferenceId: String!, employeeReferenceId : String!, feedback : Feedback!, utcDateTime: DateTime) : EmployeeFeedback
+
+  addEmployeeStatus(organisationId: ID!, employeeReferenceId : String!, status : Status!, utcDateTime: DateTime) : EmployeeStatus
+
+  deleteAlert(id: ID!) : ID
+}
+
+type Subscription {
+    alertAdded: AlertAdded
+    alertChanged: AlertChanged
+    employeeFeedbackAdded : EmployeeFeedbackAdded
+    employeeStatusAdded : EmployeeStatusAdded
+}
+
+type PaginatedAlerts {
+  totalCount: Int
+  items: [Alert]
+}
+
+type Alert {
+  id: ID
+  organisation: Organisation
+  referenceId: String
+  keyword: String
+  active: Boolean
+  utcDateTime: DateTime
+  description: String
+  addressRaw : String,
+  addressInfo1 : String,
+  addressInfo2 : String,
+  addressLat : String,
+  addressLng : String,
+  route: String,
+  distance: Float,
+  duration: Int,
+  employeeFeedback: [EmployeeFeedback]
+  employeeStatus: [EmployeeStatus]
+  alertCalls: [AlertCall]
+  aao: [String]
+}
+
+type AlertCall {
+  id: ID
+  referenceId: String
+  alertNumber: AlertNumber
+  utcDateTime: DateTime
+  alert : Alert
+}
+
+type AlertNumber {
+  id: ID
+  number: String
+  description: String
+  shortDescription: String
+}
+
+type AlertAdded {
+  id: ID
+  organisationId: ID
+}
+
+type AlertChanged {
+  id: ID
+}
+
+type EmployeeFeedbackAdded {
+  alertId: ID
+  alertCallId: ID
+  employeeId: ID
+}
+
+type EmployeeStatusAdded {
+  employeeId: ID
+}
+
+type Organisation {
+  id: ID
+  name: String
+  addressLat: String
+  addressLng: String
+  location: String
+  employees: [Employee]
+  skills: [Skill]
+  alertNumbers: [AlertNumber]
+  notificationConfig : NotificationOrganisationConfig
+  aaoConfig : AaoOrganisationConfiguration
+}
+
+type EmployeeFeedback {
+  employee: Employee
+  feedback: Feedback
+  utcDateTime: DateTime
+}
+
+type EmployeeStatus {
+  employee: Employee
+  status: Status
+  utcDateTime: DateTime
+}
+
+enum Feedback {
+  NO_RESPONSE,
+  COMMIT,
+  LATER,
+  CANCEL
+}
+
+enum Status {
+  NOT_AVAILABLE,
+  AVAILABLE
+}
+
+type Employee {
+  id: ID
+  firstname: String
+  lastname: String
+  referenceId: String
+  skills : [Skill]
+  status : EmployeeStatus
+}
+
+type Skill {
+    id: ID
+    name: String
+    shortName: String
+    displayAtOverview: Boolean
+}
+
+scalar DateTime
