@@ -1,0 +1,7 @@
+scrape_configs:
+  - job_name: 'alarmcontrol-server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['alarmcontrol:9999']
+        labels:
+          application: alarmcontrol-server

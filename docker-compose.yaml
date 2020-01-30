@@ -23,9 +23,10 @@ services:
       FIREBASE_APP_ID: "${FIREBASE_APP_ID}"
       FIREBASE_MESSAGING_SENDER_ID: "${FIREBASE_MESSAGING_SENDER_ID}"
       PAGER_URL: "${PAGER_URL}"
-
     command: ["/app/wait-for.sh", "postgres:5432", "--timeout=300", "--", "/app/docker-entrypoint.sh",
               "-Xms1g", "-Xmx4g", "-Duser.timezone=UTC", "-jar", "/app/alarmcontrol-server.jar"]
+    networks: ['alarmcontrol-net']
+
   postgres:
     image: postgres:11.3
     volumes:
@@ -36,6 +37,9 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks: ['alarmcontrol-net']
 
 volumes:
   database-data: {}
+
+networks: {alarmcontrol-net: {}}

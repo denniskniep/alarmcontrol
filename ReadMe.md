@@ -13,13 +13,15 @@ curl https://raw.githubusercontent.com/denniskniep/alarmcontrol/master/docker-co
 ```
 
 Configure EnvironmentVariables
+
 The `GRAPHHOPPER_APIKEY` and the `MAPBOX_ACCESS_TOKEN` environment variables are optional. They are used for navigation and geocoding purposes.
+
 Set the `GRAPHHOPPER_APIKEY`: Register for a free account [here](https://graphhopper.com/dashboard/#/register) and generate your apikey. 
-Set the `MAPBOX_ACCESS_TOKEN`: register for a free account [here](https://www.mapbox.com/) and generate your accesstoken
+Set the `MAPBOX_ACCESS_TOKEN`: register for a free account [here](https://www.mapbox.com/) and generate your accesstoken.
 
 
-The `FIREBASE_*` and `PAGER_URL` environment variables are optional. They are used for push notifications
-Register for a free account [here](https://firebase.google.com/) and setup the firebase project with [this guide](firebase_setup.md)
+The `FIREBASE_*` and `PAGER_URL` environment variables are optional. They are used for push notifications.
+Register for a free account [here](https://firebase.google.com/) and setup the firebase project with [this guide](docs/firebase_setup.md)
 
 
 Execute docker-compose

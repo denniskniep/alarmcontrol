@@ -79,6 +79,22 @@
       <version>1.13.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- Micormeter core dependecy  -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+
     <!-- GraphQl -->
     <dependency>
       <groupId>com.graphql-java</groupId>
