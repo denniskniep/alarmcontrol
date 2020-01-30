@@ -2,6 +2,9 @@
 [![AzureDevOps build](https://dev.azure.com/kniepdennis/Alarmcontrol/_apis/build/status/Alarmcontrol-CI?branchName=master)](https://dev.azure.com/kniepdennis/Alarmcontrol/_build?definitionId=3)
 [![GitHub release](https://img.shields.io/github/release/denniskniep/alarmcontrol.svg)](https://github.com/denniskniep/alarmcontrol/releases)
 
+
+![alert_view.png](docs/screenshots/alert_view.png)
+
 ## Quick Start
 
 ### From DockerHub
@@ -131,6 +134,9 @@ See [docs/release.md](docs/release.md)
 
 ## Changelog
 See [CHANGELOG.md](CHANGELOG.md)
+
+## Screenshots
+See [docs/screenshots.md](docs/screenshots.md)
 
 ## Known Problems
 ### Geocoding house numbers with Nominatim
