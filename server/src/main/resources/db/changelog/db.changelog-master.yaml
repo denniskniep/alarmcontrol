@@ -438,7 +438,7 @@ databaseChangeLog:
                   name: location
                   type: nvarchar(255)
                   constraints:
-                    nullable: false
+                    nullable: true
             tableName: organisation
   - changeSet:
       id: 5
@@ -449,4 +449,6 @@ databaseChangeLog:
               - column:
                   name: aao
                   type: nvarchar(255)
+                  constraints:
+                    nullable: true
             tableName: alert

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.2.2] - 2020-01-30
+### Fixed
+- location column to not null
+
 ## [1.2.1] - 2020-01-30
 ### Fixed
 - Docker-Compose Version
