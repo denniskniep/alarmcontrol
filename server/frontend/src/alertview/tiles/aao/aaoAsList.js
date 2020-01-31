@@ -6,7 +6,7 @@ class AaoAsList extends Component {
 
     render() {
         return (
-            this.props.alert.aao.length > 0 &&
+            this.props.alert && this.props.alert.aao && this.props.alert.aao.length > 0 &&
             <AlertViewBox>
               <Container fluid="true"
                          className={"d-flex flex-column h-100"}>
