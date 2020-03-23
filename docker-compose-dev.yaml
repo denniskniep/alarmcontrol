@@ -34,6 +34,7 @@ services:
     image: postgres:11.3
     volumes:
       - database-data:/var/lib/postgresql/data
+      - ./misc/postgres:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
     environment:
@@ -48,6 +49,25 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8081:80
+    networks: ['alarmcontrol-net']
+
+  keycloak:
+    image: jboss/keycloak:8.0.1
+    depends_on:
+      - "postgres"
+    environment:
+      KEYCLOAK_FRONTEND_URL: ${KEYCLOAK_FRONTEND_URL}
+      KEYCLOAK_USER: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_IMPORT: /tmp/import/alarmcontrol_realm.json
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_USER: ${KEYCLOAK_DATABASE_USER}
+      DB_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    volumes:
+      - ./misc/keycloak:/tmp/import
+    ports:
+      - 8090:8080
     networks: ['alarmcontrol-net']
 
 volumes:
