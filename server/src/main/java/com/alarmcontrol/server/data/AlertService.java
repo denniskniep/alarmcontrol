@@ -223,20 +223,22 @@ public class AlertService {
         .sorted(Comparator.<T>comparingLong(a -> extractUtcDate.apply(a).getTime()).reversed())
         .collect(Collectors.toList());
 
-    logger.info("Found all " + name + "s in "
-        + "organisationId '" + organisationId + "' "
-        + "with referenceId '" + referenceId + "'. "
-        + "Found " + foundObjectsSortedByUtcDate.size() + " " + name + "s");
+    logger.info("Found all {}s in "
+            + "organisationId '{}' "
+            + "with referenceId '{}'. "
+            + "Found {} {}s",
+        name, organisationId, referenceId, foundObjectsSortedByUtcDate.size(), name);
 
     if (foundObjectsSortedByUtcDate.isEmpty()) {
       return Optional.empty();
     }
 
     T lastObject = foundObjectsSortedByUtcDate.get(0);
-    logger.info("The most recent " + name + " in "
-        + "organisationId '" + organisationId + "' "
-        + "with referenceId '" + referenceId + "' "
-        + "is " + name + " with Id:" + extractId.apply(lastObject));
+    logger.info("The most recent {} in "
+            + "organisationId '{}' "
+            + "with referenceId '{}' "
+            + "is {} with Id: {}",
+        name, organisationId, referenceId, name, extractId.apply(lastObject));
 
     Instant objectCreatedUtc = extractUtcDate.apply(lastObject).toInstant();
     Instant objectActiveUntilUtc = objectCreatedUtc.plusMillis(activeTimeFrameInMs);
@@ -246,28 +248,38 @@ public class AlertService {
     // If the time frame is exceeded we can assume that it is a new Alert
     // and not another call for an existing Alert!
     if (objectDateExceedsTimeFrame) {
-      logger.info(name + " Id {} was found for ReferenceId '{}' in organisationId '{}'. "
-              + "But this " + name + " was created at {}. That is outside of the time frame ({}ms) "
-              + "to treat the existing " + name + " as active and reuse the existing  " + name + " "
-              + "for further activity. " + name + " was active till {}",
+      logger.info("{} Id {} was found for ReferenceId '{}' in organisationId '{}'. "
+              + "But this {} was created at {}. That is outside of the time frame ({}ms) "
+              + "to treat the existing {} as active and reuse the existing {}"
+              + "for further activity. {} was active till {}",
+          name,
           extractId.apply(lastObject),
           referenceId,
           organisationId,
+          name,
           DateTimeHelper.toISOString(extractUtcDate.apply(lastObject)),
           alertActiveTimeFrameInMs,
+          name,
+          name,
+          name,
           DateTimeHelper.toISOString(objectActiveUntilUtc));
       return Optional.empty();
     }
 
-    logger.info(name + " Id {} was found for ReferenceId '{}' in organisationId '{}'. "
-            + "This " + name + " was created at {}. That is inside the time frame of ({}ms) "
-            + "to treat the existing " + name + " as active and reuse the existing  " + name + " "
-            + "for further activity. " + name + " remains active until {}",
+    logger.info("{} Id {} was found for ReferenceId '{}' in organisationId '{}'. "
+            + "This {} was created at {}. That is inside of the time frame ({}ms) "
+            + "to treat the existing {} as active and reuse the existing {}"
+            + "for further activity. {} remains active until {}",
+        name,
         extractId.apply(lastObject),
         referenceId,
         organisationId,
+        name,
         DateTimeHelper.toISOString(extractUtcDate.apply(lastObject)),
         alertActiveTimeFrameInMs,
+        name,
+        name,
+        name,
         DateTimeHelper.toISOString(objectActiveUntilUtc));
     return Optional.of(lastObject);
   }
