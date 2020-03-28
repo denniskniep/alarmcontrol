@@ -452,3 +452,15 @@ databaseChangeLog:
                   constraints:
                     nullable: true
             tableName: alert
+  - changeSet:
+      id: 6
+      author: dkniep
+      changes:
+        - dropUniqueConstraint:
+            tableName: alert
+            columnNames: organisation_id, reference_id
+            constraintName: uk_alert-organisation_id-reference_id
+        - dropUniqueConstraint:
+            tableName: alert_call
+            columnNames: organisation_id, reference_id
+            constraintName: uk_alert_call-organisation_id-reference_id
