@@ -57,15 +57,26 @@ public class TetraPagerAlertParser {
     String text = param.getValue();
 
     String[] textParts = text.split("\\*");
-    if (textParts.length < 2) {
-      throw new IllegalArgumentException("Expected at least two parts "
-          + "(separated by '*') for parameter '" + param.getKey() + "'. "
+
+    int startIndex = 0;
+    for (String textPart : textParts) {
+      String subaddress = getTextByRegExp(textPart, SUBADDRESS_PATTERN);
+      if(!StringUtils.isBlank(subaddress)){
+        logger.info("Found Subaddress in Textpart: {}", startIndex);
+        break;
+      }
+      startIndex++;
+    }
+
+    if (textParts.length < startIndex + 2) {
+      throw new IllegalArgumentException("Expected at least two parts after part with index " + startIndex
+          + " (separated by '*') for parameter '" + param.getKey() + "'. "
           + "But was '" + param.getValue() + "'");
     }
 
-    String subaddress = extractSubaddress(textParts[0]);
+    String subaddress = extractSubaddress(textParts[startIndex]);
     logger.info("Subaddress:{}", subaddress);
-    String description = textParts[1];
+    String description = textParts[startIndex+1];
 
     String alertId = getTextByRegExp(description, ALERT_ID_PATTERN);
     logger.info("AlertId:{}",alertId);
@@ -80,7 +91,7 @@ public class TetraPagerAlertParser {
     }
     logger.info("Description:{}", description);
 
-    String keyword = tryGet(textParts, 2);
+    String keyword = tryGet(textParts, startIndex+2);
     if(StringUtils.isBlank(keyword) && StringUtils.equalsIgnoreCase(description, "FUNKTIONSPROBE")){
       logger.debug("keyword is blank and description is 'FUNKTIONSPROBE'. Switch values of keyword and description");
       keyword = description;
@@ -88,7 +99,7 @@ public class TetraPagerAlertParser {
     }
     logger.info("Keyword:{}", keyword);
 
-    String address = tryGet(textParts, 3);
+    String address = tryGet(textParts, startIndex+3);
     logger.info("Address:{}", address);
 
     return new ParsedText(subaddress,
