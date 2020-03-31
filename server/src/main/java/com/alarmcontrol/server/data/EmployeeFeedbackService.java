@@ -14,6 +14,7 @@ import com.alarmcontrol.server.data.repositories.AlertCallEmployeeRepository;
 import com.alarmcontrol.server.data.repositories.AlertCallRepository;
 import com.alarmcontrol.server.data.repositories.AlertRepository;
 import com.alarmcontrol.server.data.repositories.EmployeeRepository;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -30,18 +31,20 @@ public class EmployeeFeedbackService {
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
   private EmployeeFeedbackAddedPublisher employeeFeedbackAddedPublisher;
   private EmployeeRepository employeeRepository;
+  private AlertService alertService;
 
   public EmployeeFeedbackService(
       AlertRepository alertRepository,
       AlertCallRepository alertCallRepository,
       AlertCallEmployeeRepository alertCallEmployeeRepository,
       EmployeeFeedbackAddedPublisher employeeFeedbackAddedPublisher,
-      EmployeeRepository employeeRepository) {
+      EmployeeRepository employeeRepository, AlertService alertService) {
     this.alertRepository = alertRepository;
     this.alertCallRepository = alertCallRepository;
     this.alertCallEmployeeRepository = alertCallEmployeeRepository;
     this.employeeFeedbackAddedPublisher = employeeFeedbackAddedPublisher;
     this.employeeRepository = employeeRepository;
+    this.alertService = alertService;
   }
 
   public EmployeeFeedback addEmployeeFeedback(Long organisationId,
@@ -63,11 +66,11 @@ public class EmployeeFeedbackService {
       utcDateTime = new Date();
     }
 
-    Optional<AlertCall> foundAlertCall = alertCallRepository
-        .findByOrganisationIdAndReferenceId(organisationId, alertCallReferenceId);
+    Instant utcInstant = Instant.ofEpochMilli(utcDateTime.getTime());
+    Optional<AlertCall> activeAlertCall = alertService.findActiveAlertCall(utcInstant, organisationId, alertCallReferenceId);
 
-    if (foundAlertCall.isEmpty()) {
-      throw new IllegalArgumentException("No AlertCall found for referenceId '" + alertCallReferenceId + "'"
+    if (activeAlertCall.isEmpty()) {
+      throw new IllegalArgumentException("No active AlertCall found for referenceId '" + alertCallReferenceId + "'"
           + " in organisationId '" + organisationId + "'");
     }
 
@@ -80,11 +83,11 @@ public class EmployeeFeedbackService {
     }
 
     AlertCallEmployee alertCallEmployee = new AlertCallEmployee(foundEmployee.get().getId(),
-        foundAlertCall.get().getId(), feedback, "", utcDateTime);
+        activeAlertCall.get().getId(), feedback, raw == null ? "" : raw, utcDateTime);
 
     alertCallEmployeeRepository.save(alertCallEmployee);
 
-    employeeFeedbackAddedPublisher.emitEmployeeFeedbackForAlertAdded(foundAlertCall.get().getAlertId(),
+    employeeFeedbackAddedPublisher.emitEmployeeFeedbackForAlertAdded(activeAlertCall.get().getAlertId(),
         alertCallEmployee.getAlertCallId(),
         alertCallEmployee.getEmployeeId());
 
