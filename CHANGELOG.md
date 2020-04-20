@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.3.1] - 2020-04-20
+### Fixed
+- Revert react-bootstrap version lift due to lib Issue
+
 ## [1.3.0] - 2020-04-20
 ### Changed
 - ReferenceIds must not anymore be unique for an organisation. There is a timeframe where the referenceId treated as active. Same with AlertCalls.
