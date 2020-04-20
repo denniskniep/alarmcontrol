@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.3.2] - 2020-04-20
+### Fixed
+- Revert javascript version lift due to lib Issue
+
 ## [1.3.1] - 2020-04-20
 ### Fixed
 - Revert react-bootstrap version lift due to lib Issue
