@@ -3,6 +3,7 @@ services:
 
   alarmcontrol:
     image: denniskniep/alarmcontrol:1.2.3
+    restart: always
     container_name: alarmcontrol
     ports:
       - 8080:8080
@@ -29,6 +30,7 @@ services:
 
   postgres:
     image: postgres:11.3
+    restart: always
     volumes:
       - database-data:/var/lib/postgresql/data
     ports:

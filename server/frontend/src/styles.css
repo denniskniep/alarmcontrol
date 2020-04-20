@@ -20,15 +20,13 @@ html,body,#app{
 }
 
 .alertViewOuterBox {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px;
 }
 
 .alertViewBox{
   border-radius: .8rem;
   border: 1px solid #e5e5e5;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px;
   background-color: white;
   overflow: hidden;
 }
