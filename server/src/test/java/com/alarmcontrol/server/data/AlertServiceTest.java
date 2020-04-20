@@ -1,5 +1,6 @@
 package com.alarmcontrol.server.data;
 
+import static com.alarmcontrol.server.data.graphql.DateTimeHelper.createDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,6 +16,7 @@ import com.alarmcontrol.server.maps.GeocodingService;
 import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -170,7 +172,7 @@ public class AlertServiceTest extends AlertBaseTest {
         "",
         "");
 
-    Optional<Alert> foundAlert = alertRepository.findByOrganisationIdAndReferenceId(organisation.getId(), "B12345");
+    Optional<Alert> foundAlert = alertService.findActiveAlert(organisation.getId(), "B12345");
 
     assertThat(foundAlert.get().getAddressInfo1()).isEqualTo("Musterweg 5");
     assertThat(foundAlert.get().getAddressInfo2()).isEqualTo("Oberhausen - Demohausen");
@@ -215,4 +217,141 @@ public class AlertServiceTest extends AlertBaseTest {
     );
   }
 
+  @Test
+  public void whenTwoAlertCallsForSameAlertReferenceId_ReturnsTwoSeparateAlertCallsWithSameAlert() {
+    TestOrganisation organisation = setupOrganisation();
+    AlertCall alertCallA = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "123",
+        "H1",
+        createDate(2020, 03, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallB = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "124",
+        "H1",
+        createDate(2020, 03, 28, 15, 10, 40),
+        "",
+        "",
+        "");
+
+    assertThat(alertCallA.getAlertId()).isEqualTo(alertCallB.getAlertId());
+  }
+
+  @Test
+  public void whenTwoAlertCallsForSameAlertReferenceIdAfterTwoDaysTimeFrame_ReturnsTwoSeparateAlertCallsWithDifferentAlerts() {
+    TestOrganisation organisation = setupOrganisation();
+    AlertCall alertCallA = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "123",
+        "H1",
+        createDate(2020, 03, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallB = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "124",
+        "H1",
+        createDate(2020, 03, 31, 15, 10, 40),
+        "",
+        "",
+        "");
+
+    assertThat(alertCallA.getAlertId()).isNotEqualTo(alertCallB.getAlertId());
+  }
+
+  @Test
+  public void whenAlertCallsWithSameReferenceId_ReturnsTwoSeparateAlerts() {
+    TestOrganisation organisation = setupOrganisation();
+    AlertCall alertCallA = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "123",
+        "H1",
+        createDate(2020, 03, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallB = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "124",
+        "H1",
+        createDate(2020, 03, 28, 15, 05, 40),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallC = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B11111",
+        "123",
+        "H1",
+        createDate(2020, 03, 28, 15, 15, 44),
+        "",
+        "",
+        "");
+
+    assertThat(alertCallA.getAlertId()).isEqualTo(alertCallB.getAlertId());
+    assertThat(alertCallC.getAlertId()).isNotEqualTo(alertCallA.getAlertId());
+    assertThat(alertCallC.getAlertId()).isNotEqualTo(alertCallB.getAlertId());
+  }
+
+  @Test
+  public void whenThreeAlertCallsWithSameReferenceId_ReturnsThreeDifferentAlerts() {
+    TestOrganisation organisation = setupOrganisation();
+    AlertCall alertCallA = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "123",
+        "H1",
+        createDate(2020, 03, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallB = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "124",
+        "H1",
+        createDate(2020, 04, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    AlertCall alertCallC = alertService.create(
+        organisation.getId(),
+        "1234-S04",
+        "B12345",
+        "123",
+        "H1",
+        createDate(2020, 05, 28, 15, 00, 00),
+        "",
+        "",
+        "");
+
+    assertThat(alertCallA.getAlertId()).isNotEqualTo(alertCallB.getAlertId());
+    assertThat(alertCallC.getAlertId()).isNotEqualTo(alertCallA.getAlertId());
+    assertThat(alertCallC.getAlertId()).isNotEqualTo(alertCallB.getAlertId());
+  }
 }

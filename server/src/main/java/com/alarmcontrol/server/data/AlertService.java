@@ -3,6 +3,7 @@ package com.alarmcontrol.server.data;
 import com.alarmcontrol.server.aao.AaoRuleService;
 import com.alarmcontrol.server.aao.ruleengine.AlertContext;
 import com.alarmcontrol.server.aao.ruleengine.MatchResult;
+import com.alarmcontrol.server.data.graphql.DateTimeHelper;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertAddedPublisher;
 import com.alarmcontrol.server.data.graphql.alert.publisher.AlertChangedPublisher;
 import com.alarmcontrol.server.data.models.Alert;
@@ -23,15 +24,21 @@ import com.alarmcontrol.server.maps.RoutingResult;
 import com.alarmcontrol.server.maps.RoutingService;
 import com.alarmcontrol.server.notifications.core.NotificationService;
 import com.alarmcontrol.server.notifications.usecases.alertcreated.AlertCreatedEvent;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +59,12 @@ public class AlertService {
   private AlertCallRepository alertCallRepository;
   private AlertCallEmployeeRepository alertCallEmployeeRepository;
   private NotificationService notificationService;
+
+  @Value("${alert.active.timeFrameInMs}")
+  private long alertActiveTimeFrameInMs;
+
+  @Value("${alertCall.active.timeFrameInMs}")
+  private long alertCallActiveTimeFrameInMs;
 
   public AlertService(AaoRuleService ruleService,
       AlertRepository alertRepository,
@@ -147,12 +160,128 @@ public class AlertService {
         address,
         description);
 
-    if(existingAlert.isCreated()){
+    if (existingAlert.isCreated()) {
       processAlert(existingAlert.getAlert());
     }
 
-    AlertCall alertCall = createAlertCall(foundAlertNumber.get(), existingAlert.getAlert(), referenceCallId, utcDateTime, raw);
+    AlertCall alertCall = createAlertCall(foundAlertNumber.get(),
+        existingAlert.getAlert(),
+        referenceCallId,
+        utcDateTime,
+        raw);
+
     return new AlertCallCreated(alertCall, existingAlert.getAlert(), existingAlert.isCreated);
+  }
+
+  public Optional<AlertCall> findActiveAlertCall(Long organisationId, String alertCallReferenceId) {
+    return findActiveAlertCall(Instant.now(), organisationId, alertCallReferenceId);
+  }
+
+  public Optional<AlertCall> findActiveAlertCall(Instant nowUtc, Long organisationId, String alertCallReferenceId) {
+    return findActive(
+        AlertCall.class,
+        organisationId,
+        alertCallReferenceId,
+        alertCallActiveTimeFrameInMs,
+        nowUtc,
+        (o, r) -> alertCallRepository.findByOrganisationIdAndReferenceId(o, r),
+        (a) -> a.getUtcDateTime(),
+        (a) -> a.getId());
+  }
+
+  public Optional<Alert> findActiveAlert(Long organisationId, String alertReferenceId) {
+    return findActiveAlert(Instant.now(), organisationId, alertReferenceId);
+  }
+
+  public Optional<Alert> findActiveAlert(Instant nowUtc, Long organisationId, String alertReferenceId) {
+    return findActive(
+        Alert.class,
+        organisationId,
+        alertReferenceId,
+        alertActiveTimeFrameInMs,
+        nowUtc,
+        (o, r) -> alertRepository.findByOrganisationIdAndReferenceId(o, r),
+        (a) -> a.getUtcDateTime(),
+        (a) -> a.getId());
+  }
+
+  private <T> Optional<T> findActive(
+      Class<T> clazz,
+      Long organisationId,
+      String referenceId,
+      long activeTimeFrameInMs,
+      Instant nowUtc,
+      BiFunction<Long, String, List<T>> executeLookup,
+      Function<T, Date> extractUtcDate,
+      Function<T, Long> extractId) {
+
+    String name = clazz.getSimpleName();
+    List<T> foundObjects = executeLookup.apply(organisationId, referenceId);
+
+    List<T> foundObjectsSortedByUtcDate = foundObjects
+        .stream()
+        .sorted(Comparator.<T>comparingLong(a -> extractUtcDate.apply(a).getTime()).reversed())
+        .collect(Collectors.toList());
+
+    logger.info("Found all {}s in "
+            + "organisationId '{}' "
+            + "with referenceId '{}'. "
+            + "Found {} {}s",
+        name, organisationId, referenceId, foundObjectsSortedByUtcDate.size(), name);
+
+    if (foundObjectsSortedByUtcDate.isEmpty()) {
+      return Optional.empty();
+    }
+
+    T lastObject = foundObjectsSortedByUtcDate.get(0);
+    logger.info("The most recent {} in "
+            + "organisationId '{}' "
+            + "with referenceId '{}' "
+            + "is {} with Id: {}",
+        name, organisationId, referenceId, name, extractId.apply(lastObject));
+
+    Instant objectCreatedUtc = extractUtcDate.apply(lastObject).toInstant();
+    Instant objectActiveUntilUtc = objectCreatedUtc.plusMillis(activeTimeFrameInMs);
+
+    boolean objectDateExceedsTimeFrame = nowUtc.isAfter(objectActiveUntilUtc);
+
+    // If the time frame is exceeded we can assume that it is a new Alert
+    // and not another call for an existing Alert!
+    if (objectDateExceedsTimeFrame) {
+      logger.info("{} Id {} was found for ReferenceId '{}' in organisationId '{}'. "
+              + "But this {} was created at {}. That is outside of the time frame ({}ms) "
+              + "to treat the existing {} as active and reuse the existing {}"
+              + "for further activity. {} was active till {}",
+          name,
+          extractId.apply(lastObject),
+          referenceId,
+          organisationId,
+          name,
+          DateTimeHelper.toISOString(extractUtcDate.apply(lastObject)),
+          alertActiveTimeFrameInMs,
+          name,
+          name,
+          name,
+          DateTimeHelper.toISOString(objectActiveUntilUtc));
+      return Optional.empty();
+    }
+
+    logger.info("{} Id {} was found for ReferenceId '{}' in organisationId '{}'. "
+            + "This {} was created at {}. That is inside of the time frame ({}ms) "
+            + "to treat the existing {} as active and reuse the existing {}"
+            + "for further activity. {} remains active until {}",
+        name,
+        extractId.apply(lastObject),
+        referenceId,
+        organisationId,
+        name,
+        DateTimeHelper.toISOString(extractUtcDate.apply(lastObject)),
+        alertActiveTimeFrameInMs,
+        name,
+        name,
+        name,
+        DateTimeHelper.toISOString(objectActiveUntilUtc));
+    return Optional.of(lastObject);
   }
 
   private ExistingAlert createAlertIfNotExists(Long organisationId,
@@ -167,12 +296,13 @@ public class AlertService {
     synchronized (this) {
       logger.info("Finished waiting before looking for existing alert (Took: {})", stopWatch.toString());
 
-      Optional<Alert> foundAlert = alertRepository
-          .findByOrganisationIdAndReferenceId(organisationId, referenceId);
+      Instant utcInstant = Instant.ofEpochMilli(utcDateTime.getTime());
+      Optional<Alert> foundActiveAlert = findActiveAlert(utcInstant, organisationId, referenceId);
 
-      if (foundAlert.isEmpty()) {
+      if (foundActiveAlert.isEmpty()) {
         logger.info(
-            "No Alert with ReferenceId '{}'" + " in organisationId '{}' found", referenceId, organisationId);
+            "No Alert with ReferenceId '{}' in organisationId '{}' in the specific alert-active-time-frame found",
+            referenceId, organisationId);
 
         Alert alert = new Alert(organisationId,
             referenceId,
@@ -195,10 +325,10 @@ public class AlertService {
       }
       logger.info(
           "Alert '{}' already exists with ReferenceId '{}'" + " in organisationId '{}'",
-          foundAlert.get().getId(),
+          foundActiveAlert.get().getId(),
           referenceId,
           organisationId);
-      return new ExistingAlert(foundAlert.get(), false);
+      return new ExistingAlert(foundActiveAlert.get(), false);
     }
   }
 
@@ -242,7 +372,8 @@ public class AlertService {
 
     MatchResult aaoMatchResult = new MatchResult();
     try {
-      aaoMatchResult = ruleService.evaluateAao(alert.getOrganisationId(), new AlertContext(alert.getKeyword(), alert.getUtcDateTime(), addressInfo2));
+      aaoMatchResult = ruleService.evaluateAao(alert.getOrganisationId(),
+          new AlertContext(alert.getKeyword(), alert.getUtcDateTime(), addressInfo2));
     } catch (Exception e) {
       logger.error("Error during aao evaluation", e);
     }
@@ -255,7 +386,7 @@ public class AlertService {
     alert.setRoute(routeJson);
     alert.setDistance(routeDistance);
     alert.setDuration(routeDuration);
-    alert.setAao( new StringList(aaoMatchResult.getResults()));
+    alert.setAao(new StringList(aaoMatchResult.getResults()));
 
     alertRepository.save(alert);
   }

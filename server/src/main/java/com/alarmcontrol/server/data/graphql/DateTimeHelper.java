@@ -42,6 +42,11 @@ public class DateTimeHelper {
         return toISOString(toLocalDateTime(date));
     }
 
+    public static String toISOString(Instant instant) {
+        Objects.requireNonNull(instant, "date");
+        return instant.toString();
+    }
+
     public static LocalDateTime toLocalDateTime(Date date) {
         Objects.requireNonNull(date, "date");
 

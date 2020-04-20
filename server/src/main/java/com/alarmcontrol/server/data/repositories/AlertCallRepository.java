@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AlertCallRepository extends CrudRepository<AlertCall, Long> {
   List<AlertCall> findByAlertId(Long alertId);
-  Optional<AlertCall> findByOrganisationIdAndReferenceId(Long organisationId, String referenceId);
+  List<AlertCall> findByOrganisationIdAndReferenceId(Long organisationId, String referenceId);
 
 }
