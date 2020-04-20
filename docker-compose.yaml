@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   alarmcontrol:
-    image: denniskniep/alarmcontrol:1.3.0
+    image: denniskniep/alarmcontrol:1.3.1
     restart: always
     container_name: alarmcontrol
     ports:
