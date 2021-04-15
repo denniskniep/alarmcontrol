@@ -10,6 +10,7 @@ import {
 import {gql} from "apollo-boost";
 import QueryHandler from "../../utils/queryHandler";
 import MailContactsEditMutation from "./contacts/mailContactsEditMutation";
+import TeamsContactsEditMutation from "./contacts/teamsContactsEditMutation";
 import NotificationSubscriptionsEditMutation from "./notificationSubscriptionsEditMutation";
 import FirebaseMessageContactsEditMutation  from "./contacts/firebaseMessageContactsEditMutation";
 import EditableTable from "../../components/editableTable";
@@ -26,6 +27,9 @@ query organisationById($id: ID!) {
         __typename
         ... on MailContact {
           mailAddress
+        }
+        ... on TeamsContact {
+          url
         }
         ... on FirebaseMessageContact {
           mail
@@ -92,6 +96,13 @@ class NotificationsByOrganisationView extends Component {
             .contacts
             .filter(contact => contact.__typename == "MailContact");
 
+
+            let teamsContacts = data
+            .organisationById
+            .notificationConfig
+            .contacts
+            .filter(contact => contact.__typename == "TeamsContact");
+
             let firebaseMessageContacts = data
             .organisationById
             .notificationConfig
@@ -102,12 +113,20 @@ class NotificationsByOrganisationView extends Component {
                 <Container>
                   <Row className={"row-header"}>
                     <Col>
-                      <h2>E-Mails</h2>
+                     <h2>E-Mails</h2>
 
                       <MailContactsEditMutation
                           onContactsChanged={() => refetch()}
                           organisationId={this.props.match.params.id}
                           contacts={mailContacts}
+                      />
+
+                      <h2>Teams</h2>
+
+                      <TeamsContactsEditMutation
+                          onContactsChanged={() => refetch()}
+                          organisationId={this.props.match.params.id}
+                          contacts={teamsContacts}
                       />
 
                        <div className={"float-left"}>

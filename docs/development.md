@@ -5,7 +5,7 @@ The following steps are necessary to start the application for development:
 
 * Open Maven Project in your IDE `./server/pom.xml`
 
-* Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local`
+* Set SpringProfile to local i.e. via env variable `SPRING_PROFILES_ACTIVE=local` or VM Argument `-Dspring.profiles.active=local`
 
 * Set the env variable `GRAPHHOPPER_APIKEY=xxxxx-xxxx-xxxx-xxxx-xxxxxxxxx`
 (register for a free account [here](https://graphhopper.com/dashboard/#/register) and generate your apikey) 
