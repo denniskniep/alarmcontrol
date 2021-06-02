@@ -5,6 +5,7 @@ extend type Query {
 extend type Mutation {
   addNotificationMailContact(organisationId: ID!, name: String, mailAddress : String!): Contact
   addNotificationFirebaseMessageContact(organisationId: ID!, name: String, mail : String!): Contact
+  addNotificationTeamsContact(organisationId: ID!, name: String, url: String!): Contact
   deleteNotificationContact(organisationId: ID!, uniqueContactId : String!): String
 
   addNotificationSubscriptionForAlertCreated(organisationId: ID!, updateDelaysInSeconds: [Int]!, subscriberContactUniqueIds : [String]!): NotificationSubscription
@@ -47,6 +48,13 @@ type MailContact implements Contact {
   name : String
   mailAddress : String
 }
+
+type TeamsContact implements Contact {
+  uniqueId : String
+  name : String
+  url : String
+}
+
 
 type FirebaseMessageContact implements Contact {
   uniqueId : String
