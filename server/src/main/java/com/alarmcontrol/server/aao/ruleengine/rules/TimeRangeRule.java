@@ -29,6 +29,10 @@ public class TimeRangeRule implements Rule {
 
   @Override
   public boolean match(ReferenceContext referenceContext, AlertContext alertContext) {
+    if (timeRanges.size() == 0) {
+      return true;
+    }
+
     LocalDateTime localDateTime = toLocalDateTime(alertContext.getUtcDateTime());
     return match(localDateTime, referenceContext.getFeiertage());
   }

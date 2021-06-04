@@ -37,8 +37,8 @@ public class MapboxParser {
       return new GeocodingResult(json, null, null, null, null);
     }
 
-    String lon = tryReadDoubleJsonPath(json, "$.features[0].center[0]").toString();
-    String lat = tryReadDoubleJsonPath(json, "$.features[0].center[1]").toString();
+    String lon = tryReadJsonPathAsDouble(json, "$.features[0].center[0]").toString();
+    String lat = tryReadJsonPathAsDouble(json, "$.features[0].center[1]").toString();
 
     String houseNumber = tryReadJsonPath(json, "$.features[0].address");
     String road = tryReadJsonPath(json, "$.features[0].text");
@@ -48,18 +48,14 @@ public class MapboxParser {
     String accuracy =  tryReadJsonPath(json, "$.features[0].properties.accuracy");
     logger.info("Geocoding result had a accuracy of '{}'", accuracy);
 
-    Double relevance =  tryReadDoubleJsonPath(json, "$.features[0].relevance");
+    Double relevance =  tryReadJsonPathAsDouble(json, "$.features[0].relevance");
     logger.info("Geocoding result had a relevance of '{}'", relevance);
 
-    String cityDistrict = "";
-    String city = "";
+    String city =  tryReadJsonPathAsArrayAndReturnFirstElement(json, "$.features[0].context[?(@.id=~/place.*/i)].text");
+    String cityDistrict = tryReadJsonPathAsArrayAndReturnFirstElement(json, "$.features[0].context[?(@.id=~/local.*/i)].text");
 
-    //directly in the main town
-    if(context.size() == 4){
-      city = context.get(1);
-    }else if(context.size() > 4){
-      city = context.get(2);
-      cityDistrict = context.get(0);
+    if(StringUtils.equalsIgnoreCase(city, cityDistrict)){
+      cityDistrict = null;
     }
 
     String addressInfo1 = join(" ", road, houseNumber);
@@ -74,7 +70,7 @@ public class MapboxParser {
   }
 
 
-  private Double tryReadDoubleJsonPath(String json, String path){
+  private Double tryReadJsonPathAsDouble(String json, String path){
       Object value = tryReadJsonPath(json, path);
 
       // When an value is with an floating point then it is a double
@@ -101,4 +97,23 @@ public class MapboxParser {
     }
   }
 
+  private <T> List<T> tryReadJsonPathAsArray(String json, String path){
+    try{
+      logger.debug("Read '{}'", path);
+      List<T> value = JsonPath.read(json, path);
+      logger.debug("Value of '{}' is '{}'", path, value);
+      return value;
+    }catch (Exception e){
+      logger.info("Can't read jsonPath '{}' from geocoded json result.", path);
+      return null;
+    }
+  }
+
+  private <T> T tryReadJsonPathAsArrayAndReturnFirstElement(String json, String path){
+    List<T> values = tryReadJsonPathAsArray(json, path);
+    if(values.isEmpty()){
+      return null;
+    }
+    return values.get(0);
+  }
 }
