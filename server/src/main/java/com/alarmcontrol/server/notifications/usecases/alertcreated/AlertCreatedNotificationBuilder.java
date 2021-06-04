@@ -106,9 +106,8 @@ public class AlertCreatedNotificationBuilder extends
 
     String body = alert.getKeyword() + "\n" +
         description +
-        address + "\n\n" +
-        organisation.getName() + "\n" +
-        alert.getReferenceId();
+        "Ortsteil: " + address + "\n\n" +
+        "Organisation: " + organisation.getName() + "\n";
 
     return new Message(Severity.ALERT, subject, body);
   }
@@ -155,8 +154,7 @@ public class AlertCreatedNotificationBuilder extends
     String body = "KOMMEN:" + employeeIdsThatCommitted.size() + "\n"
         + "ABGELEHNT:" + employeeIdsThatCancel.size() + "\n"
         + skillBodyPart.toString() + "\n\n" +
-        organisation.getName() + "\n" +
-        alert.getReferenceId();
+        "Organisation: " +organisation.getName();
 
     return new Message(Severity.INFO, subject, body);
   }
