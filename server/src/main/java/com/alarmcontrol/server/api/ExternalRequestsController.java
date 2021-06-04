@@ -1,7 +1,7 @@
 package com.alarmcontrol.server.api;
 
 
-import com.alarmcontrol.server.api.tetrapager.TetraPagerAlertParser;
+import com.alarmcontrol.server.api.tetrapager.TetraPagerAlertParserV2;
 import com.alarmcontrol.server.api.tetrapager.TetraPagerEmployeeFeedbackParser;
 import com.alarmcontrol.server.api.tetrapager.TetraPagerEmployeeStatusParser;
 import com.alarmcontrol.server.data.AlertService;
@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalRequestsController {
 
   private static final String ORG_ID =  "organisationId";
-  private TetraPagerAlertParser tetraPagerAlertParser;
+  private TetraPagerAlertParserV2 tetraPagerAlertParser;
   private TetraPagerEmployeeFeedbackParser tetraPagerEmployeeFeedbackParser;
   private TetraPagerEmployeeStatusParser tetraPagerEmployeeStatusParser;
   private AlertService alertService;
   private EmployeeFeedbackService employeeFeedbackService;
   private EmployeeStatusService employeeStatusService;
 
-  public ExternalRequestsController(TetraPagerAlertParser tetraPagerAlertParser,
+  public ExternalRequestsController(TetraPagerAlertParserV2 tetraPagerAlertParser,
       TetraPagerEmployeeFeedbackParser tetraPagerEmployeeFeedbackParser,
       TetraPagerEmployeeStatusParser tetraPagerEmployeeStatusParser,
       AlertService alertService, EmployeeFeedbackService employeeFeedbackService,

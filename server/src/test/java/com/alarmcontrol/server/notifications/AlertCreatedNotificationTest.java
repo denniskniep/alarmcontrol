@@ -93,7 +93,7 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
-        + "Berlin-Tempelhof"));
+        + "Ortsteil: Berlin-Tempelhof"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:0\n"
         + "ABGELEHNT:0"));
@@ -126,9 +126,9 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
-        + "Berlin-Tempelhof\n"
+        + "Ortsteil: Berlin-Tempelhof\n"
         + "\n"
-        + "Organisation"));
+        + "Organisation: Organisation"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:1\n"
         + "ABGELEHNT:0\n"
@@ -172,9 +172,9 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
 
     assertThat(messages).hasSize(2);
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("H1\n"
-        + "Berlin-Tempelhof\n"
+        + "Ortsteil: Berlin-Tempelhof\n"
         + "\n"
-        + "Organisation"));
+        + "Organisation: Organisation"));
 
     assertThat(messages).extracting(m -> m.getBody()).areExactly(1, isStartingWith("KOMMEN:3\n"
         + "ABGELEHNT:1\n"
@@ -184,7 +184,7 @@ public class AlertCreatedNotificationTest extends AlertBaseTest {
         + "* FK: 1\n"
         + "* AGT: 2\n"
         + "\n"
-        + "Organisation"));
+        + "Organisation: Organisation"));
   }
 
   private List<Message> waitForAllMessages() {
